@@ -1,0 +1,65 @@
+name: "Module Task"
+description: "Task für ein spezifisches Modul (BASO, ICT, CRA, etc.)"
+title: "[MODULE] Task description"
+labels: ["needs-triage"]
+body:
+  - type: dropdown
+    id: module
+    attributes:
+      label: "Modul"
+      options:
+        - BASO
+        - ICT
+        - Compliance
+        - CRA
+        - DSGVO
+        - NIS2
+        - AI Act
+        - Gutachten
+        - Compliance-DB
+        - Kunden
+        - Risikobewertung
+        - Infrastructure/VCS
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "Priorität"
+      options:
+        - "P0 - Critical"
+        - "P1 - High"
+        - "P2 - Medium"
+        - "P3 - Low"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Beschreibung"
+      description: "Was muss erledigt werden?"
+      placeholder: "Klare Aufgabenbeschreibung"
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "Acceptance Criteria"
+      description: "Wann ist diese Task fertig?"
+      placeholder: "- [ ] Feature funktioniert\n- [ ] Tests schreiben\n- [ ] Dokumentation aktualisiert"
+
+  - type: checkboxes
+    id: areas
+    attributes:
+      label: "Betroffene Bereiche"
+      options:
+        - label: "GUI"
+        - label: "CLI"
+        - label: "Database"
+        - label: "Config"
+        - label: "Documentation"
+        - label: "Testing"
+        - label: "GitHub Integration"
