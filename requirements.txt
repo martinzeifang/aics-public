@@ -19,7 +19,7 @@ python-docx>=1.1.2
 
 # HTTP (CVE-Fix #275)
 requests>=2.32.3
-urllib3>=2.2.2,<3.0.0  # CVE-2024-37891 fix
+urllib3>=2.7.0,<3.0.0  # CVE-2024-37891 fix
 
 # YAML (CVE-Fix #276)
 PyYAML>=6.0.1  # CVE-2020-14343, CVE-2017-18342 fixes
