@@ -1,0 +1,146 @@
+site_name: AI Compliance Suite
+site_description: Technische Dokumentation der AI Compliance Suite – KI-gestützte Compliance-Werkzeuge für BASO, ICT, DSGVO, NIS2, CRA, AI Act, Gutachten und Risikobewertung
+site_author: Martin Zeifang
+repo_url: https://github.com/martinzeifang/AI_Compliance_Suite
+repo_name: martinzeifang/AI_Compliance_Suite
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: de
+  logo: assets/logo_icon.png
+  favicon: assets/logo_icon.png
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Zum dunklen Modus wechseln
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Zum hellen Modus wechseln
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - navigation.indexes
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search:
+      lang: de
+  - glightbox
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+      title: Inhalt
+
+nav:
+  - Start: index.md
+  - Web-App:
+    - web/index.md
+    - Docker-Deployment: web/deployment.md
+    - Benutzerverwaltung: web/user-management.md
+    - Zwei-Faktor-Authentifizierung: web/two-factor-auth.md
+    - Framework-Bibliothek: web/framework-library.md
+  - Architektur:
+    - architecture/index.md
+    - Systemübersicht: architecture/overview.md
+    - Datenfluss: architecture/data-flow.md
+    - Datenbankschemas: architecture/database-schemas.md
+  - Module:
+    - modules/index.md
+    - BASO Fragebogen: modules/baso.md
+    - ICT Fragebogen: modules/ict.md
+    - DSGVO-Compliance: modules/dsgvo.md
+    - NIS2-Umsetzung: modules/nis2.md
+    - CRA-Readiness: modules/cra.md
+    - AI Act Readiness: modules/ai-act.md
+    - Compliance Bewertung (Desktop): modules/compliance.md
+    - Compliance-DB (RAG): modules/compliance-db.md
+    - Gutachten: modules/gutachten.md
+    - Risikobewertung: modules/risikobewertung.md
+    - Kundenverwaltung: modules/kunden.md
+  - KI-Integration:
+    - KI-Anbieter-Schnittstelle: ai/provider-interface.md
+    - Datenanhandhabung: ai/data-handling.md
+    - On-Prem KI (Ollama): ai/on-prem.md
+    - Cloud-KI: ai/cloud.md
+    - Nachweis-Mapping: ai/mapping.md
+  - Konfiguration:
+    - configuration/index.md
+  - CLI-Referenz:
+    - cli/index.md
+  - API-Referenz:
+    - api/index.md
+    - security_utils: api/security-utils.md
+    - config_io: api/config-io.md
+    - db_security: api/db-security.md
+    - fs_perms: api/fs-perms.md
+    - json_io: api/json-io.md
+    - net_validation: api/net-validation.md
+    - redaction: api/redaction.md
+    - crypto_at_rest: api/crypto-at-rest.md
+    - audit: api/audit.md
+  - Workflows:
+    - workflows/index.md
+    - BASO Workflow: workflows/baso-workflow.md
+    - ICT Workflow: workflows/ict-workflow.md
+    - CRA Workflow: workflows/cra-workflow.md
+    - AI Act Workflow: workflows/ai-act-workflow.md
+    - Gutachten Workflow: workflows/gutachten-workflow.md
+    - Risikobewertung Workflow: workflows/risikobewertung-workflow.md
+  - Templates:
+    - templates/index.md
+    - CRA Compliance Pack: templates/cra-compliance-pack.md
+  - Entwicklung:
+    - Setup: development/setup.md
+    - Security Tooling: development/security-tooling.md
+    - Integrity Check: development/integrity-check.md
+    - At-Rest Encryption: development/at-rest-encryption.md
+    - UI Menüstruktur: ui/menu-structure.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/martinzeifang
+
+copyright: Copyright &copy; 2024-2026 Martin Zeifang

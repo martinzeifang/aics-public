@@ -1,0 +1,222 @@
+"""Cross-Modul Issue-Übersicht — alle verlinkten Issues über alle Module.
+
+Aggregiert über cra.sqlite, nis2.sqlite, aiact.sqlite, dora.sqlite, risikobewertung.sqlite.
+Nutzt shared/issue_links für Datenzugriff.
+"""
+
+from flask import current_app, Blueprint, request
+from flask_jwt_extended import jwt_required
+from pathlib import Path
+from typing import Any, Dict, List
+
+from server.models.permission import require_permission
+
+issues_bp = Blueprint('issues', __name__, url_prefix='/api/issues')
+
+
+# Module → DB-Pfad-Mapping
+MODULE_DBS = {
+    'cra': Path('data/db/cra.sqlite'),
+    'nis2': Path('data/db/nis2.sqlite'),
+    'aiact': Path('data/db/ai_act.sqlite'),
+    'dora': Path('data/db/dora.sqlite'),
+    'risikobewertung': Path('data/db/risikobewertung.sqlite'),
+}
+
+
+def _serialize_link(li: Any, module: str) -> Dict[str, Any]:
+    return {
+        'id': getattr(li, 'id', None),
+        'module': module,
+        'projekt_name': getattr(li, 'projekt_name', ''),
+        'object_kind': getattr(li, 'object_kind', ''),
+        'object_id': getattr(li, 'object_id', ''),
+        'provider': getattr(li, 'provider', ''),
+        'repo': getattr(li, 'repo', ''),
+        'url': getattr(li, 'url', ''),
+        'issue_number': getattr(li, 'issue_number', None),
+        'issue_iid': getattr(li, 'issue_iid', None),
+        'title': getattr(li, 'title', ''),
+        'state': getattr(li, 'state', ''),
+        'state_reason': getattr(li, 'state_reason', ''),
+    }
+
+
+@issues_bp.get('/all')
+@require_permission('admin:audit')
+def list_all_issues():
+    """Alle Issue-Verknüpfungen über alle Module."""
+    try:
+        from shared.issue_links import ensure_tables, list_links
+        import sqlite3
+
+        filter_module = request.args.get('module', '').lower()
+        filter_state = request.args.get('state', '').lower()
+        filter_projekt = request.args.get('projekt', '')
+
+        result: List[Dict[str, Any]] = []
+
+        for module, db_path in MODULE_DBS.items():
+            if filter_module and filter_module != module:
+                continue
+            if not db_path.exists():
+                continue
+
+            try:
+                ensure_tables(db_path)
+                # Direkt SQL für Performance — list_links benötigt object_kind+object_id
+                con = sqlite3.connect(str(db_path))
+                con.row_factory = sqlite3.Row
+                cur = con.cursor()
+                # Tabelle gibts?
+                row = cur.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='linked_issues'"
+                ).fetchone()
+                if not row:
+                    con.close()
+                    continue
+
+                where_parts: List[str] = []
+                params: List[Any] = []
+                if filter_state:
+                    where_parts.append('state=?')
+                    params.append(filter_state)
+                if filter_projekt:
+                    where_parts.append('projekt_name=?')
+                    params.append(filter_projekt)
+                where_sql = ('WHERE ' + ' AND '.join(where_parts)) if where_parts else ''
+
+                rows = cur.execute(
+                    f'SELECT * FROM linked_issues {where_sql} ORDER BY projekt_name, object_id LIMIT 500',
+                    params,
+                ).fetchall()
+
+                for r in rows:
+                    result.append({
+                        'id': r['id'],
+                        'module': module,
+                        'projekt_name': r['projekt_name'],
+                        'object_kind': r['object_kind'],
+                        'object_id': r['object_id'],
+                        'provider': r['provider'],
+                        'repo': r['repo'] if 'repo' in r.keys() else '',
+                        'url': r['url'],
+                        'issue_number': r['issue_number'] if 'issue_number' in r.keys() else None,
+                        'issue_iid': r['issue_iid'] if 'issue_iid' in r.keys() else None,
+                        'title': r['title'] if 'title' in r.keys() else '',
+                        'state': r['state'] if 'state' in r.keys() else '',
+                        'state_reason': r['state_reason'] if 'state_reason' in r.keys() else '',
+                    })
+                con.close()
+            except Exception:
+                continue
+
+        return {
+            'issues': result,
+            'count': len(result),
+            'modules': list(MODULE_DBS.keys()),
+        }, 200
+    except Exception as e:
+        current_app.logger.exception('%s %s — %s: %s', request.method, request.path, type(e).__name__, e)
+        return {'error': str(e), 'type': type(e).__name__}, 500
+
+
+@issues_bp.post('/sync-all')
+@require_permission('admin:audit')
+def sync_all_issues():
+    """Synchronisiert alle GitHub-Issues über alle Module mit ihrem aktuellen Status."""
+    try:
+        from shared.issue_links import list_links, update_issue_state
+        from shared.issue_sync import sync_github_issue
+        import sqlite3
+
+        synced = 0
+        errors: List[Dict[str, Any]] = []
+
+        for module, db_path in MODULE_DBS.items():
+            if not db_path.exists():
+                continue
+            try:
+                con = sqlite3.connect(str(db_path))
+                con.row_factory = sqlite3.Row
+                row = con.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='linked_issues'"
+                ).fetchone()
+                if not row:
+                    con.close()
+                    continue
+                rows = con.execute(
+                    "SELECT id, repo, issue_number, title FROM linked_issues "
+                    "WHERE provider='github' AND issue_number IS NOT NULL"
+                ).fetchall()
+                con.close()
+
+                for r in rows:
+                    try:
+                        s = sync_github_issue(repo=r['repo'], number=r['issue_number'])
+                        update_issue_state(
+                            db_path, link_id=r['id'],
+                            state=s.state,
+                            state_reason=s.state_reason or '',
+                            title=s.title or r['title'],
+                        )
+                        synced += 1
+                    except Exception as e:
+                        errors.append({'module': module, 'id': r['id'], 'error': str(e)})
+            except Exception as e:
+                errors.append({'module': module, 'error': str(e)})
+
+        return {'synced': synced, 'errors': errors}, 200
+    except Exception as e:
+        current_app.logger.exception('%s %s — %s: %s', request.method, request.path, type(e).__name__, e)
+        return {'error': str(e), 'type': type(e).__name__}, 500
+
+
+@issues_bp.get('/stats')
+@require_permission('admin:audit')
+def issues_stats():
+    """Statistiken: Anzahl pro Modul, pro Status, pro Provider."""
+    try:
+        import sqlite3
+
+        stats = {
+            'by_module': {},
+            'by_state': {},
+            'by_provider': {},
+            'total': 0,
+        }
+
+        for module, db_path in MODULE_DBS.items():
+            if not db_path.exists():
+                continue
+            try:
+                con = sqlite3.connect(str(db_path))
+                row = con.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name='linked_issues'"
+                ).fetchone()
+                if not row:
+                    con.close()
+                    continue
+
+                count = con.execute('SELECT COUNT(*) FROM linked_issues').fetchone()[0]
+                stats['by_module'][module] = count
+                stats['total'] += count
+
+                for state, c in con.execute(
+                    "SELECT COALESCE(state, 'unknown') AS s, COUNT(*) FROM linked_issues GROUP BY state"
+                ):
+                    stats['by_state'][state] = stats['by_state'].get(state, 0) + c
+
+                for prov, c in con.execute(
+                    "SELECT provider, COUNT(*) FROM linked_issues GROUP BY provider"
+                ):
+                    stats['by_provider'][prov] = stats['by_provider'].get(prov, 0) + c
+
+                con.close()
+            except Exception:
+                continue
+
+        return stats, 200
+    except Exception as e:
+        current_app.logger.exception('%s %s — %s: %s', request.method, request.path, type(e).__name__, e)
+        return {'error': str(e), 'type': type(e).__name__}, 500

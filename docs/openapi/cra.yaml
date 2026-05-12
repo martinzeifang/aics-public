@@ -1,0 +1,183 @@
+openapi: 3.0.0
+info:
+  title: "AI Compliance Suite - CRA API"
+  version: "1.0.0"
+  description: "REST API für Compliance Risk Assessment (CRA) Modul"
+  contact:
+    name: "AI Compliance Suite"
+
+servers:
+  - url: "http://localhost:5000"
+    description: "Development Server"
+  - url: "https://api.example.com"
+    description: "Production Server"
+
+paths:
+  /api/cra/dashboard:
+    get:
+      summary: "CRA Dashboard Statistics"
+      operationId: "getCraDashboard"
+      tags: ["CRA"]
+      security:
+        - bearerAuth: ["cra:read"]
+      responses:
+        '200':
+          description: "Dashboard data with maturity gauge, chapter overview, KPIs"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  maturity: { type: number, format: float }
+                  chapters: { type: array }
+                  kpis: { type: object }
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/cra/chapters:
+    get:
+      summary: "List CRA Chapters"
+      operationId: "getCraChapters"
+      tags: ["CRA"]
+      security:
+        - bearerAuth: ["cra:read"]
+      responses:
+        '200':
+          description: "List of chapters"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+
+  /api/cra/chapters/{id}:
+    get:
+      summary: "Get CRA Chapter Details"
+      operationId: "getCraChapter"
+      tags: ["CRA"]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      security:
+        - bearerAuth: ["cra:read"]
+      responses:
+        '200':
+          description: "Chapter details with requirements"
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/cra/controls:
+    get:
+      summary: "List OWASP Controls"
+      operationId: "getCraControls"
+      tags: ["Controls"]
+      security:
+        - bearerAuth: ["cra:read"]
+      responses:
+        '200':
+          description: "List of OWASP controls"
+
+    post:
+      summary: "Create Control"
+      operationId: "createControl"
+      tags: ["Controls"]
+      security:
+        - bearerAuth: ["cra:write"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ["control_id", "title"]
+              properties:
+                control_id: { type: string }
+                title: { type: string }
+      responses:
+        '201':
+          description: "Control created"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/cra/prefill/generate:
+    post:
+      summary: "Generate Prefill Suggestions"
+      operationId: "generatePrefill"
+      tags: ["Prefill"]
+      security:
+        - bearerAuth: ["cra:prefill"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ["suite_cfg", "fields", "evidence_chunks"]
+              properties:
+                suite_cfg: { type: object }
+                fields: { type: array }
+                evidence_chunks: { type: array }
+      responses:
+        '200':
+          description: "Generated suggestions"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  suggestions:
+                    type: array
+                    items:
+                      type: object
+                  generated_at: { type: string, format: date-time }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    BadRequest:
+      description: "Bad Request - Validation error"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }
+
+    Unauthorized:
+      description: "Unauthorized - Missing or invalid token"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }
+
+    Forbidden:
+      description: "Forbidden - Insufficient permissions"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }
+
+    NotFound:
+      description: "Not Found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error: { type: string }
