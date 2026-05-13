@@ -1,0 +1,69 @@
+name: Docker Image Publish
+
+# Public-Repo (aics-public): baut + pusht 2 Images nach ghcr.io
+#   ghcr.io/<owner>/ai_compliance_suite  (Backend + Frontend)
+#   ghcr.io/<owner>/aics-nginx           (Nginx-Reverse-Proxy)
+#
+# Trigger: Push auf main, Tag v*.*.*, manueller workflow_dispatch.
+# Identisch zum privaten Repo, damit pre-built Images aus beiden Quellen
+# byte-gleich sind.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: aics-web
+            image: ${{ github.repository }}
+            dockerfile: ./Dockerfile
+            context: .
+          - name: aics-nginx
+            image: ${{ github.repository_owner }}/aics-nginx
+            dockerfile: ./docker/nginx.Dockerfile
+            context: ./docker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ matrix.image }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-,format=short
+
+      - uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}
