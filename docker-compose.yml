@@ -1,0 +1,218 @@
+# AI Compliance Suite — Portainer-Stack / docker-compose
+# =====================================================================
+#
+# ZERO-CONFIG-DEPLOY (Portainer "Stacks → Add Stack → Web editor"):
+#   Einfach diesen Inhalt einfügen → Deploy. Alles weitere ist optional.
+#
+# OPTIONALE ENV-Variablen (alle haben sinnvolle Defaults):
+#   GH_TOKEN              — GitHub-PAT für Issue-Erstellung + Repo-Scan
+#                           (alternativ später in /admin/settings einstellen)
+#   AICS_HTTP_PORT        — Default 8082 (HTTP → HTTPS-Redirect)
+#   AICS_HTTPS_PORT       — Default 8443
+#   AICS_IMAGE_TAG        — Default 'latest', z.B. 'v1.2.3' für Pin
+#   OLLAMA_DEFAULT_MODEL  — Default llama3.1:8b
+#   OLLAMA_DEFAULT_MODEL  — Ollama-Modell (Default: llama3.1:8b)
+#   OLLAMA_MAX_MEM        — RAM-Limit für Ollama (Default: 8G)
+#   OLLAMA_ENABLED        — auf 'false' setzen um Ollama-Container zu überspringen
+#                           (via docker-compose.no-ollama.yml Override)
+#
+# AUTOMATISCH (kein Setup nötig):
+#   ✓ JWT-Secret wird beim ersten Start in /app/data/.jwt-secret generiert
+#     (überlebt Restarts, ist 64 Hex-Zeichen lang)
+#   ✓ Self-Signed HTTPS-Cert wird in /app/certs/ angelegt
+#   ✓ Frontend wird beim Start ins Nginx-Volume kopiert
+#
+# UPDATE (Portainer):
+#   Stack öffnen → "Update the stack" mit aktiviertem "Re-pull image"
+#
+# DEFAULTS überschreiben (Portainer):
+#   Stack → Environment variables → key/value eintragen
+#
+# Self-built Image für Entwicklung:
+#   AICS_IMAGE=local docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+
+version: '3.8'
+
+services:
+  # ---- Backend (Flask + Gunicorn) ----
+  web:
+    # Default: pull aus GitHub Container Registry.
+    # Override mit AICS_IMAGE_TAG (z.B. v1.2.3, sha-abc1234, main).
+    image: ${AICS_IMAGE:-ghcr.io/martinzeifang/ai_compliance_suite}:${AICS_IMAGE_TAG:-latest}
+    container_name: aics_web
+    restart: unless-stopped
+    labels:
+      io.portainer.stack: ai-compliance-suite
+    expose:
+      - "5000"
+    environment:
+      - FLASK_ENV=production
+      # JWT_SECRET_KEY ist optional — wenn leer, generiert entrypoint.sh
+      # einen stabilen Secret in /app/data/.jwt-secret (im Volume persistent).
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-}
+      - JWT_EXPIRES_HOURS=${JWT_EXPIRES_HOURS:-24}
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://localhost,https://localhost:443}
+      - ENABLE_DEMO_USERS=${ENABLE_DEMO_USERS:-false}
+      - HTTPS_ENABLED=false  # Nginx terminiert HTTPS, Backend läuft HTTP
+      - GUNICORN_WORKERS=${GUNICORN_WORKERS:-4}
+      # Publish-Dir → entrypoint kopiert frontend/dist hierhin, nginx serviert
+      - FRONTEND_PUBLISH_DIR=/srv/frontend
+      # Config-Pfad in /app/data (Volume) — verhindert Permission-denied
+      # auf root-owned /app beim Save (Admin → Einstellungen)
+      - AICS_CONFIG_PATH=/app/data/ai_compliance_suite.config.json
+      # Issue #357: nach Backup-Restore könnte ein stale .sha256-Sidecar
+      # zurückbleiben. Auto-Repair regeneriert es beim Load mit Audit-Eintrag
+      # (config.load outcome=repaired) statt fail-closed zu raisen.
+      - AICS_CONFIG_AUTO_REPAIR_SIDECAR=${AICS_CONFIG_AUTO_REPAIR_SIDECAR:-1}
+      # Tempspace für Report-Exports etc. — gehört in /app/data (gemountet,
+      # schreibbar) statt /app/var (root-owned read-only).
+      - AICS_TMP_DIR=/app/data/tmp
+      # Optional: LDAP
+      - LDAP_ENABLED=${LDAP_ENABLED:-false}
+      - LDAP_SERVER=${LDAP_SERVER:-}
+      - LDAP_BASE_DN=${LDAP_BASE_DN:-}
+      - LDAP_BIND_DN=${LDAP_BIND_DN:-}
+      - LDAP_BIND_PASSWORD=${LDAP_BIND_PASSWORD:-}
+      - LDAP_GROUP_MAPPING=${LDAP_GROUP_MAPPING:-{}}
+      # GitHub-Token für REST-API (Issue-Erstellung, Repo-Scan).
+      # Da gh-CLI im Container fehlt, nutzt vcs/github_issues.py REST direkt.
+      - GH_TOKEN=${GH_TOKEN:-}
+      # Optional: AI
+      - AI_CLOUD_API_KEY=${AI_CLOUD_API_KEY:-}
+      # Ollama läuft per Default als eigener Container im selben Netz.
+      # Lokal ohne Docker: http://host.docker.internal:11434 setzen.
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
+      - OLLAMA_DEFAULT_MODEL=${OLLAMA_DEFAULT_MODEL:-llama3.1:8b}
+      # Service-Hostname 'ollama' ist nicht loopback → erlauben.
+      - AICS_ALLOW_NONLOCAL_LLM=${AICS_ALLOW_NONLOCAL_LLM:-1}
+    volumes:
+      - aics_data:/app/data
+      - aics_logs:/app/logs
+      - aics_backups:/app/out/backup
+      - aics_certs:/app/certs
+      - aics_frontend:/srv/frontend  # entrypoint kopiert frontend/dist hierhin
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://127.0.0.1:5000/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+
+  # ---- Reverse-Proxy (Nginx mit HTTPS-Termination) ----
+  nginx:
+    # Eigenes Image mit eingebackener nginx.conf (kein Host-Bind-Mount nötig).
+    # Wird vom selben Workflow gebaut wie aics_web.
+    image: ${AICS_NGINX_IMAGE:-ghcr.io/martinzeifang/aics-nginx}:${AICS_IMAGE_TAG:-latest}
+    container_name: aics_nginx
+    restart: unless-stopped
+    labels:
+      io.portainer.stack: ai-compliance-suite
+    ports:
+      # Konfigurierbar via .env (Default: 8082/8443; auf 80/443 setzbar wenn frei)
+      - "${AICS_HTTP_PORT:-8082}:80"
+      - "${AICS_HTTPS_PORT:-8443}:443"
+    volumes:
+      # Web-Container generiert self-signed-Certs in aics_certs;
+      # nginx liest sie read-only aus demselben Volume.
+      - aics_certs:/etc/nginx/certs:ro
+      - aics_frontend:/usr/share/nginx/html:ro
+    depends_on:
+      web:
+        condition: service_healthy
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
+        reservations:
+          cpus: "0.1"
+          memory: 32M
+
+  # ---- Frontend Static Files Provider ----
+  # Wird einmal beim Start ausgeführt: kopiert frontend/dist von web zu nginx-Volume
+  frontend-init:
+    image: alpine:latest
+    container_name: aics_frontend_init
+    command: >
+      sh -c "cp -r /src/* /dest/ && echo 'Frontend assets copied' && tail -f /dev/null"
+    volumes:
+      - aics_frontend:/dest
+    depends_on:
+      web:
+        condition: service_started
+    profiles:
+      - manual
+
+  # ---- Ollama (KI-Backend, Standard) ─────────────────────────────────────
+  # Startet per Default mit docker compose up -d.
+  # Web-Service erreicht Ollama intern unter http://ollama:11434.
+  # Pullt beim ersten Start das Default-Modell (background) — kein separater
+  # Init-Container nötig, damit Portainer keinen "exited"-Status anzeigt.
+  #
+  # Ollama DEAKTIVIEREN (Deployments ohne KI):
+  #   docker compose -f docker-compose.yml -f docker-compose.no-ollama.yml up -d
+  ollama:
+    image: ollama/ollama:latest
+    container_name: aics_ollama
+    restart: unless-stopped
+    expose:
+      - "11434"
+    volumes:
+      - aics_ollama_models:/root/.ollama
+    networks:
+      - app-network
+    labels:
+      io.portainer.stack: ai-compliance-suite
+    environment:
+      - OLLAMA_DEFAULT_MODEL=${OLLAMA_DEFAULT_MODEL:-llama3.1:8b}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        # Default-Modell im Hintergrund pullen sobald Server bereit ist
+        (
+          until ollama list >/dev/null 2>&1; do sleep 2; done
+          if ! ollama list | grep -q "$$OLLAMA_DEFAULT_MODEL"; then
+            echo "→ pulling $$OLLAMA_DEFAULT_MODEL"
+            ollama pull "$$OLLAMA_DEFAULT_MODEL" || echo "WARN: pull failed"
+          fi
+        ) &
+        exec /bin/ollama serve
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: ${OLLAMA_MAX_MEM:-8G}
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  aics_data:
+  aics_logs:
+  aics_backups:
+  aics_certs:
+  aics_frontend:
+  aics_ollama_models:
