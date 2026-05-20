@@ -15,7 +15,7 @@ sqlalchemy>=2.0.30,<3.0.0
 # Document Processing
 pillow>=10.3.0  # CVE-2024-28219, CVE-2023-50447 fixes
 openpyxl>=3.1.5
-python-docx>=1.1.2
+python-docx>=1.2.0
 
 # HTTP (CVE-Fix #275)
 requests>=2.32.3
