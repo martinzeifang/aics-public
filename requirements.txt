@@ -18,7 +18,7 @@ openpyxl>=3.1.5
 python-docx>=1.1.2
 
 # HTTP (CVE-Fix #275)
-requests>=2.32.3
+requests>=2.34.2
 urllib3>=2.2.2,<3.0.0  # CVE-2024-37891 fix
 
 # YAML (CVE-Fix #276)
