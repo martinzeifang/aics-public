@@ -1,0 +1,72 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+
+# Virtualenv
+.venv/
+venv/
+ENV/
+env/
+
+# Local tooling
+.claude/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# Node / Frontend dependencies (#746 — niemals committen)
+node_modules/
+frontend/node_modules/
+
+# App generated data (downloads, databases, reports)
+data/*
+out/
+logs/
+*.log
+
+# Config integrity sidecars
+*.config.json.sha256
+
+# ISO frameworks are part of the repo (cannot be downloaded from the internet)
+!data/iso27001_questionnaires/
+!data/iso27001_questionnaires/**
+
+# Databases / artifacts
+*.sqlite
+*.sqlite3
+*.db
+
+# Local secrets
+.jwt-dev-secret
+.env
+.env.local
+
+# Partial downloads / temp office files
+*.part
+*.part*
+~$*
+site/
+frontend/dist/
+logs/
+var/
+
+# Local test environment
+test.env
+.venv-test/
+
+# Runtime-Lock-Files
+*.config.json.lock
+
+# Zertifikate / private Schlüssel (#735) — niemals committen, werden zur Laufzeit erzeugt
+certs/*.key
+certs/*.crt
+certs/*.pem
+*.key
+*.pem
