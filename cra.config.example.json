@@ -1,0 +1,26 @@
+{
+  "bericht": {
+    "berater_name": "",
+    "organisation": "",
+    "version": "1.0",
+    "vertraulichkeit": "Vertraulich"
+  },
+  "paths": {
+    "berichte_dir": "out/cra/berichte",
+    "cra_resources_dir": "data/cra_resources",
+    "db_path": "data/db/cra.sqlite",
+    "fragebogen_dir": "out/cra/fragebogen"
+  },
+  "sync": {
+    "auto_promote_to_risk": false,
+    "gitlab_base_url": "https://gitlab.com",
+    "gitlab_token_env": "GITLAB_TOKEN"
+  },
+  "threatmodel": {
+    "framework_locked_to_risk": true
+  },
+  "ui": {
+    "debug_mode": false,
+    "projekt_name": "Mein-CRA-Projekt"
+  }
+}

@@ -1,0 +1,27 @@
+# Gitleaks-Konfiguration (#735 / WP-02). Filesystem-Scan des Arbeitsbaums.
+title = "AI Compliance Suite — Gitleaks"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Globale Ausnahmen (Build-Artefakte, Vendor-Code, Baselines)"
+paths = [
+  '''frontend/node_modules/.*''',
+  '''frontend/dist/.*''',
+  '''site/.*''',
+  '''venv/.*''',
+  '''\.venv/.*''',
+  '''data/.*''',                       # Runtime-Daten (per .gitignore geschützt, kein Quellcode)
+  '''bandit-baseline\.json''',
+  '''\.integrity\.manifest\.json''',   # SHA-256-Datei-Hashes, keine Keys
+  '''docs/LDAP_INTEGRATION\.md''',     # abgeschnittenes JWT-Beispiel in Doku
+  '''.*\.lock''',
+]
+# Test-/Doku-Platzhalter (keine echten Secrets)
+regexes = [
+  '''0123456789012345678901234567890123456789''',
+  '''admin-password''',
+  '''editor-password''',
+  '''eyJ0eXAiOiJKV1QiLCJhbGc''',       # Beispiel-JWT-Prefix in Doku
+]
