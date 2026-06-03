@@ -1,0 +1,40 @@
+{
+  "paths": {
+    "answers_dir": "out/baso/answers",
+    "db_path": "data/db/baso.sqlite",
+    "filled_dir": "out/baso/filled",
+    "new_dir": "data/baso/neu",
+    "prompts_dir": "out/baso/prompts",
+    "sikos_dir": "data/shared/sikos",
+    "source_dir": "data/baso/quelle"
+  },
+  "prompt": {
+    "header": "Du bist ein Informationssicherheits-Assistent. Beantworte die Sollmaßnahmen kurz, konkret und fachlich. Nutze die bereitgestellten Kontexte (Sicherheitskonzepte + bereits beantwortete Beispiele) und triff plausible Annahmen wie in den bestehenden Antworten. Schreibe NICHT, dass etwas 'nicht ableitbar' ist. Formuliere mutig, aber bei Unsicherheit bevorzuge 'Teilweise' statt 'Nein'.",
+    "service_contract_values": [
+      "Ja",
+      "Nein",
+      "Nicht anwendbar"
+    ],
+    "service_ops_values": [
+      "Ja",
+      "Nein",
+      "teilweise umgesetzt",
+      "Nicht anwendbar"
+    ],
+    "style_service": "Stil: kurze Feststellungssätze; kein 'nicht ableitbar'; bei Unklarheit lieber 'teilweise umgesetzt'",
+    "style_system": "Stil: kurze Feststellungssätze; kein 'nicht ableitbar', kein 'kann nicht beurteilt werden'",
+    "system_statuses": [
+      "vollständig umgesetzt",
+      "teilweise umgesetzt",
+      "nicht umgesetzt",
+      "unbearbeitet"
+    ]
+  },
+  "ui": {
+    "batch_size": 10,
+    "debug_mode": false,
+    "evaluated_by": "",
+    "test_mode": false,
+    "top_k": 3
+  }
+}
