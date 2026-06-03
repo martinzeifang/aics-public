@@ -1,0 +1,46 @@
+name: Docker Image Build (Sanity-Check)
+
+# Public-Repo (aics-public): baut die 2 Docker-Images zur Verifikation,
+# pusht aber NICHT nach GHCR. Die produktiven Images werden ausschließlich
+# aus dem privaten Repo gepusht und sind dort als public packages verfügbar:
+#   ghcr.io/martinzeifang/ai_compliance_suite
+#   ghcr.io/martinzeifang/aics-nginx
+#
+# Damit das Public-Repo nicht versucht, in ein Package zu pushen für das es
+# keine Schreibrechte hat (Cross-Repo-Token-Limitation).
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: aics-web
+            dockerfile: ./Dockerfile
+            context: .
+          - name: aics-nginx
+            dockerfile: ./docker/nginx.Dockerfile
+            context: ./docker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build (no push)
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: false
+          tags: ${{ matrix.name }}:public-sanity
+          cache-from: type=gha,scope=${{ matrix.name }}-public
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}-public
