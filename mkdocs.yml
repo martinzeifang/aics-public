@@ -1,0 +1,86 @@
+site_name: AI Compliance Suite
+site_description: Web-basierte Plattform für Compliance-Bewertung — CRA · NIS2 · EU AI Act · DSGVO · Risikobewertung
+site_author: Martin Zeifang
+repo_url: https://github.com/martinzeifang/aics-public
+repo_name: martinzeifang/aics-public
+edit_uri: ""
+
+theme:
+  name: material
+  language: de
+  logo: assets/logo_docs.png
+  favicon: assets/logo_icon.png
+  palette:
+    - scheme: default
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Zum dunklen Modus wechseln
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Zum hellen Modus wechseln
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+
+nav:
+  - Start: index.md
+  - Web-App:
+    - web/index.md
+    - Docker-Deployment: web/deployment.md
+    - Lizenz-Setup: web/license-setup.md
+    - Ollama (lokale KI): web/ollama-setup.md
+    - Benutzerverwaltung: web/user-management.md
+    - Zwei-Faktor-Authentifizierung: web/two-factor-auth.md
+    - Framework-Bibliothek: web/framework-library.md
+  - Architektur:
+    - architecture/index.md
+    - Datenbankschemas: architecture/database-schemas.md
+  - Module:
+    - modules/index.md
+    - CRA-Readiness: modules/cra.md
+    - NIS2-Umsetzung: modules/nis2.md
+    - DSGVO-Compliance: modules/dsgvo.md
+    - AI Act Readiness: modules/ai-act.md
+    - Risikobewertung: modules/risikobewertung.md
+    - Gutachten: modules/gutachten.md
+    - Firmenverwaltung: modules/firmen.md
+  - KI-Integration:
+    - KI-Anbieter-Schnittstelle: ai/provider-interface.md
+    - Datenhandhabung: ai/data-handling.md
+    - On-Prem KI (Ollama): ai/on-prem.md
+    - Cloud-KI: ai/cloud.md
+  - Konfiguration:
+    - configuration/index.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/martinzeifang/aics-public
