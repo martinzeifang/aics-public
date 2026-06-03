@@ -1,0 +1,907 @@
+"""G1-1 bis G1-5 — DB-Tabellen für das BISG-Gerichtsgutachten.
+
+Komplett getrennt von den existierenden gutachten_*-Tabellen (Audit-Bericht).
+"""
+from __future__ import annotations
+
+import json
+import sqlite3
+from pathlib import Path
+from typing import Any
+
+_SCHEMA = """
+-- G1-1: Stammdaten Verfahren (mit Privat-Variante #663)
+CREATE TABLE IF NOT EXISTS gerichtsgutachten (
+    name              TEXT PRIMARY KEY,
+    gutachten_art     TEXT NOT NULL DEFAULT 'gericht',   -- gericht|privat (#663)
+    gericht           TEXT NOT NULL DEFAULT '',
+    kammer            TEXT NOT NULL DEFAULT '',
+    aktenzeichen      TEXT NOT NULL DEFAULT '',
+    klaeger_name      TEXT NOT NULL DEFAULT '',
+    klaeger_anwalt    TEXT NOT NULL DEFAULT '',
+    beklagter_name    TEXT NOT NULL DEFAULT '',
+    beklagter_anwalt  TEXT NOT NULL DEFAULT '',
+    beweisbeschluss_datum TEXT NOT NULL DEFAULT '',
+    -- Privat-spezifisch (#663):
+    auftraggeber      TEXT NOT NULL DEFAULT '',
+    auftrags_art      TEXT NOT NULL DEFAULT '',   -- Beweissicherung|Tauglichkeitsprüfung|Schaden-Gutachten|Sonstiges
+    auftrags_datum    TEXT NOT NULL DEFAULT '',
+    auftrags_nummer   TEXT NOT NULL DEFAULT '',   -- freier Code statt Aktenzeichen
+    honorarvereinbarung TEXT NOT NULL DEFAULT '', -- Privat: freie Vereinbarung
+    -- gemeinsam:
+    thema             TEXT NOT NULL DEFAULT '',
+    vertraulichkeit   TEXT NOT NULL DEFAULT 'STRENG VERTRAULICH',
+    sv_name           TEXT NOT NULL DEFAULT '',
+    sv_zertifizierung TEXT NOT NULL DEFAULT '',
+    sv_anschrift      TEXT NOT NULL DEFAULT '',
+    sv_kontakt        TEXT NOT NULL DEFAULT '',
+    erstellt_am       TEXT NOT NULL DEFAULT (datetime('now')),
+    erstellt_von      TEXT NOT NULL DEFAULT '',
+    status            TEXT NOT NULL DEFAULT 'in_bearbeitung',  -- in_bearbeitung|finalisiert|eingereicht
+    meta_json         TEXT NOT NULL DEFAULT '{}'
+);
+
+-- G1-2: Beweisfragen
+CREATE TABLE IF NOT EXISTS gerichtsgutachten_beweisfragen (
+    id                       INTEGER PRIMARY KEY AUTOINCREMENT,
+    projekt_name             TEXT NOT NULL,
+    nr                       INTEGER NOT NULL DEFAULT 1,
+    frage_text               TEXT NOT NULL DEFAULT '',
+    antwort_text             TEXT NOT NULL DEFAULT '',
+    antwort_kurz             TEXT NOT NULL DEFAULT '',  -- ja|nein|teilweise|non-liquet
+    referenz_beurteilung_ids TEXT NOT NULL DEFAULT '[]',
+    FOREIGN KEY (projekt_name) REFERENCES gerichtsgutachten(name) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_bewf_projekt ON gerichtsgutachten_beweisfragen(projekt_name, nr);
+
+-- G1-3: Befunde (Kap. IV — Tatsachen)
+CREATE TABLE IF NOT EXISTS gerichtsgutachten_befunde (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    projekt_name      TEXT NOT NULL,
+    nr                TEXT NOT NULL DEFAULT '',       -- z.B. "4.1", "4.2"
+    titel             TEXT NOT NULL DEFAULT '',
+    beschreibung_text TEXT NOT NULL DEFAULT '',
+    methode           TEXT NOT NULL DEFAULT '',       -- statisch|dynamisch|db|netzwerk|interview|live-forensik
+    werkzeug_name     TEXT NOT NULL DEFAULT '',
+    werkzeug_version  TEXT NOT NULL DEFAULT '',
+    asset_ids         TEXT NOT NULL DEFAULT '[]',
+    erhebung_datum    TEXT NOT NULL DEFAULT '',
+    erhebung_ort      TEXT NOT NULL DEFAULT '',
+    zeugen_text       TEXT NOT NULL DEFAULT '',
+    non_liquet        INTEGER NOT NULL DEFAULT 0,
+    non_liquet_grund  TEXT NOT NULL DEFAULT '',
+    FOREIGN KEY (projekt_name) REFERENCES gerichtsgutachten(name) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_befunde_projekt ON gerichtsgutachten_befunde(projekt_name, nr);
+
+-- G1-4: Beurteilungen (Kap. V)
+CREATE TABLE IF NOT EXISTS gerichtsgutachten_beurteilungen (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    projekt_name    TEXT NOT NULL,
+    nr              TEXT NOT NULL DEFAULT '',         -- z.B. "5.1", "5.2"
+    titel           TEXT NOT NULL DEFAULT '',
+    befund_ids      TEXT NOT NULL DEFAULT '[]',
+    norm_referenz   TEXT NOT NULL DEFAULT '',
+    soll_text       TEXT NOT NULL DEFAULT '',
+    ist_text        TEXT NOT NULL DEFAULT '',
+    kausalitaet_text TEXT NOT NULL DEFAULT '',
+    bewertung_text  TEXT NOT NULL DEFAULT '',
+    non_liquet      INTEGER NOT NULL DEFAULT 0,
+    non_liquet_grund TEXT NOT NULL DEFAULT '',
+    FOREIGN KEY (projekt_name) REFERENCES gerichtsgutachten(name) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_beurt_projekt ON gerichtsgutachten_beurteilungen(projekt_name, nr);
+
+-- G1-5a: Assets (Asservaten mit SHA-256)
+CREATE TABLE IF NOT EXISTS gerichtsgutachten_assets (
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    projekt_name        TEXT NOT NULL,
+    bezeichnung         TEXT NOT NULL DEFAULT '',
+    sha256              TEXT NOT NULL DEFAULT '',
+    akquisitions_utc    TEXT NOT NULL DEFAULT '',
+    akquisitions_ort    TEXT NOT NULL DEFAULT '',
+    werkzeug_name       TEXT NOT NULL DEFAULT '',
+    werkzeug_version    TEXT NOT NULL DEFAULT '',
+    parteien_anwesend   TEXT NOT NULL DEFAULT '[]',
+    gegengezeichnet_von TEXT NOT NULL DEFAULT '',
+    bemerkungen         TEXT NOT NULL DEFAULT '',
+    original_dateiname  TEXT NOT NULL DEFAULT '',
+    FOREIGN KEY (projekt_name) REFERENCES gerichtsgutachten(name) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_assets_projekt ON gerichtsgutachten_assets(projekt_name);
+
+-- G1-5b: Verfahrensereignisse (CoC + Verfahrensgang)
+CREATE TABLE IF NOT EXISTS gerichtsgutachten_verfahrensereignisse (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    projekt_name    TEXT NOT NULL,
+    ereignis_datum  TEXT NOT NULL DEFAULT (datetime('now')),
+    ereignis_typ    TEXT NOT NULL DEFAULT '',
+    titel           TEXT NOT NULL DEFAULT '',
+    beschreibung    TEXT NOT NULL DEFAULT '',
+    empfaenger      TEXT NOT NULL DEFAULT '[]',
+    FOREIGN KEY (projekt_name) REFERENCES gerichtsgutachten(name) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_verf_projekt ON gerichtsgutachten_verfahrensereignisse(projekt_name, ereignis_datum);
+
+-- #955: Gutachter-Stammdaten (einmalig anlegen, wiederverwendbar)
+CREATE TABLE IF NOT EXISTS gutachter_profile (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT NOT NULL UNIQUE,
+    zertifizierung  TEXT NOT NULL DEFAULT '',
+    anschrift       TEXT NOT NULL DEFAULT '',
+    email           TEXT NOT NULL DEFAULT '',
+    telefon         TEXT NOT NULL DEFAULT '',
+    ust_id          TEXT NOT NULL DEFAULT '',
+    bestellungs_url TEXT NOT NULL DEFAULT '',
+    aktiv           INTEGER NOT NULL DEFAULT 1,
+    notizen         TEXT NOT NULL DEFAULT '',
+    erstellt_am     TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- #955: Hilfspersonen (§ 407a Abs. 2 ZPO)
+CREATE TABLE IF NOT EXISTS hilfspersonen (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT NOT NULL UNIQUE,
+    rolle           TEXT NOT NULL DEFAULT '',
+    qualifikation   TEXT NOT NULL DEFAULT '',
+    email           TEXT NOT NULL DEFAULT '',
+    telefon         TEXT NOT NULL DEFAULT '',
+    aktiv           INTEGER NOT NULL DEFAULT 1,
+    notizen         TEXT NOT NULL DEFAULT '',
+    erstellt_am     TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- #955: pro Gutachten verlinkte Hilfspersonen (mit konkreter Aufgabe)
+CREATE TABLE IF NOT EXISTS gerichtsgutachten_hilfspersonen (
+    projekt_name    TEXT NOT NULL,
+    hilfsperson_id  INTEGER NOT NULL,
+    aufgabe         TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (projekt_name, hilfsperson_id),
+    FOREIGN KEY (projekt_name) REFERENCES gerichtsgutachten(name) ON DELETE CASCADE
+);
+
+-- #969: Final-Archiv — unveränderlich hochgeladene finalisierte Gutachten
+CREATE TABLE IF NOT EXISTS gerichtsgutachten_final_export (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    projekt_name    TEXT NOT NULL,
+    dateiname       TEXT NOT NULL,
+    format          TEXT NOT NULL,           -- 'docx' | 'pdf'
+    datei_pfad      TEXT NOT NULL,
+    datei_groesse   INTEGER NOT NULL DEFAULT 0,
+    sha256          TEXT NOT NULL DEFAULT '',
+    hochgeladen_am  TEXT NOT NULL DEFAULT (datetime('now')),
+    hochgeladen_von TEXT NOT NULL DEFAULT '',
+    bemerkung       TEXT NOT NULL DEFAULT '',
+    deleted_at      TEXT,
+    deleted_by      TEXT,
+    deletion_reason TEXT,
+    FOREIGN KEY (projekt_name) REFERENCES gerichtsgutachten(name) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_final_export_projekt ON gerichtsgutachten_final_export(projekt_name);
+
+-- #957: Custom-Word-Vorlagen (Corporate Design)
+CREATE TABLE IF NOT EXISTS gutachten_templates (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    name            TEXT NOT NULL UNIQUE,
+    gutachten_art   TEXT NOT NULL DEFAULT 'beide',   -- gericht|privat|beide
+    datei_pfad      TEXT NOT NULL,
+    datei_sha256    TEXT NOT NULL DEFAULT '',
+    variablen_json  TEXT NOT NULL DEFAULT '[]',
+    mapping_json    TEXT NOT NULL DEFAULT '{}',
+    ist_default     INTEGER NOT NULL DEFAULT 0,
+    aktiv           INTEGER NOT NULL DEFAULT 1,
+    hochgeladen_am  TEXT NOT NULL DEFAULT (datetime('now')),
+    hochgeladen_von TEXT NOT NULL DEFAULT '',
+    notizen         TEXT NOT NULL DEFAULT ''
+);
+"""
+
+EREIGNIS_TYPEN = (
+    "akteneinsicht", "parteikommunikation", "ortstermin", "asservat-aufnahme",
+    "labor-analyse", "gutachten-versand", "selbstcheck", "befangenheitspruefung",
+    "sonstiges",
+)
+
+
+def ensure_db(db_path: Path) -> None:
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.executescript(_SCHEMA)
+        # Migrationen für #663 (Privat-Variante) — idempotent
+        cur = con.execute("PRAGMA table_info(gerichtsgutachten)")
+        cols = {r[1] for r in cur.fetchall()}
+        for new_col in ("gutachten_art", "auftraggeber", "auftrags_art",
+                        "auftrags_datum", "auftrags_nummer", "honorarvereinbarung"):
+            if new_col not in cols:
+                default = "'gericht'" if new_col == "gutachten_art" else "''"
+                con.execute(f"ALTER TABLE gerichtsgutachten ADD COLUMN {new_col} TEXT NOT NULL DEFAULT {default}")
+        # #955: Referenz aufs Gutachter-Profil
+        if "gutachter_profil_id" not in cols:
+            con.execute("ALTER TABLE gerichtsgutachten ADD COLUMN gutachter_profil_id INTEGER")
+        # #979: manuelle Reihenfolge der Verfahrensereignisse
+        vcols = {r[1] for r in con.execute("PRAGMA table_info(gerichtsgutachten_verfahrensereignisse)").fetchall()}
+        if vcols and "reihenfolge" not in vcols:
+            con.execute("ALTER TABLE gerichtsgutachten_verfahrensereignisse ADD COLUMN reihenfolge INTEGER NOT NULL DEFAULT 0")
+        con.commit()
+    finally:
+        con.close()
+
+
+# ─────────────────────────────────────────────────────────
+# Projekt
+# ─────────────────────────────────────────────────────────
+
+def save_gerichts_projekt(db_path: Path, **fields: Any) -> str:
+    name = (fields.get("name") or "").strip()
+    if not name:
+        raise ValueError("name ist Pflicht")
+    # Der Name ist der Routen-Schlüssel (/gerichts/<name>/...). Schrägstriche
+    # brechen das URL-Routing → Projekt wäre nach dem Speichern nicht mehr
+    # auswählbar (#944). Aktenzeichen/Auftrags-Nr. haben eigene Felder.
+    if "/" in name or "\\" in name:
+        raise ValueError("name darf keine Schrägstriche (/ oder \\) enthalten")
+    ensure_db(db_path)
+    cols = [
+        "gutachten_art", "gericht", "kammer", "aktenzeichen", "klaeger_name", "klaeger_anwalt",
+        "beklagter_name", "beklagter_anwalt", "beweisbeschluss_datum",
+        "auftraggeber", "auftrags_art", "auftrags_datum", "auftrags_nummer", "honorarvereinbarung",
+        "thema", "vertraulichkeit", "sv_name", "sv_zertifizierung", "sv_anschrift",
+        "sv_kontakt", "erstellt_von", "status",
+    ]
+    vals = [fields.get(c, "gericht" if c == "gutachten_art" else "") for c in cols]
+    meta_json = json.dumps(fields.get("meta", {}) or {}, ensure_ascii=False)
+
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute(
+            f"""INSERT INTO gerichtsgutachten
+                  (name, {', '.join(cols)}, meta_json)
+                VALUES (?, {', '.join('?' for _ in cols)}, ?)
+                ON CONFLICT(name) DO UPDATE SET
+                  {', '.join(f'{c}=excluded.{c}' for c in cols)},
+                  meta_json=excluded.meta_json""",
+            [name, *vals, meta_json],
+        )
+        con.commit()
+    finally:
+        con.close()
+    return name
+
+
+def load_gerichts_projekt(db_path: Path, name: str) -> dict[str, Any] | None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        r = con.execute("SELECT * FROM gerichtsgutachten WHERE name=?", (name,)).fetchone()
+        if not r:
+            return None
+        d = dict(r)
+        d["meta"] = json.loads(d.get("meta_json", "{}") or "{}")
+        return d
+    finally:
+        con.close()
+
+
+def list_gerichts_projekte(db_path: Path) -> list[dict[str, Any]]:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        rows = con.execute(
+            "SELECT name, aktenzeichen, status, erstellt_am FROM gerichtsgutachten ORDER BY erstellt_am DESC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        con.close()
+
+
+def delete_gerichts_projekt(db_path: Path, name: str) -> None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute("DELETE FROM gerichtsgutachten WHERE name=?", (name,))
+        con.commit()
+    finally:
+        con.close()
+
+
+# ─────────────────────────────────────────────────────────
+# Beweisfragen, Befunde, Beurteilungen
+# ─────────────────────────────────────────────────────────
+
+def _list_simple(db_path: Path, table: str, projekt_name: str) -> list[dict[str, Any]]:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        rows = con.execute(
+            f"SELECT * FROM {table} WHERE projekt_name=? ORDER BY id",
+            (projekt_name,),
+        ).fetchall()
+        return [_decode_json_fields(dict(r), table) for r in rows]
+    finally:
+        con.close()
+
+
+def _decode_json_fields(d: dict[str, Any], table: str) -> dict[str, Any]:
+    json_fields = {
+        "gerichtsgutachten_beweisfragen": ["referenz_beurteilung_ids"],
+        "gerichtsgutachten_befunde": ["asset_ids"],
+        "gerichtsgutachten_beurteilungen": ["befund_ids"],
+        "gerichtsgutachten_assets": ["parteien_anwesend"],
+        "gerichtsgutachten_verfahrensereignisse": ["empfaenger"],
+    }
+    for f in json_fields.get(table, []):
+        try:
+            d[f] = json.loads(d.get(f) or "[]")
+        except Exception:
+            d[f] = []
+    return d
+
+
+def save_beweisfrage(db_path: Path, **f: Any) -> int:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        refs = json.dumps(f.get("referenz_beurteilung_ids") or [], ensure_ascii=False)
+        if f.get("id"):
+            con.execute(
+                """UPDATE gerichtsgutachten_beweisfragen
+                   SET nr=?, frage_text=?, antwort_text=?, antwort_kurz=?, referenz_beurteilung_ids=?
+                   WHERE id=?""",
+                (int(f.get("nr", 1)), f.get("frage_text", ""), f.get("antwort_text", ""),
+                 f.get("antwort_kurz", ""), refs, int(f["id"])),
+            )
+            con.commit()
+            return int(f["id"])
+        cur = con.execute(
+            """INSERT INTO gerichtsgutachten_beweisfragen
+                 (projekt_name, nr, frage_text, antwort_text, antwort_kurz, referenz_beurteilung_ids)
+               VALUES (?, ?, ?, ?, ?, ?) RETURNING id""",
+            (f["projekt_name"], int(f.get("nr", 1)), f.get("frage_text", ""),
+             f.get("antwort_text", ""), f.get("antwort_kurz", ""), refs),
+        )
+        row = cur.fetchone()
+        con.commit()
+        return int(row[0])
+    finally:
+        con.close()
+
+
+def list_beweisfragen(db_path: Path, projekt_name: str) -> list[dict[str, Any]]:
+    return _list_simple(db_path, "gerichtsgutachten_beweisfragen", projekt_name)
+
+
+def delete_beweisfrage(db_path: Path, beweisfrage_id: int) -> None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute("DELETE FROM gerichtsgutachten_beweisfragen WHERE id=?", (beweisfrage_id,))
+        con.commit()
+    finally:
+        con.close()
+
+
+def save_befund(db_path: Path, **f: Any) -> int:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        asset_ids = json.dumps(f.get("asset_ids") or [], ensure_ascii=False)
+        if f.get("id"):
+            con.execute(
+                """UPDATE gerichtsgutachten_befunde SET
+                   nr=?, titel=?, beschreibung_text=?, methode=?,
+                   werkzeug_name=?, werkzeug_version=?, asset_ids=?,
+                   erhebung_datum=?, erhebung_ort=?, zeugen_text=?,
+                   non_liquet=?, non_liquet_grund=?
+                   WHERE id=?""",
+                (f.get("nr", ""), f.get("titel", ""), f.get("beschreibung_text", ""),
+                 f.get("methode", ""), f.get("werkzeug_name", ""), f.get("werkzeug_version", ""),
+                 asset_ids, f.get("erhebung_datum", ""), f.get("erhebung_ort", ""),
+                 f.get("zeugen_text", ""), 1 if f.get("non_liquet") else 0,
+                 f.get("non_liquet_grund", ""), int(f["id"])),
+            )
+            con.commit()
+            return int(f["id"])
+        cur = con.execute(
+            """INSERT INTO gerichtsgutachten_befunde
+                 (projekt_name, nr, titel, beschreibung_text, methode,
+                  werkzeug_name, werkzeug_version, asset_ids,
+                  erhebung_datum, erhebung_ort, zeugen_text,
+                  non_liquet, non_liquet_grund)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id""",
+            (f["projekt_name"], f.get("nr", ""), f.get("titel", ""),
+             f.get("beschreibung_text", ""), f.get("methode", ""),
+             f.get("werkzeug_name", ""), f.get("werkzeug_version", ""), asset_ids,
+             f.get("erhebung_datum", ""), f.get("erhebung_ort", ""), f.get("zeugen_text", ""),
+             1 if f.get("non_liquet") else 0, f.get("non_liquet_grund", "")),
+        )
+        row = cur.fetchone()
+        con.commit()
+        return int(row[0])
+    finally:
+        con.close()
+
+
+def list_befunde(db_path: Path, projekt_name: str) -> list[dict[str, Any]]:
+    return _list_simple(db_path, "gerichtsgutachten_befunde", projekt_name)
+
+
+def delete_befund(db_path: Path, befund_id: int) -> None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute("DELETE FROM gerichtsgutachten_befunde WHERE id=?", (befund_id,))
+        con.commit()
+    finally:
+        con.close()
+
+
+def save_beurteilung(db_path: Path, **f: Any) -> int:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        befund_ids = json.dumps(f.get("befund_ids") or [], ensure_ascii=False)
+        if f.get("id"):
+            con.execute(
+                """UPDATE gerichtsgutachten_beurteilungen SET
+                   nr=?, titel=?, befund_ids=?, norm_referenz=?,
+                   soll_text=?, ist_text=?, kausalitaet_text=?, bewertung_text=?,
+                   non_liquet=?, non_liquet_grund=?
+                   WHERE id=?""",
+                (f.get("nr", ""), f.get("titel", ""), befund_ids, f.get("norm_referenz", ""),
+                 f.get("soll_text", ""), f.get("ist_text", ""), f.get("kausalitaet_text", ""),
+                 f.get("bewertung_text", ""), 1 if f.get("non_liquet") else 0,
+                 f.get("non_liquet_grund", ""), int(f["id"])),
+            )
+            con.commit()
+            return int(f["id"])
+        cur = con.execute(
+            """INSERT INTO gerichtsgutachten_beurteilungen
+                 (projekt_name, nr, titel, befund_ids, norm_referenz,
+                  soll_text, ist_text, kausalitaet_text, bewertung_text,
+                  non_liquet, non_liquet_grund)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id""",
+            (f["projekt_name"], f.get("nr", ""), f.get("titel", ""), befund_ids,
+             f.get("norm_referenz", ""), f.get("soll_text", ""), f.get("ist_text", ""),
+             f.get("kausalitaet_text", ""), f.get("bewertung_text", ""),
+             1 if f.get("non_liquet") else 0, f.get("non_liquet_grund", "")),
+        )
+        row = cur.fetchone()
+        con.commit()
+        return int(row[0])
+    finally:
+        con.close()
+
+
+def list_beurteilungen(db_path: Path, projekt_name: str) -> list[dict[str, Any]]:
+    return _list_simple(db_path, "gerichtsgutachten_beurteilungen", projekt_name)
+
+
+def delete_beurteilung(db_path: Path, beurteilung_id: int) -> None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute("DELETE FROM gerichtsgutachten_beurteilungen WHERE id=?", (beurteilung_id,))
+        con.commit()
+    finally:
+        con.close()
+
+
+# ─────────────────────────────────────────────────────────
+# Assets + Verfahrensereignisse (G1-5)
+# ─────────────────────────────────────────────────────────
+
+def save_asset(db_path: Path, **f: Any) -> int:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        parteien = json.dumps(f.get("parteien_anwesend") or [], ensure_ascii=False)
+        if f.get("id"):
+            con.execute(
+                """UPDATE gerichtsgutachten_assets SET
+                   bezeichnung=?, sha256=?, akquisitions_utc=?, akquisitions_ort=?,
+                   werkzeug_name=?, werkzeug_version=?, parteien_anwesend=?,
+                   gegengezeichnet_von=?, bemerkungen=?, original_dateiname=?
+                   WHERE id=?""",
+                (f.get("bezeichnung", ""), f.get("sha256", ""), f.get("akquisitions_utc", ""),
+                 f.get("akquisitions_ort", ""), f.get("werkzeug_name", ""),
+                 f.get("werkzeug_version", ""), parteien, f.get("gegengezeichnet_von", ""),
+                 f.get("bemerkungen", ""), f.get("original_dateiname", ""), int(f["id"])),
+            )
+            con.commit()
+            return int(f["id"])
+        cur = con.execute(
+            """INSERT INTO gerichtsgutachten_assets
+                 (projekt_name, bezeichnung, sha256, akquisitions_utc, akquisitions_ort,
+                  werkzeug_name, werkzeug_version, parteien_anwesend, gegengezeichnet_von,
+                  bemerkungen, original_dateiname)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id""",
+            (f["projekt_name"], f.get("bezeichnung", ""), f.get("sha256", ""),
+             f.get("akquisitions_utc", ""), f.get("akquisitions_ort", ""),
+             f.get("werkzeug_name", ""), f.get("werkzeug_version", ""), parteien,
+             f.get("gegengezeichnet_von", ""), f.get("bemerkungen", ""),
+             f.get("original_dateiname", "")),
+        )
+        row = cur.fetchone()
+        con.commit()
+        return int(row[0])
+    finally:
+        con.close()
+
+
+def list_assets(db_path: Path, projekt_name: str) -> list[dict[str, Any]]:
+    return _list_simple(db_path, "gerichtsgutachten_assets", projekt_name)
+
+
+def delete_asset(db_path: Path, asset_id: int) -> None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute("DELETE FROM gerichtsgutachten_assets WHERE id=?", (asset_id,))
+        con.commit()
+    finally:
+        con.close()
+
+
+def save_verfahrensereignis(db_path: Path, **f: Any) -> int:
+    if f.get("ereignis_typ") and f["ereignis_typ"] not in EREIGNIS_TYPEN:
+        # warning only, no exception — allow user-defined types
+        pass
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        empf = json.dumps(f.get("empfaenger") or [], ensure_ascii=False)
+        # #677 Edit-Support
+        if f.get("id"):
+            con.execute(
+                """UPDATE gerichtsgutachten_verfahrensereignisse SET
+                   ereignis_datum=COALESCE(?, ereignis_datum),
+                   ereignis_typ=?, titel=?, beschreibung=?, empfaenger=?
+                   WHERE id=?""",
+                (f.get("ereignis_datum"), f.get("ereignis_typ", ""),
+                 f.get("titel", ""), f.get("beschreibung", ""), empf, int(f["id"])),
+            )
+            con.commit()
+            return int(f["id"])
+        # #979: neues Ereignis ans Ende der manuellen Reihenfolge.
+        nxt = con.execute(
+            "SELECT COALESCE(MAX(reihenfolge), 0) + 1 FROM gerichtsgutachten_verfahrensereignisse WHERE projekt_name=?",
+            (f["projekt_name"],),
+        ).fetchone()[0]
+        cur = con.execute(
+            """INSERT INTO gerichtsgutachten_verfahrensereignisse
+                 (projekt_name, ereignis_datum, ereignis_typ, titel, beschreibung, empfaenger, reihenfolge)
+               VALUES (?, COALESCE(?, datetime('now')), ?, ?, ?, ?, ?) RETURNING id""",
+            (f["projekt_name"], f.get("ereignis_datum"), f.get("ereignis_typ", ""),
+             f.get("titel", ""), f.get("beschreibung", ""), empf, int(nxt)),
+        )
+        row = cur.fetchone()
+        con.commit()
+        return int(row[0])
+    finally:
+        con.close()
+
+
+def list_verfahrensereignisse(db_path: Path, projekt_name: str) -> list[dict[str, Any]]:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        rows = con.execute(
+            """SELECT * FROM gerichtsgutachten_verfahrensereignisse
+               WHERE projekt_name=? ORDER BY reihenfolge, ereignis_datum, id""",
+            (projekt_name,),
+        ).fetchall()
+        return [_decode_json_fields(dict(r), "gerichtsgutachten_verfahrensereignisse") for r in rows]
+    finally:
+        con.close()
+
+
+def reorder_verfahrensereignisse(db_path: Path, projekt_name: str, ordered_ids: list[int]) -> None:
+    """Setzt reihenfolge=Index gemäß ordered_ids (#979)."""
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        for idx, eid in enumerate(ordered_ids):
+            con.execute(
+                "UPDATE gerichtsgutachten_verfahrensereignisse SET reihenfolge=? WHERE id=? AND projekt_name=?",
+                (idx, int(eid), projekt_name),
+            )
+        con.commit()
+    finally:
+        con.close()
+
+
+def delete_verfahrensereignis(db_path: Path, ereignis_id: int) -> None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute("DELETE FROM gerichtsgutachten_verfahrensereignisse WHERE id=?", (ereignis_id,))
+        con.commit()
+    finally:
+        con.close()
+
+
+# ─────────────────────────────────────────────────────────
+# SHA-256 Helper für Asset-Upload
+# ─────────────────────────────────────────────────────────
+
+def compute_sha256(data: bytes) -> str:
+    import hashlib
+    return hashlib.sha256(data).hexdigest()
+
+
+# ─────────────────────────────────────────────────────────
+# #969 — Final-Archiv
+# ─────────────────────────────────────────────────────────
+
+def save_final_export(db_path: Path, **f: Any) -> int:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        cur = con.execute(
+            """INSERT INTO gerichtsgutachten_final_export
+                   (projekt_name, dateiname, format, datei_pfad, datei_groesse,
+                    sha256, hochgeladen_von, bemerkung)
+               VALUES (?,?,?,?,?,?,?,?)""",
+            (f["projekt_name"], f.get("dateiname", ""), f.get("format", ""),
+             f.get("datei_pfad", ""), int(f.get("datei_groesse", 0)),
+             f.get("sha256", ""), f.get("hochgeladen_von", ""), f.get("bemerkung", "")),
+        )
+        con.commit()
+        return int(cur.lastrowid or 0)
+    finally:
+        con.close()
+
+
+def list_final_exports(db_path: Path, projekt_name: str) -> list[dict[str, Any]]:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        rows = con.execute(
+            "SELECT * FROM gerichtsgutachten_final_export WHERE projekt_name=? ORDER BY hochgeladen_am DESC",
+            (projekt_name,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        con.close()
+
+
+def get_final_export(db_path: Path, fid: int) -> dict[str, Any] | None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        row = con.execute("SELECT * FROM gerichtsgutachten_final_export WHERE id=?", (int(fid),)).fetchone()
+        return dict(row) if row else None
+    finally:
+        con.close()
+
+
+def soft_delete_final_export(db_path: Path, fid: int, deleted_by: str, reason: str) -> None:
+    """Soft-Delete: DB-Zeile bleibt (SHA-256 + Nachweis), Datei wird vom Caller gelöscht."""
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute(
+            """UPDATE gerichtsgutachten_final_export
+               SET deleted_at=datetime('now'), deleted_by=?, deletion_reason=? WHERE id=?""",
+            (deleted_by, reason, int(fid)),
+        )
+        con.commit()
+    finally:
+        con.close()
+
+
+# ─────────────────────────────────────────────────────────
+# #955 — Stammdaten: Gutachter-Profile + Hilfspersonen
+# ─────────────────────────────────────────────────────────
+
+_GUTACHTER_COLS = ("name", "zertifizierung", "anschrift", "email", "telefon",
+                   "ust_id", "bestellungs_url", "aktiv", "notizen")
+_HILFS_COLS = ("name", "rolle", "qualifikation", "email", "telefon", "aktiv", "notizen")
+
+
+def _save_stammdaten(db_path: Path, table: str, cols: tuple, fields: dict) -> int:
+    name = (fields.get("name") or "").strip()
+    if not name:
+        raise ValueError("name ist Pflicht")
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        vals = [int(fields.get(c, 1)) if c == "aktiv" else fields.get(c, "") for c in cols]
+        rid = fields.get("id")
+        if rid:
+            set_clause = ", ".join(f"{c}=?" for c in cols)
+            con.execute(f"UPDATE {table} SET {set_clause} WHERE id=?", (*vals, int(rid)))
+            con.commit()
+            return int(rid)
+        placeholders = ", ".join("?" for _ in cols)
+        cur = con.execute(
+            f"INSERT INTO {table} ({', '.join(cols)}) VALUES ({placeholders})", vals)
+        con.commit()
+        return int(cur.lastrowid or 0)
+    finally:
+        con.close()
+
+
+def _list_stammdaten(db_path: Path, table: str, only_active: bool) -> list[dict[str, Any]]:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        q = f"SELECT * FROM {table}"
+        if only_active:
+            q += " WHERE aktiv=1"
+        q += " ORDER BY name"
+        return [dict(r) for r in con.execute(q).fetchall()]
+    finally:
+        con.close()
+
+
+def _delete_stammdaten(db_path: Path, table: str, rid: int) -> None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute(f"DELETE FROM {table} WHERE id=?", (int(rid),))
+        con.commit()
+    finally:
+        con.close()
+
+
+def list_gutachter(db_path: Path, only_active: bool = False) -> list[dict[str, Any]]:
+    return _list_stammdaten(db_path, "gutachter_profile", only_active)
+
+
+def save_gutachter(db_path: Path, **fields: Any) -> int:
+    return _save_stammdaten(db_path, "gutachter_profile", _GUTACHTER_COLS, fields)
+
+
+def delete_gutachter(db_path: Path, rid: int) -> None:
+    _delete_stammdaten(db_path, "gutachter_profile", rid)
+
+
+def list_hilfspersonen(db_path: Path, only_active: bool = False) -> list[dict[str, Any]]:
+    return _list_stammdaten(db_path, "hilfspersonen", only_active)
+
+
+def save_hilfsperson(db_path: Path, **fields: Any) -> int:
+    return _save_stammdaten(db_path, "hilfspersonen", _HILFS_COLS, fields)
+
+
+def delete_hilfsperson(db_path: Path, rid: int) -> None:
+    _delete_stammdaten(db_path, "hilfspersonen", rid)
+
+
+def link_hilfspersonen(db_path: Path, projekt_name: str, entries: list[dict]) -> None:
+    """Setzt die Hilfspersonen-Zuordnung eines Gutachtens (ersetzt bestehende).
+
+    entries: ``[{"hilfsperson_id": int, "aufgabe": str}, ...]``.
+    """
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute("DELETE FROM gerichtsgutachten_hilfspersonen WHERE projekt_name=?", (projekt_name,))
+        for e in entries or []:
+            hid = e.get("hilfsperson_id")
+            if not hid:
+                continue
+            con.execute(
+                "INSERT OR REPLACE INTO gerichtsgutachten_hilfspersonen (projekt_name, hilfsperson_id, aufgabe) VALUES (?,?,?)",
+                (projekt_name, int(hid), e.get("aufgabe", "")),
+            )
+        con.commit()
+    finally:
+        con.close()
+
+
+def list_hilfspersonen_for_projekt(db_path: Path, projekt_name: str) -> list[dict[str, Any]]:
+    """Hilfspersonen eines Gutachtens inkl. Stammdaten + projektbezogener Aufgabe."""
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        rows = con.execute(
+            """SELECT h.id, h.name, h.rolle, h.qualifikation, l.aufgabe
+               FROM gerichtsgutachten_hilfspersonen l
+               JOIN hilfspersonen h ON h.id = l.hilfsperson_id
+               WHERE l.projekt_name=? ORDER BY h.name""",
+            (projekt_name,),
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        con.close()
+
+
+# ─────────────────────────────────────────────────────────
+# #957 — Custom-Word-Vorlagen
+# ─────────────────────────────────────────────────────────
+
+def list_templates(db_path: Path, only_active: bool = False) -> list[dict[str, Any]]:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        q = "SELECT * FROM gutachten_templates"
+        if only_active:
+            q += " WHERE aktiv=1"
+        q += " ORDER BY name"
+        return [dict(r) for r in con.execute(q).fetchall()]
+    finally:
+        con.close()
+
+
+def get_template(db_path: Path, tid: int) -> dict[str, Any] | None:
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        row = con.execute("SELECT * FROM gutachten_templates WHERE id=?", (int(tid),)).fetchone()
+        return dict(row) if row else None
+    finally:
+        con.close()
+
+
+def save_template(db_path: Path, **fields: Any) -> int:
+    """Insert/Update eines Vorlagen-Metadatensatzes. Pflicht: name, datei_pfad."""
+    name = (fields.get("name") or "").strip()
+    if not name:
+        raise ValueError("name ist Pflicht")
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        cols = ("name", "gutachten_art", "datei_pfad", "datei_sha256",
+                "variablen_json", "mapping_json", "ist_default", "aktiv",
+                "hochgeladen_von", "notizen")
+        vals = []
+        for c in cols:
+            if c in ("ist_default", "aktiv"):
+                vals.append(int(fields.get(c, 1 if c == "aktiv" else 0)))
+            elif c == "gutachten_art":
+                vals.append(fields.get(c, "beide"))
+            else:
+                vals.append(fields.get(c, ""))
+        tid = fields.get("id")
+        if tid:
+            set_clause = ", ".join(f"{c}=?" for c in cols)
+            con.execute(f"UPDATE gutachten_templates SET {set_clause} WHERE id=?", (*vals, int(tid)))
+            con.commit()
+            return int(tid)
+        placeholders = ", ".join("?" for _ in cols)
+        cur = con.execute(
+            f"INSERT INTO gutachten_templates ({', '.join(cols)}) VALUES ({placeholders})", vals)
+        con.commit()
+        return int(cur.lastrowid or 0)
+    finally:
+        con.close()
+
+
+def delete_template(db_path: Path, tid: int) -> str | None:
+    """Löscht den Metadatensatz und liefert den Dateipfad zurück (zum Entfernen der Datei)."""
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        row = con.execute("SELECT datei_pfad FROM gutachten_templates WHERE id=?", (int(tid),)).fetchone()
+        con.execute("DELETE FROM gutachten_templates WHERE id=?", (int(tid),))
+        con.commit()
+        return row["datei_pfad"] if row else None
+    finally:
+        con.close()
+
+
+def set_default_template(db_path: Path, tid: int, gutachten_art: str = "beide") -> None:
+    """Setzt eine Vorlage als Default für eine Art (entfernt das Flag bei anderen derselben Art)."""
+    ensure_db(db_path)
+    con = sqlite3.connect(str(db_path))
+    try:
+        con.execute("UPDATE gutachten_templates SET ist_default=0 WHERE gutachten_art=?", (gutachten_art,))
+        con.execute("UPDATE gutachten_templates SET ist_default=1, gutachten_art=? WHERE id=?",
+                    (gutachten_art, int(tid)))
+        con.commit()
+    finally:
+        con.close()
