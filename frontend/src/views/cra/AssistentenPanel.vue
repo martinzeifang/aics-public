@@ -1,0 +1,223 @@
+<template>
+  <div class="assistenten-panel">
+    <div class="info-banner">
+      <h3>🤖 CRA-Assistenten</h3>
+      <p>Alle KI-gestützten Helfer des CRA-Moduls an einem Ort: Klassifikator,
+        Branchen-Templates und Policy-Generatoren. Die Ergebnisse landen direkt in
+        den Pflicht-Doku-Feldern.</p>
+    </div>
+
+    <AssistentenKachelGrid
+      :wizards="wizards"
+      grouped
+      :modul="'cra'"
+      :projekt="store.selectedProjekt"
+      @open="openWizard"
+    />
+
+    <!-- Branchen-Template-Wizard (C7) -->
+    <div v-if="brancheWizardOpen" class="wizard-modal-overlay" @mousedown.self="brancheWizardOpen = false">
+      <div class="wizard-modal">
+        <h3>🤖 Branchen-Template anwenden</h3>
+        <p class="hint">Setzt sinnvolle Defaults für PSIRT-SLAs, Support-Jahre und
+          Threat-Framework je Branche.</p>
+
+        <label>Branche</label>
+        <select v-model="selectedBranche">
+          <option value="">— Branche wählen —</option>
+          <option v-for="t in store.branchenTemplates" :key="t.id" :value="t.id">{{ t.name }}</option>
+        </select>
+
+        <div v-if="brancheApplied" class="branche-applied">
+          ✅ Template <strong>{{ brancheAppliedName }}</strong> angewendet — folgende Defaults wurden gesetzt:
+          <ul>
+            <li v-for="(v, k) in brancheAppliedDefaults" :key="k"><strong>{{ k }}</strong>: {{ v }}</li>
+          </ul>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-secondary" @click="brancheWizardOpen = false">Schließen</button>
+          <button class="btn-primary" :disabled="!selectedBranche" @click="applyBranche">Anwenden</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prompt-Wizard-Dialog (C6 / C8 / C9) -->
+    <div v-if="wizardModal.open" class="wizard-modal-overlay" @mousedown.self="closeWizard">
+      <div class="wizard-modal">
+        <h3>🤖 {{ wizardModal.title }}</h3>
+        <p class="hint">1. Kopiere den Prompt nach ChatGPT. 2. Antwort als JSON hier einfügen. 3. „Anwenden" speichert das Ergebnis.</p>
+
+        <label>Prompt (zum Kopieren)</label>
+        <textarea readonly :value="wizardModal.prompt" rows="8" class="mono"></textarea>
+        <button class="btn-link" @click="copyPrompt">📋 Kopieren</button>
+
+        <label>ChatGPT-Antwort (JSON)</label>
+        <textarea v-model="wizardModal.response" rows="6" class="mono" placeholder="Hier die ChatGPT-Antwort einfügen..."></textarea>
+
+        <div v-if="wizardModal.parsed" class="parsed-result">
+          <strong v-if="wizardModal.parsed.applied" style="color: #2e7d32;">✓ Angewendet + gespeichert</strong>
+          <strong v-else style="color: #e65100;">Geparsed (nur Vorschau, nicht gespeichert)</strong>
+          <pre>{{ JSON.stringify(wizardModal.parsed, null, 2) }}</pre>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-secondary" @click="closeWizard">Abbrechen</button>
+          <button class="btn-secondary" :disabled="!wizardModal.response" @click="parseOnly">Nur parsen</button>
+          <button class="btn-primary" :disabled="!wizardModal.response" @click="parseAndApply">Parsen + Anwenden</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { useCraStore } from '../../stores/cra'
+import AssistentenKachelGrid from '../../components/assistenten/AssistentenKachelGrid.vue'
+import { buildWizardList, type WizardDescriptor } from '../../components/assistenten/registry'
+
+const store = useCraStore()
+
+const emit = defineEmits<{
+  /** Signals the host that pflicht-doku data changed and should reload. */
+  (e: 'applied'): void
+}>()
+
+// ── Tile-Registry (S11 / #1081) ─────────────────────────────────────────────
+const wizards: WizardDescriptor[] = buildWizardList([
+  {
+    id: 'klassifikator',
+    title: 'C6 — CRA-Klassifikator',
+    description: 'Bestimmt automatisch die Produktklasse (default / Annex III Klasse I+II / Annex IV).',
+    kategorie: 'compliance',
+    icon: '📌',
+  },
+  {
+    id: 'branche',
+    title: 'C7 — Branchen-Template',
+    description: 'Setzt branchenübliche Defaults für PSIRT-SLAs, Support-Jahre und Threat-Framework in einem Klick.',
+    kategorie: 'compliance',
+    icon: '🏭',
+  },
+  {
+    id: 'vuln-policy',
+    title: 'C8 — Vulnerability-Disclosure-Policy',
+    description: 'Generiert einen vollständigen Policy-Text passend zur PSIRT-Konfiguration.',
+    kategorie: 'dokumentation',
+    icon: '📝',
+  },
+  {
+    id: 'update-policy',
+    title: 'C9 — Security-Update-Policy',
+    description: 'Generiert eine Update-Policy mit Kadenz, Out-of-Band-Verfahren und EOL-Kommunikation.',
+    kategorie: 'dokumentation',
+    icon: '🔄',
+  },
+])
+
+onMounted(() => store.fetchBranchenTemplates())
+
+const openWizard = (id: string) => {
+  if (id === 'branche') {
+    selectedBranche.value = ''
+    brancheApplied.value = false
+    brancheWizardOpen.value = true
+    return
+  }
+  openPromptWizard(id as PromptWizardKind)
+}
+
+// ── Branchen-Template (C7) ──────────────────────────────────────────────────
+const brancheWizardOpen = ref(false)
+const selectedBranche = ref('')
+const brancheApplied = ref(false)
+const brancheAppliedName = ref('')
+const brancheAppliedDefaults = ref<Record<string, any>>({})
+
+const applyBranche = async () => {
+  if (!selectedBranche.value) return
+  const tpl = store.branchenTemplates.find((t: any) => t.id === selectedBranche.value)
+  const ok = await store.applyBranchenTemplate(selectedBranche.value)
+  if (ok) {
+    brancheApplied.value = true
+    brancheAppliedName.value = tpl?.name || selectedBranche.value
+    brancheAppliedDefaults.value = tpl?.pflicht_doku_defaults || {}
+    emit('applied')
+  }
+}
+
+// ── Prompt-Wizards (C6 / C8 / C9) ───────────────────────────────────────────
+type PromptWizardKind = 'klassifikator' | 'vuln-policy' | 'update-policy'
+
+const wizardTitles: Record<PromptWizardKind, string> = {
+  'klassifikator': 'CRA-Klassifikator',
+  'vuln-policy': 'Vulnerability-Disclosure-Policy',
+  'update-policy': 'Security-Update-Policy',
+}
+
+const wizardModal = ref<any>({ open: false, kind: '', title: '', prompt: '', response: '', parsed: null })
+
+const openPromptWizard = async (kind: PromptWizardKind) => {
+  const prompt = await store.getWizardPrompt(kind)
+  wizardModal.value = { open: true, kind, title: wizardTitles[kind], prompt, response: '', parsed: null }
+}
+
+const closeWizard = () => { wizardModal.value = { open: false, kind: '', title: '', prompt: '', response: '', parsed: null } }
+
+const copyPrompt = () => navigator.clipboard?.writeText(wizardModal.value.prompt)
+
+const parseOnly = async () => {
+  wizardModal.value.parsed = await store.parseWizardResponse(wizardModal.value.kind, wizardModal.value.response, false)
+}
+
+const parseAndApply = async () => {
+  const kind = wizardModal.value.kind
+  wizardModal.value.parsed = await store.parseWizardResponse(kind, wizardModal.value.response, true)
+  // Projekt-Daten neu laden (Klassifikator schreibt in projekt.produktklasse + meta)
+  await store.fetchProjekte()
+  if (wizardModal.value.parsed?.applied) {
+    emit('applied')
+    setTimeout(() => { closeWizard() }, 1200)
+  }
+}
+</script>
+
+<style scoped>
+.assistenten-panel { display: flex; flex-direction: column; gap: 16px; }
+
+.info-banner { background: #f3e5f5; padding: 16px 20px; border-radius: 8px; border-left: 4px solid #7b1fa2; }
+.info-banner h3 { margin: 0 0 8px; color: #4a148c; }
+.info-banner p { margin: 0; color: #444; line-height: 1.5; }
+
+.wizard-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;
+}
+.wizard-modal {
+  background: white; padding: 24px; border-radius: 10px; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto;
+}
+.wizard-modal h3 { margin: 0 0 8px; color: #4a148c; }
+.wizard-modal label { display: block; margin-top: 12px; font-weight: 600; font-size: 13px; }
+.wizard-modal textarea, .wizard-modal select {
+  width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font: inherit;
+}
+.wizard-modal .mono { font-family: monospace; font-size: 12px; }
+.hint { color: #666; font-size: 13px; margin-top: 8px; }
+
+.parsed-result { background: #e8f5e9; padding: 12px; border-radius: 4px; margin-top: 12px; }
+.parsed-result pre { margin: 6px 0 0; white-space: pre-wrap; font-size: 12px; }
+
+.branche-applied {
+  background: #e8f5e9; border-left: 4px solid #4caf50; padding: 10px 14px;
+  border-radius: 4px; margin-top: 10px; font-size: 13px;
+}
+.branche-applied ul { margin: 6px 0 0 18px; padding: 0; }
+
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.btn-primary { background: #1565c0; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+.btn-primary:hover { background: #0d47a1; }
+.btn-secondary { background: #eee; color: #333; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+.btn-secondary:hover { background: #ddd; }
+.btn-primary:disabled, .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-link { background: none; border: none; cursor: pointer; font-size: 14px; color: #1565c0; padding: 4px 0; }
+</style>
