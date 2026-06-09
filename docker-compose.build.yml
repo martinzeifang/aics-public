@@ -1,0 +1,14 @@
+# Override für lokalen Build (statt Pull aus ghcr.io)
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+#
+# Damit baust du das Image aus dem aktuellen Source-Stand und nutzt es lokal,
+# anstatt das ghcr.io-Image zu ziehen.
+
+services:
+  web:
+    image: aics-web:local
+    build:
+      context: .
+      dockerfile: Dockerfile

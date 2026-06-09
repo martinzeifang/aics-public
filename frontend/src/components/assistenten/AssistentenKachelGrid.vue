@@ -1,0 +1,343 @@
+<template>
+  <div class="assistenten-grid">
+    <div v-if="!wizards.length" class="empty">
+      Für dieses Modul sind noch keine Assistenten verfügbar.
+    </div>
+
+    <template v-else-if="grouped">
+      <section
+        v-for="group in groups"
+        :key="group.kategorie"
+        class="kategorie-section"
+      >
+        <h3 class="kategorie-title">{{ group.label }}</h3>
+        <div class="card-grid">
+          <div
+            v-for="w in group.wizards"
+            :key="w.id"
+            class="assistent-card-wrap"
+          >
+            <button
+              type="button"
+              class="assistent-card"
+              :class="{ 'is-disabled': w.disabled }"
+              :disabled="w.disabled"
+              @click="onOpen(w)"
+            >
+              <div class="card-icon">{{ w.icon }}</div>
+              <h4>{{ w.title }}</h4>
+              <p>{{ w.description }}</p>
+            </button>
+            <button
+              v-if="w.produces_document && canSaveDocument"
+              type="button"
+              class="save-doc-btn"
+              title="Ergebnis dieses Assistenten als Dokument speichern"
+              @click.stop="openSaveDialog(w)"
+            >📄 Als Dokument speichern</button>
+          </div>
+        </div>
+      </section>
+    </template>
+
+    <div v-else class="card-grid">
+      <div
+        v-for="w in wizards"
+        :key="w.id"
+        class="assistent-card-wrap"
+      >
+        <button
+          type="button"
+          class="assistent-card"
+          :class="{ 'is-disabled': w.disabled }"
+          :disabled="w.disabled"
+          @click="onOpen(w)"
+        >
+          <div class="card-icon">{{ w.icon }}</div>
+          <h4>{{ w.title }}</h4>
+          <p>{{ w.description }}</p>
+        </button>
+        <button
+          v-if="w.produces_document && canSaveDocument"
+          type="button"
+          class="save-doc-btn"
+          title="Ergebnis dieses Assistenten als Dokument speichern"
+          @click.stop="openSaveDialog(w)"
+        >📄 Als Dokument speichern</button>
+      </div>
+    </div>
+
+    <!-- Generischer „Als Dokument speichern"-Dialog (Sprint #24, Block C) -->
+    <div v-if="saveDialog.open" class="save-doc-overlay" @mousedown.self="closeSaveDialog">
+      <div class="save-doc-modal">
+        <h3>📄 Als Dokument speichern</h3>
+        <p class="save-hint">
+          Füge das Ergebnis von „{{ saveDialog.title }}" ein. Es wird als Dokument
+          (Typ <code>{{ saveDialog.docType }}</code>) gespeichert und kann danach
+          weiterbearbeitet werden.
+        </p>
+        <textarea
+          v-model="saveDialog.text"
+          rows="10"
+          placeholder="Assistenten-Ergebnis (Markdown oder Text) hier einfügen…"
+        ></textarea>
+        <div v-if="saveDialog.error" class="save-error">{{ saveDialog.error }}</div>
+        <div class="save-actions">
+          <button class="btn-secondary" @click="closeSaveDialog">Abbrechen</button>
+          <button
+            class="btn-primary"
+            :disabled="!saveDialog.text.trim() || saveDialog.busy"
+            @click="confirmSave"
+          >{{ saveDialog.busy ? 'Speichern…' : 'Speichern' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, reactive } from 'vue'
+import {
+  groupWizardsByKategorie,
+  type WizardDescriptor,
+} from './registry'
+import { useDocumentsStore } from '../../stores/documents'
+import markdownToHtml from '../../utils/markdownToHtml'
+
+const props = withDefaults(
+  defineProps<{
+    /** Wizard tiles to render. */
+    wizards: WizardDescriptor[]
+    /** When true, tiles are grouped into category sections. */
+    grouped?: boolean
+    /**
+     * Module + project context for the generic „Als Dokument speichern" action
+     * (Sprint #24, Block C). When both are set, tiles whose descriptor carries
+     * `produces_document` show a save action.
+     */
+    modul?: string
+    projekt?: string | null
+  }>(),
+  {
+    grouped: false,
+    modul: '',
+    projekt: null,
+  },
+)
+
+const emit = defineEmits<{
+  /** Emitted with the wizard id when an enabled tile is activated. */
+  (e: 'open', id: string): void
+  /** Emitted after a wizard result was stored as a document. */
+  (e: 'document-saved', id: number): void
+}>()
+
+const documents = useDocumentsStore()
+
+const groups = computed(() => groupWizardsByKategorie(props.wizards))
+
+const canSaveDocument = computed(() => !!props.modul && !!props.projekt)
+
+function onOpen(w: WizardDescriptor): void {
+  if (w.disabled) return
+  emit('open', w.id)
+}
+
+// ── Generischer „Als Dokument speichern"-Flow (Block C) ─────────────────────
+const saveDialog = reactive({
+  open: false,
+  title: '',
+  docType: '',
+  assistantKey: '',
+  text: '',
+  busy: false,
+  error: '',
+})
+
+function openSaveDialog(w: WizardDescriptor): void {
+  if (!w.produces_document || !canSaveDocument.value) return
+  saveDialog.open = true
+  saveDialog.title = w.title
+  saveDialog.docType = w.produces_document.doc_type
+  saveDialog.assistantKey = w.id
+  saveDialog.text = ''
+  saveDialog.error = ''
+  saveDialog.busy = false
+}
+
+function closeSaveDialog(): void {
+  saveDialog.open = false
+}
+
+async function confirmSave(): Promise<void> {
+  if (!props.modul || !props.projekt || !saveDialog.text.trim()) return
+  saveDialog.busy = true
+  saveDialog.error = ''
+  const html = markdownToHtml(saveDialog.text)
+  const id = await documents.createFromAssistant(
+    props.modul,
+    props.projekt,
+    saveDialog.docType,
+    saveDialog.assistantKey,
+    html,
+  )
+  saveDialog.busy = false
+  if (id != null) {
+    emit('document-saved', id)
+    saveDialog.open = false
+  } else {
+    saveDialog.error =
+      documents.keyState(props.modul, props.projekt).error ||
+      'Dokument konnte nicht gespeichert werden.'
+  }
+}
+</script>
+
+<style scoped>
+.assistenten-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.empty {
+  padding: 24px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+}
+
+.kategorie-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.kategorie-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.assistent-card-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.assistent-card-wrap .assistent-card {
+  flex: 1;
+  width: 100%;
+}
+
+.save-doc-btn {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border: 1px solid #ce93d8;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+.save-doc-btn:hover { background: #e1bee7; }
+
+.save-doc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1300;
+}
+.save-doc-modal {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  width: 640px;
+  max-width: 95%;
+}
+.save-doc-modal h3 { margin: 0 0 8px; color: #1565c0; }
+.save-hint { font-size: 13px; color: #666; margin: 0 0 12px; line-height: 1.4; }
+.save-hint code { background: #f5f5f5; padding: 1px 6px; border-radius: 3px; }
+.save-doc-modal textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font: 13px/1.5 monospace;
+  resize: vertical;
+}
+.save-error {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ef5350;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.save-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+.save-actions .btn-primary {
+  background: #1565c0; color: #fff; border: none;
+  padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px;
+}
+.save-actions .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.save-actions .btn-secondary {
+  background: #e0e0e0; color: #333; border: none;
+  padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px;
+}
+
+.assistent-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 24px;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 150ms, box-shadow 150ms, border-color 150ms;
+}
+.assistent-card:hover:not(.is-disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-primary);
+}
+.assistent-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.assistent-card.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.card-icon {
+  font-size: 32px;
+}
+.assistent-card h4 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--color-primary);
+}
+.assistent-card p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1.4;
+}
+</style>
