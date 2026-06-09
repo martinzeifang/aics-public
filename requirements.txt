@@ -31,7 +31,7 @@ urllib3>=2.7.0,<3.0.0  # CVE-2024-37891 fix
 PyYAML>=6.0.3  # CVE-2020-14343, CVE-2017-18342 fixes
 
 # Reports (PDF)
-reportlab>=4.2.0,<5.0.0
+reportlab>=4.5.1,<5.0.0
 
 # API Documentation
 flasgger>=0.9.7,<1.0.0
