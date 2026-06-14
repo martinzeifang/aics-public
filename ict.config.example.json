@@ -1,0 +1,30 @@
+{
+  "paths": {
+    "answers_dir": "out/ict/answers",
+    "db_path": "data/db/ict.sqlite",
+    "filled_dir": "out/ict/filled",
+    "new_dir": "data/ict/neu",
+    "prompts_dir": "out/ict/prompts",
+    "reports_dir": "data/compliance/berichte",
+    "sikos_dir": "data/shared/sikos",
+    "source_dir": "data/ict/quelle"
+  },
+  "prompt": {
+    "answer_values": [
+      "Ja",
+      "Nein"
+    ],
+    "header": "Du bist ein Informationssicherheits-Assistent. Beantworte ICT-Fragebogenpunkte kurz, konkret und fachlich. Nutze die bereitgestellten Kontexte (bereits beantwortete Beispiele + Sicherheitskonzepte) und orientiere dich stilistisch an den bisherigen Antworten.",
+    "maturity_values": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "ui": {
+    "batch_size": 10,
+    "test_mode": false,
+    "top_k": 3
+  }
+}
