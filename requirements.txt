@@ -56,7 +56,7 @@ python-dateutil>=2.9.0
 # HTML→DOCX (Berichts-Center #1350/#1381 + Dokumenten-Management #1149): shared/documents/export
 # nutzt BeautifulSoup. Fehlte im Image → 'Interner Serverfehler' bei Berichts-/Dokument-Export
 # unter Docker (#1404).
-beautifulsoup4>=4.12.0
+beautifulsoup4>=4.15.0
 
 # ---- TODO (#745, DEFERRED) -------------------------------------------------
 # Vollständiger gehashter Lockfile via pip-compile (pip-tools) als
