@@ -1,0 +1,60 @@
+{
+  "ai": {
+    "cloud": {
+      "allow_data_egress": false,
+      "api_key_env": "AI_CLOUD_API_KEY",
+      "base_url": "https://api.openai.com/v1",
+      "model": "",
+      "redact": true,
+      "timeout_s": 60
+    },
+    "on_prem": {
+      "allow_nonlocal_base_url": false,
+      "base_url": "http://127.0.0.1:11434",
+      "model": "",
+      "timeout_s": 60
+    },
+    "provider": "on_prem"
+  },
+  "appearance": {
+    "dark_mode": false
+  },
+  "backup": {
+    "backup_on_exit": false,
+    "backup_retention_count": 5
+  },
+  "integrations": {
+    "github": {
+      "default_repo": "",
+      "token": "",
+      "username": ""
+    }
+  },
+  "modules": {
+    "disabled": [],
+    "order": []
+  },
+  "security": {
+    "at_rest_encryption": {
+      "enabled": false,
+      "encrypt_backups": true,
+      "encrypt_evidence": false,
+      "key_env": "AICS_AT_REST_KEY"
+    }
+  },
+  "soc_portal": {
+    "enabled": true
+  },
+  "windows": {
+    "main_geometry": "1500x1100",
+    "main_minsize": [
+      1280,
+      820
+    ],
+    "report_geometry": "1500x1100",
+    "report_minsize": [
+      1100,
+      860
+    ]
+  }
+}
