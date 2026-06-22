@@ -1,0 +1,15 @@
+{
+  "name": "aics-e2e-smoke",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Wiederholbarer Firefox-Smoke-Test (E2E) für die AI Compliance Suite",
+  "scripts": {
+    "smoke": "node smoke.mjs",
+    "smoke:strict": "node smoke.mjs --strict",
+    "postinstall": "playwright install firefox"
+  },
+  "dependencies": {
+    "playwright": "^1.48.0"
+  }
+}

@@ -1,0 +1,133 @@
+// Per-Tab-Inhalte (vollständige Funktionsdoku). Pro Modul + Tab eine Beschreibung.
+// Screenshot je Tab: shots2/<modul>__<tabid>.png  (Token {{img:...}})
+import { MOD_TABS } from './tabs.mjs'
+
+const KI = '\n\n> **🤖 KI:** läuft über den konfigurierten Provider (lokale LLM **oder** Cloud-API). Vor der Übermittlung zeigt eine **Datenvorschau**, was gesendet wird; der Verlauf ist **live** sichtbar, das **Ergebnis** wird vor der Übernahme angezeigt. KI-Ausgaben sind fachlich zu prüfen.'
+
+// Buch je Modul (id muss dem bestehenden Buchnamen entsprechen)
+export const MODULE_BOOK = {
+  cra: '2 · CRA — Cyber Resilience Act',
+  nis2: '3 · NIS2',
+  aiact: '4 · EU AI Act',
+  dsgvo: '5 · DSGVO (DSMS)',
+  wiba: '7 · WiBA',
+  soc: '8 · SOC',
+  risikobewertung: '9 · Risikobewertung',
+}
+
+// Beschreibungen je Modul/Tab (id -> Text). Titel wird aus dem Label (ohne Emoji) abgeleitet.
+export const DESC = {
+  cra: {
+    dashboard: 'Einstieg ins Projekt: Gesamt-Reifegrad als Ampel-Gauge, Kapitelkarten (Annex I Teil I/II, Art. 13, …), KPI-Kacheln für offene Punkte und Fristen, Dokumente-Soll-Ist sowie eine read-only Risiko-Kurzübersicht. Klicks auf Kacheln springen in den passenden Tab.',
+    requirements: 'Die 32 CRA-Anforderungen werden je Eintrag auf 0–5 bewertet (0 = nicht bewertet … 5 = vollständig umgesetzt) mit Kommentar und Maßnahmen. Bewertung wahlweise manuell, per **Copy/Paste-Prompt** oder per **Automatischer Bewertung** (Live-Fenster + Ergebnis-Zusammenfassung). Offene Punkte lassen sich als GitHub/GitLab-Issue verfolgen. Filter nach Kapitel.' + KI,
+    owasp: 'Die 10 OWASP Proactive Controls (Secure by Design) als Checkliste mit Status 0–5, Repository-Abgleich und Issue-Anbindung — ergänzt die CRA-Anforderungen um konkrete Entwicklungs-Kontrollen.' + KI,
+    pflichtdoku: 'Erfasst die CRA-Nachweise C1–C5: **SBOM** (mit „📄 Abrufen"-Link), **PSIRT**-Prozess, **Schwachstellen-Sync** (GitHub/GitLab), **Supportzeitraum** (Art. 13(8)) und **Threat-Model**. Die Auto-Erkennung übernimmt vorhandene Belege idempotent aus dem verknüpften Repository.',
+    dokumente: 'Verwaltete, versionierte Dokumente (z. B. Technische Dokumentation nach Annex VII, EU-Konformitätserklärung). Editor mit Status-Workflow (Entwurf → final → freigegeben), **KI-Vollständigkeitsprüfung** gegen die Pflicht-Checkliste und Export als Word/PDF.' + KI,
+    assistenten: 'KI-Assistenten als Kacheln: Produkt-Klassifikator, Vulnerability-Disclosure-Policy, Security-Update-Policy, EU-Konformitätserklärung, SBOM-Begleitdokument, Analyse wesentlicher Änderungen. Ergebnisse lassen sich als Dokument speichern.' + KI,
+    konformitaet: 'Konformitätsbewertung je Produktklasse (Modul A / B+C / H / EUCC) mit Evidence-Checkliste, Ausstellung der EU-Konformitätserklärung (Annex V), CE-Status und Freigabe-Sperre nach Sign-off.',
+    meldungen: 'Melde- und Berichtspflichten nach Art. 14 (aktiv ab 11.09.2026): aktiv ausgenutzte Schwachstellen und schwerwiegende Vorfälle an die zuständigen Stellen.',
+    akteure: 'Wirtschaftsakteure nach Art. 19–22: Rollen und Pflichten von Hersteller, bevollmächtigtem Vertreter, Importeur und Händler.',
+    korrektur: 'Korrekturmaßnahmen und Rückruf nach Art. 13(19)–(22): Workflow für nicht-konforme Produkte inkl. Information der Marktüberwachungsbehörden.',
+    traceability: 'Nachverfolgbarkeit nach Art. 13(1): Matrix Anforderung → Nachweis (inkl. Annex-VII-Abdeckung), um Lücken in der technischen Dokumentation sichtbar zu machen.',
+    fragebogen: 'Import/Prefill: bestehende Antworten oder Fragebögen übernehmen, um die Bewertung vorzubefüllen.',
+    risikoanalyse: 'Verknüpfung zum Modul **Risikobewertung**: das CRA-Projekt wird mit einem Risikoprojekt verbunden; Risiken fließen in Dashboard und Cockpit ein.',
+    risikocockpit: 'Read-only, firmenweite Risiko-Aggregation (offene Risiken aus der Risikobewertung + CRA-Schwachstellen) — modulübergreifend pro Firma.',
+    bericht: 'Erzeugt den CRA-Readiness-/Detailbericht als **Word/PDF**; im Berichts-Center optional über einen Zeitraum mit KI-Management-Zusammenfassung.',
+  },
+  nis2: {
+    dashboard: 'Reifegrad über die NIS2-Bereiche (N1–N5), offene Punkte/Fristen, Dokumente-Soll-Ist und Risiko-Kurzübersicht; Kacheln springen in den jeweiligen Tab.',
+    anforderungen: 'NIS2-Maßnahmen (Art. 21) bewerten (0–5) mit Kommentar/Maßnahme — manuell, per Prompt oder automatisch (lokal/Cloud), inkl. Issue-Anbindung.' + KI,
+    pflichtdoku: 'Pflicht-Dokumentation N1–N5 (Asset-Inventar, Risiken, CSIRT/Meldewege, Lieferanten, BCP) mit token-aware Auto-Fill aus dem Repository.',
+    dokumente: 'Verwaltete Dokumente (Memos, Konzepte, Richtlinien) mit Editor, Status-Workflow, KI-Vollständigkeitsprüfung und DOCX/PDF-Export.' + KI,
+    assistenten: 'NIS2-Wizards: Entitäts-Klassifizierung, Incident-Meldungen (24h/72h/Final), Supply-Chain-Assessment, IS-Leitlinie, BCP/DR, Krypto-/Zugriffs-Richtlinie, Cyberhygiene-Quiz u. a.' + KI,
+    incidents: 'Vorfall-Erfassung und -Meldung nach Art. 23 (Frühwarnung, Meldung, Zwischen-/Abschlussbericht) mit Fristenbezug.',
+    scoping: 'Anwendungsbereich/Einstufung nach Art. 2/3 (wesentlich/wichtig) und Art. 26 (Zuständigkeit/Jurisdiktion).',
+    registrierung: 'Registrierungspflichten nach Art. 27 (Stammdaten der Einrichtung bei der zuständigen Behörde/ENISA).',
+    audits: 'Nachweis- und Auditpflichten nach Art. 32 (Aufsichtsmaßnahmen, Prüfungen, Belege).',
+    governance: 'Governance und Verantwortlichkeiten der Leitungsorgane nach Art. 20 (Billigung, Überwachung, Schulungspflicht).',
+    fristen: 'Fristen und Wiedervorlagen (z. B. Art. 21(2)f, Art. 27(4)) zentral im Blick — terminierte Pflichten.',
+    dvo: 'Umsetzung der Durchführungsverordnung (EU) 2024/2690 mit dem sektorspezifischen Anforderungs-Set.',
+    cockpit: 'Read-only firmenweite Risiko-Aggregation (Risikobewertung + Schwachstellen) pro Firma.',
+    bericht: 'NIS2-Bericht als Word/PDF; Berichts-Center mit Zeitraum und optionaler KI-Management-Zusammenfassung.',
+  },
+  aiact: {
+    dashboard: 'Reifegrad über die AI-Act-Bereiche (HR/GOV/DATA/OPS), offene Punkte/Fristen, Dokumente-Soll-Ist und Risiko-Kurzübersicht.',
+    anforderungen: 'AI-Act-Anforderungen bewerten (0–5) — manuell, per Prompt oder automatisch (lokal/Cloud), mit Issue-Anbindung.' + KI,
+    art5: 'Verbots-Screening nach Art. 5: Prüfung auf verbotene KI-Praktiken (Scope-Bestimmung).' + KI,
+    literacy: 'KI-Kompetenz nach Art. 4 (AI-Literacy): Bewertung und Nachweis der Schulung der mit dem System befassten Personen.' + KI,
+    fria: 'Grundrechte-Folgenabschätzung nach Art. 27 (Fundamental Rights Impact Assessment) — geführter Wizard.' + KI,
+    conformity: 'Konformitätsbewertung nach Art. 43/48 (Annex VI intern / Annex VII benannte Stelle), CE-Kennzeichnung und optionale CRA-Verknüpfung.',
+    gpai: 'GPAI-Modul nach Art. 51–55: Klassifizierung, Schwellenwert für systemisches Risiko (>10^25 FLOP) und Pflicht-Register.',
+    'owasp-llm': 'OWASP-LLM-Top-10-Register: LLM-spezifische Risiken mit Status 0–5, token-aware Auto-Detect und Issue-Anbindung (CRA-Parität).' + KI,
+    incidents: 'Meldung schwerwiegender Vorfälle nach Art. 73.',
+    pflichtdoku: 'Pflicht-Dokumentation A1–A5 (Systembeschreibung, Entwicklung, Daten-Governance, Betrieb) mit Auto-Fill.',
+    dokumente: 'Verwaltete Dokumente (z. B. Technische Dokumentation nach Annex IV) mit KI-Vollständigkeitsprüfung und Export.' + KI,
+    assistenten: 'AI-Act-Wizards: Risikoklasse, Transparenz, Human Oversight, Post-Market-Monitoring, EU-Datenbank-Registrierung, Model-Card, Betriebsanleitung u. a.' + KI,
+    cockpit: 'Read-only firmenweite Risiko-Aggregation pro Firma.',
+    bericht: 'AI-Act-Bericht als Word/PDF; Berichts-Center mit Zeitraum und optionaler KI-Zusammenfassung.',
+  },
+  dsgvo: {
+    dashboard: 'DSMS-Cockpit: Reifegrad und offene Fristen über alle Datenschutz-Bereiche, Dokumente-Soll-Ist und firmenweite Risiken.',
+    anforderungen: 'DSGVO-Anforderungen bewerten (0–5) — manuell, per Prompt oder automatisch (lokal/Cloud).' + KI,
+    pflichtdoku: 'Pflicht-Dokumentation des DSMS (Rechenschaftspflicht, Art. 5(2)).',
+    'tom-katalog': 'TOM-Katalog nach Art. 32 + Standard-Datenschutzmodell (7 Gewährleistungsziele): Maßnahmen mit Status 0–5, Soll/Ist und Wirksamkeitsprüfung.',
+    tom: 'TOM-Generator: erzeugt eine TOM-Beschreibung (assistiert).' + KI,
+    betroffenenrechte: 'Betroffenenrechte nach Art. 15–22 (Auskunft, Berichtigung, Löschung, …) mit Fristenverfolgung.',
+    loeschkonzept: 'Löschkonzept nach Art. 17 / DIN 66398 (Löschregeln, Fristen, Umsetzung).',
+    transfer: 'Drittlandtransfer nach Art. 44–49 inkl. Transfer-Impact-Assessment (TIA).',
+    einwilligung: 'Einwilligungs-Management nach Art. 7 (Nachweis, Widerruf).',
+    lia: 'LIA-Register: Abwägung berechtigter Interessen (Art. 6(1)f).',
+    zweckaenderung: 'Zweckänderungs-Prüfung nach Art. 6(4) (Kompatibilitätstest).',
+    subprozessoren: 'Subprozessor-Register mit Genehmigungs-Workflow nach Art. 28(2)/(4) (AVV-Tracker).',
+    'joint-controller': 'Joint-Controller-Register nach Art. 26 (Pflichtenverteilung gemeinsam Verantwortlicher).',
+    'eu-vertreter': 'EU-Vertreter nach Art. 27 (für nicht in der EU niedergelassene Verantwortliche).',
+    datenpannen: 'Datenpannen-Register nach Art. 33/34 (Meldung an Behörde und Betroffene, Fristen).',
+    'dsgvo-dsb': 'Datenschutzbeauftragter nach Art. 37–39 (Benennung, Aufgaben, Erreichbarkeit).',
+    privacy: 'Datenschutzerklärung erstellen/pflegen (Informationspflichten Art. 13/14).' + KI,
+    training: 'Datenschutz-Schulungen verwalten und nachweisen.',
+    kontrollen: 'Jährlicher Kontrollplan: Status geplant → freigegeben (GF/DSB) → in Durchführung → abgeschlossen, mit auditierter Freigabe und Anhängen.',
+    jahresbericht: 'DSGVO-Jahresbericht: aggregiert Kontrollen, DSFAs, Datenpannen, Betroffenenrechte, TOM-Reifegrad; Sign-off (GF → DSB) und unveränderliche Final-PDF.',
+    berichte: 'Berichts-Center: Einzelberichte je Bereich (VVT, TOM, Löschkonzept, …) als Word/PDF.',
+    dokumente: 'Verwaltete DSMS-Dokumente mit Editor, Status-Workflow, KI-Vollständigkeitsprüfung und Export.' + KI,
+    assistenten: 'DSGVO-Wizards: Datenschutz-Intake, Datenpannen-Meldung, Betroffenenrechte, Rechtsgrundlage u. a.' + KI,
+    cockpit: 'Read-only firmenweite Risiko-Aggregation pro Firma.',
+  },
+  wiba: {
+    dashboard: 'Reifegrad über die WiBA-Themen, offene Prüffragen und Risiko-Kurzübersicht.',
+    prueffragen: 'Die BSI-WiBA-Prüffragen (19 Themen / 257 Fragen) als Kontrollen beantworten: offen / ja / nein / nicht relevant; Nachweise (Firmen-Belege, DSGVO-TOM) anhängen; „Nein"-Befunde als Risiken führen.' + KI,
+    dokumentation: 'Dokumentationspflichten der Basis-Absicherung.',
+    dokumente: 'Verwaltete Nachweis-Dokumente mit Editor, Status-Workflow und Export.' + KI,
+    assistenten: 'WiBA-Assistenten zur Beantwortung/Nachweisführung.' + KI,
+    risikocockpit: 'Read-only firmenweite Risiko-Aggregation pro Firma.',
+    bericht: 'WiBA-Nachweis-Report als Word/PDF.',
+  },
+  soc: {
+    dashboard: 'SOC-Lagebild: neue Alarme, offene Incidents, Schwachstellen und Kennzahlen auf einen Blick.',
+    reifegrad: 'SOC-Reifegrad über die operativen Bereiche (Discovery, Detektion, Reaktion, Betrieb).',
+    alerts: 'Wazuh-Alarme triagieren: Schweregrad, MITRE-ATT&CK-Zuordnung (inkl. Masse-Bestätigung), Eskalation zu Incident.' + KI,
+    incidents: 'Incident-Bearbeitung mit Verlauf/Timeline (rechte Spalte), Maßnahmen und DSGVO/NIS2-Meldebrücke.' + KI,
+    vulnerabilities: 'Schwachstellen-Register (Wazuh States-Index) mit optionaler Promotion zu Alarm/Incident.',
+    massnahmen: 'Maßnahmen-/Aufgabenverfolgung aus Alarmen und Incidents.',
+    betrieb: 'SOC-Betrieb: Schichten, SLAs und operative Kennzahlen.',
+    detektion: 'Detektion: Rule-Explorer und Rule-Coverage (Abdeckung gegen MITRE ATT&CK).',
+    threatintel: 'Threat-Intelligence: Indikatoren und Feeds.',
+    hunting: 'Threat-Hunting: gezielte Suchen über die Log-/Alarm-Daten.',
+    logquellen: 'Log-Quellen inkl. agentenloser Syslog-Discovery.',
+    assets: 'Asset-Inventar inkl. agentenloser Erkennung.',
+    uebungen: 'SOC-Übungen ISO-22398/ISO-IEC-27035-konform dokumentieren.',
+    assistenten: 'KI-Analyse für Alarme, Incidents und Lagebericht (lokal/Cloud).' + KI,
+    berichte: 'Berichts-Center: Incident-/Use-Case-/Alarm-Berichte (Word/PDF) mit Zeitraum/Auto-Quartal/-Jahr.',
+    setup: 'Einrichtung: Wazuh-Anbindung und Grundkonfiguration des SOC-Moduls.',
+  },
+  risikobewertung: {
+    dashboard: 'Überblick über das Risikoprojekt: Anzahl/Verteilung der Risiken und Reifegrad.',
+    risiken: 'Risiken anlegen und bewerten (Framework wählbar, z. B. STRIDE). **Automatische Bewertung** über lokale LLM oder Cloud mit Live-Fenster + Ergebnis-Zusammenfassung; **Neubewertung mit Issue-Feedback**; Massenbewertung.' + KI,
+    cockpit: 'Read-only firmenweite Risiko-Aggregation pro Firma.',
+    bericht: 'Risikobericht als Word/PDF.',
+  },
+}
+
+// Hilfsfunktion: Titel ohne Emoji
+export function cleanTitle(label) {
+  return label.replace(/^[^\p{L}\p{N}]+/u, '').trim()
+}
