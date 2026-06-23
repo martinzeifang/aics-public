@@ -19,7 +19,7 @@ psycopg-pool>=3.2,<4.0
 apscheduler>=3.10.4,<4.0.0
 
 # Gutachten Custom-Word-Vorlagen (#957)
-docxtpl>=0.16,<1.0
+docxtpl>=0.20.2,<1.0
 
 # Document Processing
 pillow>=10.3.0,<13.0.0  # CVE-2024-28219, CVE-2023-50447 fixes; Upper-Bound gegen Überraschungs-Majors (#745)
