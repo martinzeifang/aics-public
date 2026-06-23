@@ -44,7 +44,7 @@ pyotp>=2.9.0,<3.0.0
 qrcode>=7.4.2,<9.0.0
 
 # Passkey / WebAuthn / FIDO2 (Sprint ε)
-webauthn>=2.0.0,<3.0.0
+webauthn>=2.8.0,<3.0.0
 
 # Optional: LDAP/AD-Authentifizierung (server/auth/ldap.py).
 # Modul ist ohne ldap3 funktionsfähig (Fallback). Für echten LDAP-Login
