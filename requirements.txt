@@ -5,7 +5,7 @@ Flask-CORS>=6.0.0,<7.0.0  # CVE-2024-6839/6844/6866 fixes
 Flask-Limiter>=3.5.0,<4.0.0
 
 # Auth + Crypto (CVE-Fixes #274)
-cryptography>=43.0.0,<49.0.0  # CVE-2024-26130, CVE-2024-12797 fixes; Upper-Bound gegen Überraschungs-Majors (#745)
+cryptography>=49.0.0,<50.0.0  # CVE-2024-26130, CVE-2024-12797 fixes; Upper-Bound gegen Überraschungs-Majors (#745)
 werkzeug>=3.1.8,<4.0.0  # CVE-2024-49767, CVE-2024-49766 fixes
 pyjwt>=2.12.0,<3.0.0  # GHSA-752w-5fwx-jx9f (transitiv via Flask-JWT-Extended)
 
