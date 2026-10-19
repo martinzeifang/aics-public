@@ -1,0 +1,17 @@
+# Lokale Entwicklungs-/Test-Variante (#1341) — Postgres auf localhost:5432 exponieren.
+#
+# Funktioniert identisch auf Windows (Docker Desktop / WSL2) und Linux.
+#
+#   # Nur Postgres lokal starten (für pytest gegen echte DB / psql-Zugriff):
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d postgres
+#
+#   # DATABASE_URL für lokale Tests/Entwicklung:
+#   #   postgresql://aics:aics@localhost:5432/aics
+#
+# Hinweis: Für vollautomatische, isolierte Tests nutzt die Test-Suite testcontainers
+# (ephemerer Wegwerf-Container) — siehe tests/conftest.py. Dieses Override ist für
+# manuelle lokale Arbeit / Inspektion gedacht.
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:5432:5432"
