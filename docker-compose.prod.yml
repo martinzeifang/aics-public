@@ -1,0 +1,33 @@
+# Produktions-Override mit gepinnten Images (#1188 · OWASP Supply-Chain / ISO 27001 Lieferkette)
+#
+# Nutzung:
+#   AICS_IMAGE_TAG=v6.23.0 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Ziel: KEINE mutable Tags (`latest`, bewegliche Major-Tags) im Produktivbetrieb.
+# - App-/nginx-Image: über AICS_IMAGE_TAG eine KONKRETE Version ODER einen Digest pinnen.
+#   Das `:?`-Suffix erzwingt das Setzen — sonst bricht der Start ab (kein versehentliches :latest).
+#   Für maximale Supply-Chain-Sicherheit den Digest verwenden, z. B.
+#   AICS_IMAGE=ghcr.io/martinzeifang/ai_compliance_suite@sha256  AICS_IMAGE_TAG=<digest> ist nicht
+#   nötig — stattdessen direkt: image über AICS_IMAGE inkl. @sha256 setzen (siehe Doku).
+# - Drittanbieter-Images: auf konkrete Versionen gepinnt. Vor Produktivnahme die Digests
+#   auflösen (`docker buildx imagetools inspect <image>:<tag>`) und @sha256:… eintragen.
+#
+# Verifikation (cosign, keyless): die App-/nginx-Images sind in der CI signiert (#744) —
+#   cosign verify ghcr.io/martinzeifang/ai_compliance_suite@<digest> \
+#     --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+#     --certificate-identity-regexp '^https://github.com/martinzeifang/AI_Compliance_Suite/.*'
+# Details + Update-/Rotationsprozess: docs/security/container-hardening.md
+
+services:
+  web:
+    image: ${AICS_IMAGE:-ghcr.io/martinzeifang/ai_compliance_suite}:${AICS_IMAGE_TAG:?AICS_IMAGE_TAG (konkrete Version/Digest) erforderlich im Prod-Profil}
+  nginx:
+    image: ${AICS_NGINX_IMAGE:-ghcr.io/martinzeifang/aics-nginx}:${AICS_IMAGE_TAG:?AICS_IMAGE_TAG (konkrete Version/Digest) erforderlich im Prod-Profil}
+  gotenberg:
+    image: gotenberg/gotenberg:8.12.0  # Vor Prod: Digest auflösen + @sha256:… pinnen
+  ollama:
+    image: ollama/ollama:0.5.4         # Vor Prod: Digest auflösen + @sha256:… pinnen
+  postgres:
+    image: postgres:16.4-alpine        # Vor Prod: Digest auflösen + @sha256:… pinnen
+  frontend-init:
+    image: alpine:3.20
