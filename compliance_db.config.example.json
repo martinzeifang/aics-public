@@ -1,0 +1,18 @@
+{
+  "llm": {
+    "base_url": "http://localhost:11434",
+    "model": "llama3.1",
+    "provider": "ollama",
+    "timeout_s": 120,
+    "top_k": 8
+  },
+  "paths": {
+    "debug_log_path": "out/compliance_db/debug.log",
+    "gutachten_db_path": "data/db/gutachten.sqlite",
+    "index_db_path": "data/db/compliance_db.sqlite"
+  },
+  "ui": {
+    "debug_mode": false,
+    "test_mode": false
+  }
+}
