@@ -1,0 +1,16 @@
+# Öffentlicher Edge-Reverse-Proxy auf docker02 — TERMINIERT TLS mit Let's Encrypt
+# und proxyt per SNI an die internen HTTP-Ports. KEINE Last auf der Firewall
+# (diese macht nur reine DNAT 80/443 → docker02; KEIN IPS/WAF/DPI, vFW-Schonung).
+#
+# Voraussetzung: aics.cyberwoks.de + lic.cyberwoks.de zeigen öffentlich auf die
+# WAN-IP, und die Firewall leitet 80+443 an aics.example.com (docker02) weiter.
+
+aics.cyberwoks.de {
+	encode zstd gzip
+	reverse_proxy localhost:6875          # BookStack-Wiki
+}
+
+lic.cyberwoks.de {
+	encode zstd gzip
+	reverse_proxy localhost:8089          # aics_lic_nginx (Lizenzportal)
+}

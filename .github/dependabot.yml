@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - security
+    reviewers:
+      - martinzeifang
+    allow:
+      - dependency-type: direct
+      - dependency-type: indirect
