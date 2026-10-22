@@ -1,0 +1,22 @@
+AI Compliance Suite (AICS)
+Copyright © 2026 Martin Zeifang
+
+This product is licensed under the Business Source License 1.1.
+See LICENSE for the full terms.
+
+License verification:
+=====================
+The Licensed Work contains a license verification mechanism in
+`shared/licensing/`. This mechanism communicates with the official AICS
+Licensing Server to authorize features and enforce license terms.
+
+Demo licenses can be obtained from the AICS Licensing Server at no cost
+and grant access to all modules except the on-demand "Gutachten" module
+for a limited evaluation period. Production deployments require a
+commercial license from the Licensor.
+
+Modifying, removing, or otherwise circumventing the license verification
+mechanism is prohibited under the Business Source License 1.1 and
+terminates the rights granted by it.
+
+Contact for commercial licensing: martin.zeifang@gmail.com

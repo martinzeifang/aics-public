@@ -1,0 +1,18 @@
+{
+  "bericht": {
+    "berater_name": "",
+    "organisation": "",
+    "version": "1.0",
+    "vertraulichkeit": "Vertraulich"
+  },
+  "paths": {
+    "berichte_dir": "out/dsgvo/berichte",
+    "db_path": "data/db/dsgvo.sqlite",
+    "dsgvo_resources_dir": "data/dsgvo_resources",
+    "fragebogen_dir": "out/dsgvo/fragebogen"
+  },
+  "ui": {
+    "debug_mode": false,
+    "projekt_name": "Mein-DSGVO-Projekt"
+  }
+}
