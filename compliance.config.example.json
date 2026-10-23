@@ -1,0 +1,39 @@
+{
+  "paths": {
+    "answers_dir": "out/compliance/answers",
+    "db_path": "data/db/compliance.sqlite",
+    "output_dir": "out/compliance/output",
+    "prompts_dir": "out/compliance/prompts",
+    "reports_dir": "data/compliance/berichte",
+    "sikos_dir": "data/shared/sikos"
+  },
+  "prompt": {
+    "header": "Du bist ein Informationssicherheits-Assistent und erstellst Sicherheitsbewertungen auf Deutsch. Bewerte die beschriebene Schwachstelle/Beobachtung anhand der Kriterien aus den Sicherheitskonzepten (Eintrittswahrscheinlichkeit, Schadenspotenzial, Risiko, betroffene Schutzziele, Maßnahmen). Schreibe im Stil der bestehenden Quartalsberichte (kurz, konkret, nachvollziehbar).",
+    "impact_scale": [
+      "niedrig",
+      "mittel",
+      "hoch",
+      "sehr hoch"
+    ],
+    "likelihood_scale": [
+      "Unwahrscheinlich",
+      "Möglich",
+      "Wahrscheinlich",
+      "Sehr wahrscheinlich"
+    ],
+    "output_schema_hint": true,
+    "risk_scale": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ]
+  },
+  "ui": {
+    "test_mode": false,
+    "top_k_examples": 3
+  }
+}
