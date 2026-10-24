@@ -1,0 +1,51 @@
+__pycache__
+*.pyc
+.git
+.gitignore
+.env
+.env.local
+node_modules
+dist
+build
+.pytest_cache
+.coverage
+venv
+
+# ── Desktop-/CLI-Dateien: im Web-Image ohne Funktion ─────────────────
+# Das Image ist web-only (gunicorn + Vue). Tkinter-Panels, GUI-Module,
+# CLI-/__main__-Einstiege und die Viewer gehoeren zur Desktop-Suite und
+# werden von keiner im Image verbleibenden Datei importiert (geprueft:
+# 422 Dateien, 0 Treffer).
+#
+# Es sind zugleich die Dateien, die .sync-exclude aus dem oeffentlichen
+# Repo heraushaelt. Beides gleichzeitig -- herausfiltern und im anonym
+# abrufbaren Image mitliefern -- schuetzt nichts und erzeugt nur den
+# Eindruck von Schutz.
+#
+# Per .dockerignore statt "RUN rm": geloeschte Dateien blieben sonst in
+# der darunterliegenden Layer extrahierbar.
+#
+# Die Muster spiegeln .sync-exclude; tests/test_dockerfile_packages.py
+# haelt beide Listen zusammen, damit sie nicht auseinanderlaufen.
+# config.py und ai/ bleiben -- die importiert das Web-Backend.
+ai_compliance_suite/gui.py
+ai_compliance_suite/auth.py
+ai_compliance_suite/_backup_dialog.py
+ai_compliance_suite/license_dialog.py
+ai_compliance_suite/license_state.py
+ai_compliance_suite/__main__.py
+ai_compliance_suite/cli.py
+ai_compliance_suite/backup.py
+*/gui.py
+*/gui_module.py
+*/__main__.py
+*/cli.py
+cra/_panel_*.py
+compliance/standalone.py
+risikobewertung/_massen_dialog.py
+gutachten/_panel_gutachten.py
+gutachten/_download_dialog.py
+shared/db_viewer.py
+shared/audit_viewer.py
+vcs/issue_assistant.py
+prefill/review_dialog.py
