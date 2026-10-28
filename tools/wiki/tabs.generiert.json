@@ -1,0 +1,540 @@
+{
+ "cra": [
+  [
+   "dashboard",
+   "📊 Dashboard",
+   "📊 Überblick"
+  ],
+  [
+   "anforderungen",
+   "✅ Anforderungen",
+   "📋 Compliance & Register"
+  ],
+  [
+   "owasp-sbd",
+   "🛡️ OWASP SbD",
+   "📋 Compliance & Register"
+  ],
+  [
+   "konformität",
+   "✅ Konformität",
+   "📋 Compliance & Register"
+  ],
+  [
+   "akteure",
+   "🏷️ Akteure",
+   "📋 Compliance & Register"
+  ],
+  [
+   "traceability",
+   "🔗 Traceability",
+   "📋 Compliance & Register"
+  ],
+  [
+   "risikoanalyse",
+   "🔍 Risikoanalyse",
+   "📋 Compliance & Register"
+  ],
+  [
+   "releases",
+   "🚦 Releases",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "meldungen",
+   "🚨 Meldungen",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "korrektur-behörden",
+   "↩️ Korrektur & Behörden",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "dokumentation",
+   "📋 Dokumentation",
+   "📄 Dokumentation"
+  ],
+  [
+   "dokumente",
+   "📄 Dokumente",
+   "📄 Dokumentation"
+  ],
+  [
+   "assistenten",
+   "🤖 Assistenten",
+   "📄 Dokumentation"
+  ],
+  [
+   "fragebogen",
+   "📥 Fragebogen",
+   "📑 Berichte"
+  ],
+  [
+   "berichte",
+   "📄 Berichte",
+   "📑 Berichte"
+  ]
+ ],
+ "nis2": [
+  [
+   "dashboard",
+   "📊 Dashboard",
+   "📊 Überblick"
+  ],
+  [
+   "risiko-cockpit",
+   "📊 Risiko-Cockpit",
+   "📊 Überblick"
+  ],
+  [
+   "anforderungen",
+   "✅ Anforderungen",
+   "📋 Compliance & Register"
+  ],
+  [
+   "scoping",
+   "🎯 Scoping",
+   "📋 Compliance & Register"
+  ],
+  [
+   "registrierung",
+   "📝 Registrierung",
+   "📋 Compliance & Register"
+  ],
+  [
+   "dvo-2690",
+   "📜 DVO 2690",
+   "📋 Compliance & Register"
+  ],
+  [
+   "governance",
+   "🏛️ Governance",
+   "📋 Compliance & Register"
+  ],
+  [
+   "audits",
+   "🔍 Audits",
+   "📋 Compliance & Register"
+  ],
+  [
+   "vorfälle",
+   "🚨 Vorfälle",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "fristen",
+   "📅 Fristen",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "dokumentation",
+   "📋 Dokumentation",
+   "📄 Dokumentation"
+  ],
+  [
+   "dokumente",
+   "📄 Dokumente",
+   "📄 Dokumentation"
+  ],
+  [
+   "assistenten",
+   "🤖 Assistenten",
+   "📄 Dokumentation"
+  ],
+  [
+   "berichte",
+   "📄 Berichte",
+   "📑 Berichte"
+  ]
+ ],
+ "aiact": [
+  [
+   "dashboard",
+   "📊 Dashboard",
+   "📊 Überblick"
+  ],
+  [
+   "anforderungen",
+   "✅ Anforderungen",
+   "📋 Compliance & Register"
+  ],
+  [
+   "art-5-verbote",
+   "🚫 Art. 5 Verbote",
+   "📋 Compliance & Register"
+  ],
+  [
+   "art-27-fria",
+   "⚖️ Art. 27 FRIA",
+   "📋 Compliance & Register"
+  ],
+  [
+   "art-4348-konformität",
+   "🏷️ Art. 43/48 Konformität",
+   "📋 Compliance & Register"
+  ],
+  [
+   "art-51-55-gpai",
+   "🧠 Art. 51-55 GPAI",
+   "📋 Compliance & Register"
+  ],
+  [
+   "owasp-llm",
+   "🛡️ OWASP-LLM",
+   "📋 Compliance & Register"
+  ],
+  [
+   "änderungen",
+   "🔄 Änderungen",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "art-73-vorfälle",
+   "🚨 Art. 73 Vorfälle",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "dokumentation",
+   "📋 Dokumentation",
+   "📄 Dokumentation"
+  ],
+  [
+   "ai-literacy",
+   "🎓 AI-Literacy",
+   "📄 Dokumentation"
+  ],
+  [
+   "dokumente",
+   "📄 Dokumente",
+   "📄 Dokumentation"
+  ],
+  [
+   "assistenten",
+   "🤖 Assistenten",
+   "📄 Dokumentation"
+  ],
+  [
+   "berichte",
+   "📄 Berichte",
+   "📑 Berichte"
+  ]
+ ],
+ "dsgvo": [
+  [
+   "dashboard",
+   "📊 Dashboard",
+   "📊 Überblick"
+  ],
+  [
+   "risiko-cockpit",
+   "📊 Risiko-Cockpit",
+   "📊 Überblick"
+  ],
+  [
+   "anforderungen",
+   "✅ Anforderungen",
+   "📋 Pflichten & Rechtsgrundlagen"
+  ],
+  [
+   "einwilligungen",
+   "✍️ Einwilligungen",
+   "📋 Pflichten & Rechtsgrundlagen"
+  ],
+  [
+   "lia-register",
+   "⚖️ LIA-Register",
+   "📋 Pflichten & Rechtsgrundlagen"
+  ],
+  [
+   "zweckänderung",
+   "🔄 Zweckänderung",
+   "📋 Pflichten & Rechtsgrundlagen"
+  ],
+  [
+   "drittlandtransfer",
+   "🌍 Drittlandtransfer",
+   "📋 Pflichten & Rechtsgrundlagen"
+  ],
+  [
+   "subprozessoren",
+   "🔗 Subprozessoren",
+   "📋 Pflichten & Rechtsgrundlagen"
+  ],
+  [
+   "joint-controller",
+   "🤝 Joint Controller",
+   "📋 Pflichten & Rechtsgrundlagen"
+  ],
+  [
+   "tom-katalog",
+   "🔐 TOM-Katalog",
+   "🔐 Schutz & Betroffene"
+  ],
+  [
+   "tom-generator",
+   "🔒 TOM-Generator",
+   "🔐 Schutz & Betroffene"
+  ],
+  [
+   "löschkonzept",
+   "🗑️ Löschkonzept",
+   "🔐 Schutz & Betroffene"
+  ],
+  [
+   "betroffenenrechte",
+   "📨 Betroffenenrechte",
+   "🔐 Schutz & Betroffene"
+  ],
+  [
+   "datenschutzerklärung",
+   "📜 Datenschutzerklärung",
+   "🔐 Schutz & Betroffene"
+  ],
+  [
+   "datenpannen",
+   "🚨 Datenpannen",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "kontrollen",
+   "🗓️ Kontrollen",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "dsb",
+   "🛡️ DSB",
+   "🏛️ Organisation"
+  ],
+  [
+   "eu-vertreter",
+   "🇪🇺 EU-Vertreter",
+   "🏛️ Organisation"
+  ],
+  [
+   "dokumentation",
+   "📋 Dokumentation",
+   "📄 Dokumentation"
+  ],
+  [
+   "dokumente",
+   "📄 Dokumente",
+   "📄 Dokumentation"
+  ],
+  [
+   "assistenten",
+   "🤖 Assistenten",
+   "📄 Dokumentation"
+  ],
+  [
+   "schulung",
+   "🎓 Schulung",
+   "📄 Dokumentation"
+  ],
+  [
+   "jahresbericht",
+   "📅 Jahresbericht",
+   "📑 Berichte"
+  ],
+  [
+   "berichte",
+   "📄 Berichte",
+   "📑 Berichte"
+  ]
+ ],
+ "wiba": [
+  [
+   "dashboard",
+   "📊 Dashboard",
+   "📊 Überblick"
+  ],
+  [
+   "risiko-cockpit",
+   "📊 Risiko-Cockpit",
+   "📊 Überblick"
+  ],
+  [
+   "prüffragen",
+   "✅ Prüffragen",
+   "📋 Compliance & Register"
+  ],
+  [
+   "dokumentation",
+   "📋 Dokumentation",
+   "📄 Dokumentation"
+  ],
+  [
+   "dokumente",
+   "📄 Dokumente",
+   "📄 Dokumentation"
+  ],
+  [
+   "assistenten",
+   "🤖 Assistenten",
+   "📄 Dokumentation"
+  ],
+  [
+   "berichte",
+   "📄 Berichte",
+   "📑 Berichte"
+  ]
+ ],
+ "risikobewertung": [
+  [
+   "dashboard",
+   "📊 Dashboard",
+   null
+  ],
+  [
+   "risiken",
+   "⚠️ Risiken",
+   null
+  ],
+  [
+   "berichte",
+   "📄 Berichte",
+   null
+  ]
+ ],
+ "compliance-audit": [
+  [
+   "dashboard",
+   "📊 Dashboard",
+   null
+  ],
+  [
+   "übersicht",
+   "📋 Übersicht",
+   null
+  ],
+  [
+   "fragen",
+   "❓ Fragen",
+   null
+  ],
+  [
+   "wasserstand",
+   "🌡️ Wasserstand",
+   null
+  ],
+  [
+   "berichte",
+   "📄 Berichte",
+   null
+  ]
+ ],
+ "firmen": [
+  [
+   "dashboard",
+   "📊 Dashboard",
+   null
+  ],
+  [
+   "stammdaten-module",
+   "🏢 Stammdaten & Module",
+   null
+  ],
+  [
+   "risiko-cockpit",
+   "⚠️ Risiko-Cockpit",
+   null
+  ],
+  [
+   "pentests",
+   "🛡️ Pentests",
+   null
+  ],
+  [
+   "berichte",
+   "📄 Berichte",
+   null
+  ],
+  [
+   "vorlagen",
+   "🧾 Vorlagen",
+   null
+  ]
+ ],
+ "soc": [
+  [
+   "dashboard",
+   "📊 Dashboard",
+   "📊 Überblick"
+  ],
+  [
+   "reifegrad",
+   "📊 Reifegrad",
+   "📊 Überblick"
+  ],
+  [
+   "alarme",
+   "🚨 Alarme",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "incidents",
+   "🛡️ Incidents",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "schwachstellen",
+   "🛡️ Schwachstellen",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "maßnahmen",
+   "📋 Maßnahmen",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "betrieb",
+   "📞 Betrieb",
+   "🛠️ Tagesbetrieb"
+  ],
+  [
+   "detektion",
+   "🛰️ Detektion",
+   "🛰️ Detektion"
+  ],
+  [
+   "threat-intel",
+   "🌐 Threat-Intel",
+   "🛰️ Detektion"
+  ],
+  [
+   "hunting",
+   "🔭 Hunting",
+   "🛰️ Detektion"
+  ],
+  [
+   "log-quellen",
+   "📡 Log-Quellen",
+   "🛰️ Detektion"
+  ],
+  [
+   "assets",
+   "🖥️ Assets",
+   "🛰️ Detektion"
+  ],
+  [
+   "übungen",
+   "🎯 Übungen",
+   "📄 Dokumentation"
+  ],
+  [
+   "assistenten",
+   "🤖 Assistenten",
+   "📄 Dokumentation"
+  ],
+  [
+   "berichte",
+   "📄 Berichte",
+   "📑 Berichte"
+  ],
+  [
+   "einrichtung",
+   "⚙️ Einrichtung",
+   "⚙️ Verwaltung"
+  ]
+ ]
+}

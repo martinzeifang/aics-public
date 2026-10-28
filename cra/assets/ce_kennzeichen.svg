@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 228 128" width="228" height="128">
+<!-- CE-Kennzeichnung nach Verordnung (EG) Nr. 765/2008, Anhang II.
+     Das Raster der amtlichen Strichzeichnung gehoert nicht zum Zeichen.
+     Mindesthoehe 5 mm, Proportionen bei Skalierung beibehalten.
+
+     Der Mittelbalken des E ist ein EIGENES Element und nicht Teil des
+     Ring-Pfades: Im selben Pfad hebt die Fuellregel (nonzero) ihn im
+     Ueberlappungsbereich auf — sichtbar als weisse Keile an der Ansatzstelle.
+     Genau das war der Fehler in der ersten Fassung (#1671), wo der Balken
+     zudem frei in der Luft stand und das E damit kein E war. -->
+<g fill="#000">
+  <path d="M64 8 A56 56 0 1 0 64 120 A56 56 0 0 0 112 92 L96 83 A38 38 0 1 1 96 45 L112 36 A56 56 0 0 0 64 8 Z"/>
+  <path d="M172 8 A56 56 0 1 0 172 120 A56 56 0 0 0 220 92 L204 83 A38 38 0 1 1 204 45 L220 36 A56 56 0 0 0 172 8 Z"/>
+  <rect x="130" y="55" width="66" height="18"/>
+</g>
+</svg>
