@@ -1,0 +1,5 @@
+{
+  "bericht_dir": "out/nis2/berichte",
+  "db_path": "data/db/nis2.sqlite",
+  "fragebogen_dir": "out/nis2/fragebogen"
+}

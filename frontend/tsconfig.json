@@ -1,0 +1,51 @@
+{
+  // Die Projektdefinition für den Typprüfer (#1858).
+  //
+  // WARUM ES DIESE DATEI BRAUCHT
+  // Bis v8.2.1 gab es sie nicht. `vue-tsc --noEmit` fand damit kein Projekt,
+  // druckte die `tsc`-Hilfe und endete mit Exit 1 — und in der CI lief
+  // ohnehin kein Frontend-Typprüfer. Gebaut wird mit Vite/Rolldown, und das
+  // **transpiliert** TypeScript nur, statt es zu prüfen. Für die Klasse
+  // „dieser Name existiert nicht" gab es im Frontend also gar keinen Prüfer.
+  // Genau dort ging #1854 durch (durchgereichter Name ohne lokale Bindung →
+  // `ReferenceError` zur Laufzeit, Build grün), und derselbe Probelauf fand
+  // zwei weitere: `loadGitHub()` statt `loadGithub` und `props.objekte` statt
+  // `adapter.objekte`.
+  //
+  // `strict` IST AN
+  // Der Unterschied zwischen lockerer und strikter Prüfung waren beim
+  // Einschalten zwölf Meldungen. Für zwölf Meldungen lohnt kein zweiter
+  // Schritt mit abgeschwächten Schaltern — und ein Prüfer, der von Anfang an
+  // locker eingestellt ist, wird nicht nachträglich strenger.
+  //
+  // `strictTemplates` IST AUS
+  // Unbekannte Bezeichner im `<template>` (die Klasse aus #1830) prüft diese
+  // Konfiguration **nicht**. Das ist der Teil, der viel Lärm macht, und ein
+  // eigener Schritt; `tests/test_knopf_ohne_wirkung_1805.py` bleibt dafür
+  // zuständig.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client"],
+    "jsx": "preserve",
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    // Der `@`-Alias stand bisher nur in `vite.config.ts`. Zwei Stellen für
+    // dieselbe Zuordnung sind die Spiegel-Liste aus #1731/#1735 — hier
+    // unvermeidlich, weil Vite und tsc ihre eigene Auflösung mitbringen.
+    // Deshalb wenigstens hier vermerkt: Ändert sich der Alias, muss er an
+    // **beiden** Stellen nachgezogen werden.
+    "baseUrl": ".",
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.vue"]
+}
