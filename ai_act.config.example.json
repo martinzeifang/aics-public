@@ -1,0 +1,12 @@
+{
+  "paths": {
+    "berichte_dir": "out/ai_act/berichte",
+    "db_path": "data/db/ai_act.sqlite",
+    "evidence_db_path": "data/db/evidence.sqlite",
+    "firmen_db_path": "data/db/firmen.sqlite"
+  },
+  "ui": {
+    "debug_mode": false,
+    "projekt_name": "Mein-AI-ACT-Projekt"
+  }
+}
