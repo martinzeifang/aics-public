@@ -1,0 +1,25 @@
+{
+  "schema": "ai-compliance-suite/risk-export/v1",
+  "generated_at": 1778077832,
+  "projekt": {
+    "name": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    "framework": "CRA",
+    "scope": "scope"
+  },
+  "risks": [
+    {
+      "id": 1,
+      "nr": 1,
+      "name": "Test",
+      "beschreibung": "x",
+      "framework": "CRA",
+      "felder": {},
+      "score": 1,
+      "level": "low",
+      "detail": "",
+      "bewertung": "",
+      "mitigation": "",
+      "updated_at": null
+    }
+  ]
+}

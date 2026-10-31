@@ -1,0 +1,210 @@
+name: Docker Image
+
+# Public-Repo (aics-public). Baut die beiden Images aus dem öffentlichen
+# Quellbaum und veröffentlicht sie — sobald der Paketzugriff gesetzt ist:
+#   ghcr.io/martinzeifang/ai_compliance_suite
+#   ghcr.io/martinzeifang/aics-nginx
+#
+# WARUM HIER UND NICHT IM PRIVATEN REPO (#1719)
+# Nicht „Kunden haben es leichter" ist der Grund, sondern Überprüfbarkeit:
+# Wird das Image aus dem öffentlichen Baum gebaut, zeigen die cosign-Keyless-
+# Identität und die SLSA-Provenance auf einen Workflow und einen Quellbaum, die
+# der Kunde lesen kann. Zusammen mit der SPDX-SBOM ist das ein belastbarer
+# Integritäts-/Authentizitätsnachweis (CRA Anhang I). Zugleich verschwindet die
+# Fehlerklasse „privat gebaut, öffentlich abweichend".
+#
+# SCHALTER: Das Veröffentlichen hängt an der Repository-Variable
+# PUBLISH_IMAGES. Ist sie nicht auf "true" gesetzt, läuft der Workflow als
+# reiner Sanity-Build (push: false).
+#
+# ACHTUNG seit #1719/E4: Das private Repo veröffentlicht **keine** Release-Images
+# mehr (kein Tag-Trigger, kein Semver, kein `latest`). Ist PUBLISH_IMAGES hier
+# nicht "true", entsteht zu einem Release also gar kein Image — der Deploy
+# findet den Tag nicht. Der Notweg ist dann das private Dev-Image
+# (`AICS_IMAGE_TAG=sha-<kurz>`).
+#
+# VORAUSSETZUNG für PUBLISH_IMAGES=true (einmalig, nur über die GitHub-
+# Oberfläche möglich): GHCR-Pakete sind an das Repo gebunden, das sie zuerst
+# veröffentlicht hat (hier das private). Deshalb je Paket unter
+#   Package → Settings → Manage Actions access → Add repository
+# das Repo `aics-public` mit Rolle **Write** eintragen. Danach genügt der
+# normale GITHUB_TOKEN; ein langlebiger PAT als Secret ist nicht nötig.
+#
+# Der Qualitäts-Gate bleibt im privaten Repo: Dieser Workflow sieht nur Code,
+# den der Release-Sync hierher gespiegelt hat, und gespiegelt wird ausschließlich
+# bei `release: published`. Das öffentliche tests.yml ist ein Rauchtest, keine
+# Freigabe — die Vier-Shard-Suite mit Postgres läuft privat.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*.*.*']
+  workflow_dispatch: {}
+
+# Der Release-Mirror pusht `main` und den Tag praktisch gleichzeitig → zwei
+# Läufe, die beide `sha-<kurz>` desselben Commits pushen und signieren. Nicht
+# abbrechen (`cancel-in-progress: false`), sonst fehlt am Ende entweder der
+# Semver-Tag oder `latest` — nur hintereinander ausführen.
+concurrency:
+  group: docker-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write        # GHCR-Push (nur mit gesetztem Paketzugriff wirksam)
+  id-token: write        # cosign keyless (Sigstore Fulcio)
+  attestations: write
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false   # ein fehlschlagendes Image soll das andere nicht abbrechen
+      matrix:
+        include:
+          # #1719/E1: Image-Namen EXPLIZIT, nicht aus dem Repo-Namen abgeleitet.
+          # Der Name ist an das PRODUKT gebunden, nicht an das Repository, aus
+          # dem gebaut wird — sonst hiesse das Web-Image hier `aics-public` und
+          # jeder Portainer-Stack sowie jede Kunden-Compose zeigte ins Leere.
+          - name: aics-web
+            image: ${{ github.repository_owner }}/ai_compliance_suite
+            dockerfile: ./Dockerfile
+            context: .
+          - name: aics-nginx
+            image: ${{ github.repository_owner }}/aics-nginx
+            dockerfile: ./docker/nginx.Dockerfile
+            context: ./docker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        if: vars.PUBLISH_IMAGES == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          # Zwei Wege zum Push, je nachdem was eingerichtet ist:
+          #  a) GITHUB_TOKEN — braucht einmalig Paketzugriff fuer dieses Repo
+          #     (Package → Settings → Manage Actions access → aics-public: Write)
+          #  b) Secret GHCR_TOKEN — ein PAT mit `write:packages`; greift ohne
+          #     Paketzugriff, ist aber ein langlebiges Zugangsmittel.
+          # Ist GHCR_TOKEN gesetzt, gewinnt es; sonst GITHUB_TOKEN.
+          password: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ matrix.image }}
+          # #1908: Eine Vorabfassung (`8.3.0-beta.1`) bekommt NUR ihren eigenen
+          # Tag — nicht zusätzlich `8.3`. Sonst zöge jede Installation, die auf
+          # das bewegliche Tag zeigt, die Beta mit, ohne dass jemand einen Kanal
+          # gewählt hat; der Beta-Test wäre dann kein Test, sondern ein
+          # unangekündigtes Update bei allen. Erkannt am `-` im Tag-Namen (so
+          # definiert Semver die Vorabfassung); ausdrücklich gesetzt und nicht
+          # dem Standardverhalten der metadata-action überlassen, weil ein
+          # Fehler hier erst auffällt, wenn er bei Kunden gelandet ist.
+          #
+          # `latest` bleibt an `is_default_branch` — es folgt **main**, nicht dem
+          # Tag (dieser Workflow läuft auf `push`, nicht auf `release`, siehe den
+          # concurrency-Kommentar oben). Eine Beta wird als Tag gepusht, also ist
+          # `is_default_branch` dort ohnehin falsch und `latest` wird nicht
+          # gesetzt. Es an das Release-Event zu hängen hätte `latest` NIE mehr
+          # gesetzt und den Release-Prozess gebrochen.
+          tags: |
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}},enable=${{ !contains(github.ref_name, '-') }}
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-,format=short
+
+      - name: Install cosign
+        if: vars.PUBLISH_IMAGES == 'true'
+        uses: sigstore/cosign-installer@v3
+
+      # OCI-Repository-Namen muessen kleingeschrieben sein.
+      - name: Lowercase image reference
+        id: img
+        env:
+          IMG: ${{ env.REGISTRY }}/${{ matrix.image }}
+        run: echo "ref=${IMG,,}" >> "$GITHUB_OUTPUT"
+
+      # #1516: Version aus frontend/package.json ins Image injizieren — die
+      # Datei liegt im Runtime-Image nicht vor.
+      - name: Read app version
+        id: appver
+        run: |
+          V=$(grep -m1 '"version"' frontend/package.json | sed -E 's/.*"version"[[:space:]]*:[[:space:]]*"([^"]+)".*/\1/')
+          echo "v=${V:-unknown}" >> "$GITHUB_OUTPUT"
+
+      # #1908: Welcher Tag gebaut wird, muss **im Image** stehen. Sonst kann die
+      # Anwendung ihren Stand nicht benennen, und eine Installation auf einem
+      # Dev-Image zeigt weiter eine Release-Nummer (so geschehen bei v8.2.1).
+      - name: Image tag for build-arg
+        id: imagetag
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          first="$(printf '%s\n' "$TAGS" | head -n1)"
+          echo "t=${first##*:}" >> "$GITHUB_OUTPUT"
+
+      - name: Build (and push when enabled)
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: ${{ vars.PUBLISH_IMAGES == 'true' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            APP_VERSION=${{ steps.appver.outputs.v }}
+            APP_IMAGE_SOURCE=https://github.com/${{ github.repository }}
+            APP_IMAGE_TAG=${{ steps.imagetag.outputs.t }}
+          cache-from: type=gha,scope=${{ matrix.name }}-public
+          cache-to: type=gha,mode=max,scope=${{ matrix.name }}-public
+          provenance: mode=max
+          sbom: true
+
+      # Signatur an den unveraenderlichen Digest, nicht an mutable Tags.
+      - name: Sign image (keyless)
+        if: vars.PUBLISH_IMAGES == 'true'
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+          DIGEST: ${{ steps.build.outputs.digest }}
+          IMAGE: ${{ steps.img.outputs.ref }}
+        run: cosign sign --yes "${IMAGE}@${DIGEST}"
+
+      - name: Generate SBOM
+        if: vars.PUBLISH_IMAGES == 'true'
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ steps.img.outputs.ref }}@${{ steps.build.outputs.digest }}
+          format: spdx-json
+          output-file: sbom-${{ matrix.name }}.spdx.json
+          upload-release-assets: false
+
+      - name: Attest SBOM (keyless)
+        if: vars.PUBLISH_IMAGES == 'true'
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+          DIGEST: ${{ steps.build.outputs.digest }}
+          IMAGE: ${{ steps.img.outputs.ref }}
+        run: |
+          cosign attest --yes \
+            --predicate "sbom-${{ matrix.name }}.spdx.json" \
+            --type spdxjson \
+            "${IMAGE}@${DIGEST}"
+
+      - name: Hinweis, wenn nur gebaut wurde
+        if: vars.PUBLISH_IMAGES != 'true'
+        run: |
+          echo "::notice title=Nur Sanity-Build::Repository-Variable PUBLISH_IMAGES ist nicht 'true'."
+          echo "Das Image wurde gebaut, aber nicht veroeffentlicht. Voraussetzung fuer das"
+          echo "Veroeffentlichen: Paketzugriff fuer dieses Repo setzen (siehe Kopf dieser Datei),"
+          echo "danach PUBLISH_IMAGES=true als Repository-Variable."

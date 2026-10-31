@@ -1,0 +1,179 @@
+"""S1 (#1071): Logischer ``firmen_id``-FK für die Modul-Projekttabellen.
+
+Die Projekt↔Firma-Verknüpfung existierte bisher nur über die TEXT-Spalte
+``unternehmen``. Für ein zuverlässiges Risiko-Cockpit (Filter „alle Risiken der
+Firma X", #1078) und die DSFA-Verknüpfung (#1084) wird eine ``firmen_id``-Spalte
+ergänzt.
+
+Wichtig: Die Modul-DBs (``rb.sqlite``/``nis2.sqlite``/…) sind **separate**
+SQLite-Dateien getrennt von ``firmen.sqlite``. SQLite kann keine Cross-Database-
+Foreign-Keys erzwingen — ``firmen_id`` ist daher eine **logische** Referenz
+(INTEGER, NULL = nicht zugeordnet), die per Name-Match (``unternehmen`` ↔
+``firmen.name``) befüllt wird. ``firmen.sqlite`` liegt neben der Modul-DB.
+
+Vorbild: ``evidence/db.py`` (firmen_id-Härtung aus #1003).
+"""
+from __future__ import annotations
+
+from pathlib import Path
+
+from shared import db as _sdb
+
+# Modul-DB-Dateiname → (Projekt-Tabelle, Firmen-Namensspalte).
+# Achtung: AI-Act nutzt ``organisation`` statt ``unternehmen``.
+MODULE_PROJECT_TABLES: dict[str, tuple[str, str]] = {
+    "risikobewertung.sqlite": ("rb_projekte", "unternehmen"),
+    "nis2.sqlite": ("nis2_projekte", "unternehmen"),
+    "ai_act.sqlite": ("ai_act_projekte", "organisation"),
+    "dsgvo.sqlite": ("dsgvo_projekte", "unternehmen"),
+    "cra.sqlite": ("cra_projekte", "unternehmen"),
+    "wiba.sqlite": ("wiba_projekte", "unternehmen"),
+    # Compliance-Audit: eigenes Modul seit v7.4.0, Tabellenname historisch
+    # (die Daten lagen urspruenglich im Gutachten-Modul).
+    "gutachten.sqlite": ("gutachten_projects", "unternehmen"),
+}
+
+
+def firmen_db_path(module_db: Path) -> Path:
+    """``firmen.sqlite`` neben der Modul-DB."""
+    return Path(module_db).parent / "firmen.sqlite"
+
+
+def projekt_firmen_id(module_db: Path, projekt_name: str) -> int | None:
+    """``firmen_id`` eines Modul-Projekts über seinen Namen (#1071-FK).
+
+    Liegt hier, weil hier auch ``MODULE_PROJECT_TABLES`` liegt: Die Zuordnung
+    Modul → Projekt-Tabelle ein zweites Mal zu führen ist die Fehlerklasse aus
+    #1731. ``server/middleware/firma_acl`` ruft dieselbe Funktion, und seit
+    #1778 braucht sie auch die Vorlagen-Auflösung im Berichts-Center.
+
+    Fail-open wie im Objekt-RBAC: Ist die Firma nicht bestimmbar (Projekt
+    unbekannt, Spalte fehlt, Tabelle unbekannt), kommt ``None`` zurück. Was der
+    Aufrufer daraus macht, entscheidet er — die Vorlagen-Auswahl wird dadurch
+    enger (nur Haus-Vorlagen), der Detail-Guard bleibt offen.
+    """
+    fname = Path(module_db).name
+    table, _name_col = MODULE_PROJECT_TABLES.get(fname, (None, None))
+    if not table or not str(projekt_name or "").strip():
+        return None
+    try:
+        con = _sdb.connect(module_db)
+        try:
+            row = con.execute(
+                f"SELECT firmen_id FROM {table} WHERE name=? LIMIT 1",
+                (str(projekt_name),)).fetchone()
+        finally:
+            con.close()
+        return int(row[0]) if row and row[0] is not None else None
+    except Exception:  # noqa: BLE001 — z. B. Tabelle ohne firmen_id-Spalte
+        return None
+
+
+def firmen_name_to_id(firmen_db: Path) -> dict[str, int]:
+    """Map ``name.casefold()`` → ``firmen.id`` (nur nicht gelöschte Firmen)."""
+    out: dict[str, int] = {}
+    try:
+        con = _sdb.connect(firmen_db)
+        try:
+            # WICHTIG: positionsweise über row[0]/row[1] zugreifen — der PG-Kompat-Layer
+            # liefert DBRow (dict-Subklasse); Tuple-Unpacking ``for a, b in rows`` würde
+            # die KEYS statt der Werte liefern (anders als sqlite3.Row).
+            for row in con.execute(
+                "SELECT id, name FROM firmen WHERE COALESCE(is_deleted, 0) = 0"
+            ).fetchall():
+                fid, name = row[0], row[1]
+                if name and str(name).strip():
+                    out[str(name).strip().casefold()] = int(fid)
+        finally:
+            con.close()
+    except Exception:
+        pass
+    return out
+
+
+def ensure_firmen_id_column(con, table: str) -> None:
+    """Idempotent: ``firmen_id INTEGER`` + Index ergänzen (Postgres, #1332)."""
+    con.execute(f"ALTER TABLE {table} ADD COLUMN IF NOT EXISTS firmen_id INTEGER")
+    con.execute(
+        f"CREATE INDEX IF NOT EXISTS idx_{table}_firmen ON {table}(firmen_id)"
+    )
+    con.commit()
+
+
+def assign_firmen_id_on_save(con, module_db: Path, table: str, projekt_name: str,
+                             firma_name: str, firmen_db: Path | None = None) -> None:
+    """Best-effort: ``firmen_id`` eines gerade gespeicherten Projekts per Name-Match
+    setzen (#1511).
+
+    Wird aus den ``save_projekt``-Funktionen der Module heraus aufgerufen, damit ein
+    Projekt schon **bei der Anlage** der Firma zugeordnet wird (vorher nur per
+    Admin-Backfill — Ursache des „Firmen nicht zugeordnet"-Cockpit-Bugs auf frischen
+    Installationen). Nutzt die bereits offene Verbindung; Fehler werden geschluckt.
+    """
+    try:
+        name = (firma_name or "").strip()
+        if not name:
+            return
+        ensure_firmen_id_column(con, table)
+        fid = firmen_name_to_id(firmen_db or firmen_db_path(Path(module_db))).get(
+            name.casefold())
+        if fid:
+            con.execute(f"UPDATE {table} SET firmen_id=? WHERE name=?",
+                        (fid, projekt_name))
+            con.commit()
+    except Exception:
+        pass
+
+
+def backfill_all_modules(db_dir: Path) -> dict:
+    """Idempotenter Backfill über ALLE Modul-Projekttabellen (#1511).
+
+    Wird beim App-Start aufgerufen, damit bestehende frische Installationen sich
+    selbst korrigieren (füllt nur leere ``firmen_id``). Best-effort — fehlende
+    Schemata/Tabellen werden je Modul abgefangen.
+    """
+    out: dict[str, dict] = {}
+    for dbfile, (table, name_col) in MODULE_PROJECT_TABLES.items():
+        try:
+            out[dbfile] = backfill_firmen_ids(Path(db_dir) / dbfile, table,
+                                              name_col=name_col)
+        except Exception as e:  # pragma: no cover - defensiv
+            out[dbfile] = {"error": str(e)}
+    return out
+
+
+def backfill_firmen_ids(module_db: Path, table: str,
+                        name_col: str = "unternehmen",
+                        firmen_db: Path | None = None) -> dict:
+    """``firmen_id`` per Name-Match befüllen — nur dort, wo noch leer.
+
+    Liefert ``{matched, unmatched: [namen]}``. ``unmatched`` = Projekte mit
+    nicht-leerem ``unternehmen``, für die keine Firma gefunden wurde (→ Admin-UI
+    zur manuellen Zuordnung, #1071). ``firmen_db`` überschreibt die Standard-
+    Sibling-Auflösung (für Tests).
+    """
+    name2id = firmen_name_to_id(firmen_db or firmen_db_path(Path(module_db)))
+    con = _sdb.connect(module_db)
+    try:
+        ensure_firmen_id_column(con, table)
+        matched = 0
+        # Mengen-basiertes UPDATE je Firma (case-insensitiv) — kein Zeilen-Roundtrip,
+        # kein ctid-Rückbinden. Nur noch leere firmen_id werden gesetzt.
+        for fname, fid in name2id.items():
+            cur = con.execute(
+                f"UPDATE {table} SET firmen_id=? "
+                f"WHERE firmen_id IS NULL AND LOWER(TRIM({name_col}))=?",
+                (fid, fname),
+            )
+            matched += cur.rowcount if cur.rowcount and cur.rowcount > 0 else 0
+        # Verbleibende, nicht zugeordnete Projekte mit nicht-leerem Namen sammeln.
+        unmatched = []
+        for row in con.execute(
+            f"SELECT DISTINCT {name_col} FROM {table} "
+            f"WHERE firmen_id IS NULL AND TRIM(COALESCE({name_col},'')) <> ''"
+        ).fetchall():
+            unmatched.append(str(row[0]).strip())
+        con.commit()
+        return {"matched": matched, "unmatched": sorted(set(unmatched))}
+    finally:
+        con.close()
