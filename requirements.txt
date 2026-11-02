@@ -3,7 +3,7 @@ Flask>=3.0.0,<4.0.0
 Flask-JWT-Extended>=4.6.0,<4.7.0  # 4.7 Breaking: Subject must be string
 Flask-CORS>=6.0.0,<7.0.0  # CVE-2024-6839/6844/6866 fixes
 Flask-Limiter>=3.5.0,<4.0.0
-redis>=5.0,<7.0  # #1597: Shared-Storage-Backend für den Rate-Limiter (flask-limiter)
+redis>=8.1.0,<9.0  # #1597: Shared-Storage-Backend für den Rate-Limiter (flask-limiter)
 
 # Auth + Crypto (CVE-Fixes #274)
 cryptography>=50.0.0,<51.0.0  # CVE-2024-26130, CVE-2024-12797 + PYSEC-2026-3552/3553/3554 fixes (#1591/#1592); Upper-Bound gegen Überraschungs-Majors (#745)
