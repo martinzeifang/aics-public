@@ -23,7 +23,7 @@ COPY frontend/ .
 RUN npm run build || npx vite build --mode production --minify false
 
 # ---- Stage 2: Python-Backend (Python 3.11 slim) ----
-FROM python:3.11-slim@sha256:673719e071ecf27434fd2635bbd8d00f49f4fdd81f243143438a42ced8bedf60 AS backend-runtime
+FROM python:3.13-slim@sha256:2d44738ebf4ce5f63b9d9ea871e9c7cfdc0426f7b0c97cac915fd88ded1d86bb AS backend-runtime
 
 WORKDIR /app
 
