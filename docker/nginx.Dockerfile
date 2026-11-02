@@ -11,7 +11,7 @@
 # ergeben, und die EU-Konformitaetserklaerung bezeichnet seit #1884 genau
 # diesen Digest als Gegenstand (Anhang V Nr. 4).
 # Angehoben wird er von Dependabot (Oekosystem `docker`), nicht von Hand.
-FROM nginxinc/nginx-unprivileged:1.27-alpine@sha256:65e3e85dbaed8ba248841d9d58a899b6197106c23cb0ff1a132b7bfe0547e4c0
+FROM nginxinc/nginx-unprivileged:1.31-alpine@sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e
 
 # Build-Schritte brauchen root; am Ende wieder auf den nginx-User (101) zurück.
 USER root
