@@ -7,7 +7,7 @@ pytest-cov>=5.0.0,<8.0.0
 pytest-timeout>=2.3.0,<3.0.0  # #1530: Per-Test-Timeout → hängende Tests schlagen fehl statt Shard-Timeout
 
 # Postgres-Tests (#1341): ephemerer Postgres-Container für lokale Tests (Win+Linux)
-testcontainers[postgresql]>=4.0.0,<5.0.0
+testcontainers[postgresql]>=4.15.0,<5.0.0
 
 # Undefinierte Namen (#1896): im Backend gab es für diese Klasse keinen
 # Prüfer. 862 Dateien in ~4 s; der Wächter liegt in
