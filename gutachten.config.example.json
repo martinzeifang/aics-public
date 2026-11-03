@@ -1,0 +1,40 @@
+{
+  "paths": {
+    "ai_act_dir": "data/ai_act_resources",
+    "answers_dir": "out/gutachten/answers",
+    "ausgefuellt_dir": "out/gutachten/ausgefuellt",
+    "bsi_dir": "data/bsi_resources",
+    "cra_dir": "data/cra_resources",
+    "db_path": "data/db/gutachten.sqlite",
+    "dora_dir": "data/dora_downloads",
+    "dsgvo_dir": "data/dsgvo_resources",
+    "fragebogen_dir": "out/gutachten/fragebogen",
+    "gutachten_dir": "out/gutachten/gutachten",
+    "iso_dir": "data/iso27001_questionnaires",
+    "nis2_dir": "data/nis2_resources",
+    "prompts_dir": "out/gutachten/prompts"
+  },
+  "prompt": {
+    "bewertung_skala": [
+      "erfüllt",
+      "teilweise erfüllt",
+      "nicht erfüllt",
+      "nicht anwendbar"
+    ],
+    "fragen_batch_size": 15,
+    "fragen_header": "Du bist ein erfahrener IT-Compliance-Auditor. Erstelle präzise, offene Interviewfragen für ein Compliance-Gutachten. Die Fragen sollen konkrete Nachweise und Prozesse erfragen, nicht nur Ja/Nein-Antworten ermöglichen. Beziehe dich auf die relevanten Artikel/Kapitel der Regulierungen. Formuliere auf Deutsch.",
+    "gutachten_header": "Du bist ein erfahrener IT-Compliance-Auditor. Erstelle auf Basis der vorliegenden Interview-Antworten ein strukturiertes Compliance-Gutachten auf Deutsch. Bewerte den Erfüllungsgrad je Framework, identifiziere Lücken und formuliere konkrete Handlungsempfehlungen."
+  },
+  "ui": {
+    "debug_mode": false,
+    "frameworks": [
+      "DORA",
+      "NIS2",
+      "CRA",
+      "ISO27001"
+    ],
+    "projekt_name": "Demoprojekt",
+    "pruefungsfokus": "",
+    "test_mode": false
+  }
+}

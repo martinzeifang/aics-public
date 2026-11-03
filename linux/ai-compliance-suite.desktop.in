@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=AI Compliance Suite
+Comment=Start the AI Compliance Suite
+Exec=__INSTALL_DIR__/start-suite.sh
+Icon=__INSTALL_DIR__/logo_icon.png
+Terminal=false
+Categories=Office;Utility;
