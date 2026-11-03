@@ -155,7 +155,7 @@ jobs:
 
       - name: Build (and push when enabled)
         id: build
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
