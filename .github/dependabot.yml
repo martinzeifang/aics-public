@@ -1,0 +1,77 @@
+version: 2
+
+# #1915: Vier Ökosysteme statt einem.
+#
+# Bis dahin stand hier **nur** `pip`. Für das Frontend, die Basis-Abbilder und
+# die Arbeitsabläufe der Entwicklungsstrecke gab es damit keinen automatischen
+# Hinweis — Befunde kamen allein aus `npm audit` und dem OSV-Lauf, und beide
+# melden, ohne einen Vorschlag zu erzeugen.
+#
+# Der `docker`-Eintrag ist die Gegenseite zum Digest-Pin aus demselben Vorgang:
+# Ein festgelegter Digest ohne automatische Anhebung ist eine Einbahnstraße —
+# er friert ein Basis-Abbild ein, und niemand erfährt, wenn es eine Lücke hat.
+updates:
+  # ── Python (Anwendung) ────────────────────────────────────────────────
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - security
+    reviewers:
+      - martinzeifang
+    allow:
+      - dependency-type: direct
+      - dependency-type: indirect
+
+  # ── Frontend ──────────────────────────────────────────────────────────
+  # Nur direkte Abhängigkeiten: Der Baum unter `node_modules` zieht mittelbar
+  # mehrere Tausend Pakete nach, und ein Vorschlag je mittelbarem Paket macht
+  # die Liste unlesbar. Mittelbare Befunde kommen über `npm audit` und werden
+  # bei Bedarf über `overrides` in package.json aufgelöst (so geschehen bei
+  # form-data und follow-redirects).
+  - package-ecosystem: npm
+    directory: "/frontend"
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - security
+    reviewers:
+      - martinzeifang
+    allow:
+      - dependency-type: direct
+    groups:
+      # Ein Vorschlag je Woche statt zwanzig. Eine Liste, die niemand mehr
+      # liest, prüft nichts — dieselbe Lehre wie bei den Wächtertests.
+      frontend:
+        patterns:
+          - "*"
+
+  # ── Basis-Abbilder (Digest-Pins aus #1915) ────────────────────────────
+  - package-ecosystem: docker
+    directories:
+      - "/"
+      - "/docker"
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - security
+    reviewers:
+      - martinzeifang
+
+  # ── Arbeitsabläufe der Entwicklungsstrecke ────────────────────────────
+  # Sie laufen mit Schreibrechten auf das Paketverzeichnis und signieren die
+  # Release-Abbilder. Eine veraltete Aktion ist damit ein Lieferkettenrisiko
+  # und nicht bloß ein Wartungsthema.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - security
+    reviewers:
+      - martinzeifang
