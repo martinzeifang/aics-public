@@ -1,0 +1,22 @@
+{
+  "abgleichen": "Reconciling failed.",
+  "aktualisieren": "Updating failed.",
+  "allgemein": "The request failed.",
+  "anlegen": "Creating failed.",
+  "anmelden": "Sign-in failed.",
+  "auswerten": "Processing failed.",
+  "bewerten": "Assessment failed.",
+  "entfernen": "Removing failed.",
+  "erzeugen": "Generating failed.",
+  "exportieren": "Export failed.",
+  "freigeben": "Approval failed.",
+  "hochladen": "Upload failed.",
+  "laden": "Loading failed.",
+  "loeschen": "Deleting failed.",
+  "speichern": "Saving failed.",
+  "uebernehmen": "Applying failed.",
+  "verknuepfen": "Linking failed.",
+  "zusatz": {
+    "fehlendeFelder": "missing: {felder}"
+  }
+}

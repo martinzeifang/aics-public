@@ -1,0 +1,267 @@
+{
+  "title": "AI Act",
+  "regulation": "Regulation (EU) 2024/1689 (EU AI Act) laying down harmonised rules on artificial intelligence",
+  "purpose": "The module supports the classification of AI systems and AI models along the risk-based approach of the EU AI Act and derives the obligations that apply in each case. It documents the risk classification, checks the high-risk requirements and tracks the regulatory deadlines.",
+  "legalBasis": {
+    "title": "Legal basis: EU AI Act (Reg. (EU) 2024/1689)",
+    "intro": "The AI Act follows a risk-based approach and classifies AI, according to its potential for harm, into prohibited practices, high risk, limited risk and minimal risk. Different obligations apply to each class; general-purpose AI models (GPAI) are subject to separate rules. Decisive are in particular the obligations for high-risk systems (Art. 9–15) and the transparency obligations (Art. 50).",
+    "bullets": [
+      "Prohibited practices: the prohibition of certain AI applications (e.g. manipulative behaviour, social scoring, untargeted scraping to build facial recognition databases) under Art. 5.",
+      "High-risk classification: AI systems under Annex III (among others biometric identification, critical infrastructure, employment, education) as well as safety-relevant products under Annex I (Art. 6).",
+      "A risk management system across the entire lifecycle (Art. 9).",
+      "Data governance and the quality of the training, validation and testing data (Art. 10).",
+      "Technical documentation meeting the requirements of Annex IV (Art. 11) and automatic record-keeping/logging (Art. 12).",
+      "Transparency and the provision of information to deployers (Art. 13).",
+      "Human oversight (Art. 14).",
+      "Accuracy, robustness and cybersecurity (Art. 15).",
+      "Transparency obligations for limited risk: disclosure of AI interaction, marking of synthetic/deepfake content (Art. 50).",
+      "GPAI models: obligations regarding technical documentation, a copyright policy and a summary of the training data (Art. 53); additional obligations where there is systemic risk (Art. 51, 55)."
+    ]
+  },
+  "implementation": {
+    "title": "How to work in the module",
+    "intro": "Start with the risk classification of the AI system and then work through the obligations that apply to the class determined. The module guides you through classification, the per-class checklist of obligations and the tracking of the dates of application.",
+    "bullets": [
+      "Organisation vs. AI system: each company has one organisation assessment (🏢, company-wide obligations such as AI literacy under Art. 4). Create a separate assessment (🤖) for every AI system/product via '➕ Create AI system' — risk class, Art. 9–15, FRIA, conformity and incidents apply per AI system.",
+      "As soon as a company has AI systems, system-related controls are maintained per AI system only; the organisation shows an overview of the AI systems. With the first AI system, the organisation's existing assessments can be taken over.",
+      "AIA-HR-01 (risk management system, Art. 9): link or create an EU AI Act risk assessment directly at the requirement. The suggested score follows from the recording, assessment and treatment of the risks (empty = 1, all high/critical risks treated = 5). You create risks with \"🪄 Identify risks with the assistant\" in the HR-01 block or via the tile \"A3 — Identify risks\" (copy/paste or ⚡ directly with AI).",
+      "Describe the use case first and check it against the prohibited practices (Art. 5) before carrying out a high-risk assessment.",
+      "Determine the risk class: document the comparison with Annex III and the exceptions under Art. 6(3).",
+      "For high-risk systems, substantiate the checklist of obligations (Art. 9–15) point by point with evidence.",
+      "Plan the conformity assessment, the EU declaration of conformity and the registration in the EU database (Art. 49, 71) as to-dos.",
+      "Where the risk is limited, implement the transparency obligations under Art. 50 (notice of AI use, marking).",
+      "Assign the roles clearly: provider vs. deployer, since the obligations differ.",
+      "Where GPAI/foundation models are used, record the GPAI obligations (Art. 53 et seq.) separately.",
+      "File the classification, its justification and the evidence with versions in order to ensure auditability."
+    ]
+  },
+  "moduleSpecific": {
+    "title": "Particularities of the AI Act module",
+    "intro": "The module reflects the particularities of the risk-based logic and of the staggered applicability.",
+    "bullets": [
+      "Risk classification as the central entry point: prohibited practices, high risk, limited risk, minimal risk.",
+      "Obligations are presented per class; only the applicable requirements are offered for processing.",
+      "The high-risk checklist follows Art. 9–15 and Annex IV (technical documentation).",
+      "Timetable/deadlines: the prohibitions have applied since 2 February 2025, the GPAI rules since 2 August 2025, high risk under Annex III from 2 August 2026, embedded high-risk products (Annex I) from 2 August 2027.",
+      "The distinction between provider and deployer obligations is built into the module.",
+      "GPAI models are treated separately, including the criterion of systemic risk."
+    ]
+  },
+  "areas": [
+    {
+      "id": "pflichtdoku",
+      "title": "📋 Documentation",
+      "zweck": "Central mandatory documentation of the AI system: risk class, role (provider/deployer), master data and the evidence status of the high-risk obligations as the entry point into all subject-matter tabs.",
+      "rechtsgrundlage": "Art. 6/Annex III (classification), Art. 11/Annex IV (technical documentation), Art. 16/26 (obligations of providers/deployers)",
+      "pflichtfelder": [
+        "Risk class (prohibited / high risk / limited / minimal) – it governs which obligations are presented.",
+        "Role: provider or deployer – the obligations differ.",
+        "Use case description (the basis for the Art. 5 and Annex III assessment).",
+        "Company/project assignment (for the cockpit and the reports)."
+      ],
+      "anleitung": "1) Describe the use case. 2) Check the Art. 5 prohibitions (Art. 5 tab). 3) Set the risk class (Annex III/Art. 6). 4) Determine the role. 5) Where the risk is high, work through the requirements (Art. 9–15).",
+      "tipps": [
+        "Classification first – it decides which mandatory tabs apply at all."
+      ]
+    },
+    {
+      "id": "cockpit",
+      "title": "📊 Risk cockpit",
+      "zweck": "Company-wide, cross-module read-only view of the open risks (risk assessment) and vulnerabilities of the assigned company.",
+      "rechtsgrundlage": "Art. 9 AI Act (risk management across the lifecycle)",
+      "pflichtfelder": [
+        "No input – aggregation per company (firmen_id) from the linked modules."
+      ],
+      "anleitung": "1) Make sure the project is assigned to a company. 2) Review open high/critical risks first. 3) Treat them in the linked risk assessment.",
+      "tipps": [
+        "The cockpit exists in the organisation (company level) only, not per AI system (#1569) — in the AI system dashboard, 'Risks' leads to the organisation.",
+        "Risks are maintained in the risk assessment; the cockpit only mirrors their state."
+      ]
+    },
+    {
+      "id": "anforderungen",
+      "title": "✅ Requirements",
+      "zweck": "Checklist of obligations for high-risk AI (Art. 9–15) with a maturity level and a reference to evidence – applicable only where the system is classified as high risk.",
+      "rechtsgrundlage": "Art. 9–15 AI Act (risk management, data governance, technical documentation, logging, transparency, human oversight, accuracy/robustness/cybersecurity), Annex IV",
+      "pflichtfelder": [
+        "Per requirement (Art. 9–15): maturity level/status and evidence/justification.",
+        "Data governance (Art. 10): provenance/quality of the training/validation/testing data.",
+        "Logging (Art. 12) and human oversight (Art. 14) substantiated.",
+        "Technical documentation per Annex IV linked."
+      ],
+      "anleitung": "1) Work through each Art. 9–15 requirement. 2) Set the maturity level realistically. 3) Link the evidence (document/record). 4) Transfer gaps into measures/issues.",
+      "tipps": [
+        "Mandatory only where the risk is high; where the risk is limited, the transparency obligations (Art. 50) suffice."
+      ]
+    },
+    {
+      "id": "art5",
+      "title": "🚫 Art. 5 prohibitions",
+      "zweck": "A documented negative assessment against the 8 prohibited practices of Art. 5(1) – the gate before any further assessment.",
+      "rechtsgrundlage": "Art. 5(1)(a)–(h) AI Act (prohibited practices, applicable since 2 February 2025)",
+      "pflichtfelder": [
+        "Per element (a)–(h): affected = yes / no / open.",
+        "Justification of the assessment (in particular for 'no' – the negative record).",
+        "Assessed by and assessed on."
+      ],
+      "anleitung": "1) Work through all 8 elements (a manipulation … h real-time remote identification). 2) Decide per element whether it is affected or not, and justify it. 3) Record the assessor and the date. The AI wizard can supply a preliminary assessment from the use case description.",
+      "tipps": [
+        "A single 'yes' generally means the use is unlawful – adapt the use case.",
+        "A 'no' also needs a traceable justification (negative record)."
+      ]
+    },
+    {
+      "id": "literacy",
+      "title": "🎓 AI literacy",
+      "zweck": "Evidence of sufficient AI literacy of the persons dealing with the system (training records) and of the persons responsible for human oversight.",
+      "rechtsgrundlage": "Art. 4 AI Act (AI literacy, applicable since 2 February 2025, company-wide — in AI system assessments the organisation's register is used); reference Art. 14 (human oversight)",
+      "pflichtfelder": [
+        "Person and role.",
+        "Training module and level of competence (basics/…).",
+        "Carried out on and valid until (expiry status).",
+        "Evidence reference (certificate/record).",
+        "Oversight person (for Art. 14 oversight), comment."
+      ],
+      "anleitung": "1) Create a record for each person involved. 2) Record the training module, the level and the date it was carried out. 3) Set the validity (expiry is displayed). 4) Mark the oversight persons. 5) Optionally record a literacy concept.",
+      "tipps": [
+        "Expired records are marked – renew them in good time."
+      ]
+    },
+    {
+      "id": "incidents",
+      "title": "🚨 Art. 73 incidents",
+      "zweck": "A serious incident register with a deadline clock: reporting serious incidents to the market surveillance authority with staggered deadlines.",
+      "rechtsgrundlage": "Art. 73 AI Act (reporting: 2 days for a widespread infringement/critical infrastructure, 10 days in the event of death, 15 days as the standard deadline)",
+      "pflichtfelder": [
+        "Title and description of the incident.",
+        "Date of occurrence and date of becoming aware (awareness starts the deadline clock).",
+        "Severity: widespread (2 d.) / death (10 d.) / serious harm (15 d.) / standard (15 d.).",
+        "Authority (market surveillance), initial report on / full report on / closed on.",
+        "Proof of submission and CAPA reference (corrective action)."
+      ],
+      "anleitung": "1) Create the incident immediately on becoming aware of it and set the date of awareness correctly. 2) Choose the severity – it determines the deadline (2/10/15 days). 3) Send the initial report on time and record the date. 4) Document the full report and the closure, and record the proof of submission.",
+      "tipps": [
+        "The traffic light shows the time remaining from the date of awareness – the severity determines the deadline.",
+        "The CAPA reference establishes the link to the corrective action."
+      ]
+    },
+    {
+      "id": "fria",
+      "title": "⚖️ Art. 27 FRIA",
+      "zweck": "Fundamental rights impact assessment for certain deployers – a guided stepper including the notification to the authority.",
+      "rechtsgrundlage": "Art. 27 AI Act (FRIA; obligatory among others for public bodies and Annex III No. 5(b)/(c) – creditworthiness, insurance risk assessment)",
+      "pflichtfelder": [
+        "Deployer type (it triggers the FRIA obligation, e.g. public body, Annex III 5b/5c).",
+        "Processes of use (Art. 27(1)(a)) and period/frequency (b).",
+        "Categories of persons affected (c) and specific risks of harm (d).",
+        "Measures for human oversight (e) and for risk mitigation (f).",
+        "Notification to the market surveillance authority (Art. 27(3)): notified on, authority."
+      ],
+      "anleitung": "1) Check the deployer type – required only where the FRIA obligation applies. 2) Work through the stepper: processes, period, persons affected, risks, oversight, measures. 3) Finalise the FRIA. 4) Produce the notification, submit it to the authority and record the date.",
+      "tipps": [
+        "The FRIA is to be carried out BEFORE the system is first put into use.",
+        "For deployers not subject to the FRIA obligation, the tab may remain empty (with a justification)."
+      ]
+    },
+    {
+      "id": "conformity",
+      "title": "🏷️ Art. 43/48 conformity",
+      "zweck": "Conformity assessment for high-risk AI: choice of the procedural route (internal control vs. notified body), a self-assessment checklist, the EU declaration of conformity and the CE marking.",
+      "rechtsgrundlage": "Art. 43 (conformity assessment, Annex VI/VII), Art. 47/48 (EU declaration of conformity, CE), Art. 11/Annex IV",
+      "pflichtfelder": [
+        "Procedure: internal control (Annex VI, Annex III Nos. 2–8) or notified body (Annex VII, biometrics / Annex III No. 1).",
+        "Annex VI self-assessment checklist (QMS, technical documentation Annex IV, post-market monitoring Art. 72).",
+        "Where a notified body is involved: name + identification number + certificate upload (Annex VII).",
+        "EU declaration of conformity and CE status."
+      ],
+      "anleitung": "1) Choose the procedural route according to the type of risk (biometrics/Annex III No. 1 → notified body). 2) Work through the checklist (QMS, Annex IV documentation, post-market plan). 3) Where a notified body is involved, record the identification number and the certificate. 4) Issue the declaration of conformity and apply the CE marking.",
+      "tipps": [
+        "Biometrics (Annex III No. 1) generally requires a notified body – internal control does not suffice."
+      ]
+    },
+    {
+      "id": "gpai",
+      "title": "🧠 Art. 51–55 GPAI",
+      "zweck": "Obligations for general-purpose AI models, including the threshold evaluation for systemic risk and the associated documentation and notification obligations.",
+      "rechtsgrundlage": "Art. 51–55 AI Act (GPAI; systemic risk from 10^25 FLOP per Art. 51(2); Annex XI model documentation, Annex XII downstream documentation)",
+      "pflichtfelder": [
+        "Cumulative training FLOP (≥ 10^25 ⇒ systemic risk) or a manual override.",
+        "Technical model documentation (Annex XI) and downstream documentation (Annex XII).",
+        "Copyright policy and summary of the training data (Art. 53).",
+        "Where there is systemic risk: notification to the Commission (Art. 52, 2-week deadline), evaluation/adversarial testing, cybersecurity (Art. 55).",
+        "GPAI requirements (AIA-GPAI-01 et seq.) with their status."
+      ],
+      "anleitung": "1) Record the training FLOP – the module determines systemic risk (threshold 10^25). 2) Substantiate the Annex XI/XII documentation and the copyright policy. 3) Where there is systemic risk, notify the Commission within 2 weeks (deadline clock) and meet the Art. 55 obligations.",
+      "tipps": [
+        "The FLOP threshold of 10^25 decides on the stricter Art. 55 obligations.",
+        "The GPAI rules have applied since 2 August 2025.",
+        "In the Assistants tab, the GPAI classifier (prompt + take-over into the register) and the generators for the copyright/TDM policy (Art. 53(1)(c)) and the training data summary (Art. 53(1)(d)) supply copy/paste drafts; the policy and summary results can be saved as a document and exported."
+      ]
+    },
+    {
+      "id": "owasp-llm",
+      "title": "🛡️ OWASP LLM",
+      "zweck": "Security register for LLM-specific risks (OWASP Top 10 for LLM Applications) with status, issue link and auto-detect – an additive strengthening of Art. 9 and Art. 15.",
+      "rechtsgrundlage": "Art. 9 (risk management) + Art. 15 (accuracy/robustness/cybersecurity) AI Act, operationalised via the OWASP LLM Top 10",
+      "pflichtfelder": [
+        "Per LLM risk (e.g. prompt injection, data/model poisoning, insecure output handling): status 0–5.",
+        "Evidence/measure and an issue link where applicable."
+      ],
+      "anleitung": "1) Run the auto-detect (LLM heuristics). 2) Set the status per OWASP LLM risk and link the measure/evidence. 3) Track open risks as an issue. 4) The result feeds into Art. 9/15.",
+      "tipps": [
+        "Relevant only if the system uses an LLM/generative AI; it complements – it does not replace – the Art. 9–15 requirements."
+      ]
+    },
+    {
+      "id": "assistenten",
+      "title": "🤖 Assistants",
+      "zweck": "AI-supported wizards (copy/paste prompts) that supply drafts for classification, Art. 5 screening, the assessment of requirements and GPAI, AI literacy (Art. 4) and the mandatory documents (Annex IV documentation, instructions for use under Art. 13, FRIA under Art. 27, GPAI policies).",
+      "rechtsgrundlage": "— (an aid; the conformity assessment remains with the provider/deployer)",
+      "pflichtfelder": [
+        "No mandatory fields – the inputs depend on the context of each assistant."
+      ],
+      "anleitung": "1) Choose the assistant. 2) Generate the prompt with the project context and copy it into the AI tool. 3) Paste the answer back and review it. 4) Register assistants (GPAI classifier, AI literacy) take it over directly; document assistants (instructions for use, FRIA, Annex IV, GPAI policies) store it via the save-as-document action so that it can be edited and exported.",
+      "tipps": [
+        "Review AI suggestions on their merits – they do not replace a regulatory assessment."
+      ]
+    },
+    {
+      "id": "dokumente",
+      "title": "📄 Documents",
+      "zweck": "Storage and management of uploaded evidence (technical documentation, training certificates, notified body certificates, test reports) for the individual mandatory tabs.",
+      "rechtsgrundlage": "Art. 11/Annex IV AI Act (technical documentation/record-keeping)",
+      "pflichtfelder": [
+        "File + a meaningful name; document type.",
+        "Assignment to the area/requirement it substantiates."
+      ],
+      "anleitung": "1) Upload the evidence and name it unambiguously. 2) Assign it to the matching area/requirement. 3) On an update, store a new version instead of overwriting.",
+      "tipps": [
+        "Consistent tagging makes it easier to check the Annex IV file for completeness."
+      ]
+    },
+    {
+      "id": "berichte",
+      "title": "📄 Reports",
+      "zweck": "Export of the AI Act report (classification, status of the obligations, open gaps, evidence) as the basis of the technical documentation under Annex IV.",
+      "rechtsgrundlage": "Art. 11 AI Act in conjunction with Annex IV (technical documentation)",
+      "pflichtfelder": [
+        "Selection of the report sections and the format (DOCX/PDF)."
+      ],
+      "anleitung": "1) Finalise all subject-matter tabs beforehand (Art. 5, requirements, conformity, GPAI). 2) Choose the sections. 3) Produce the report and file it as part of the Annex IV file.",
+      "tipps": [
+        "The quality of the report depends directly on a maintained maturity level and on the linked evidence."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "AI Act module documentation",
+      "href": "docs:/modules/ai-act/"
+    },
+    {
+      "label": "Regulation (EU) 2024/1689 (EUR-Lex)",
+      "href": "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"
+    }
+  ],
+  "module": "aiact"
+}
