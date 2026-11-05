@@ -1,0 +1,259 @@
+{
+  "title": "NIS2",
+  "regulation": "Directive (EU) 2022/2555 (NIS2 Directive) — transposed in Germany by the NIS2 implementation act (NIS2UmsuCG, amendments including in the BSIG)",
+  "purpose": "The module supports the structured implementation of, and record-keeping for, the NIS2 cybersecurity requirements. It maps the catalogue of measures under Art. 21, the governance obligations under Art. 20 and the reporting obligations under Art. 23, and records the classification as an essential or important entity. The result is an assessed requirements catalogue with a maturity level and an exportable report.",
+  "legalBasis": {
+    "title": "Legal basis: NIS2 Directive (EU) 2022/2555",
+    "intro": "The NIS2 Directive obliges essential and important entities in the sectors named in Annexes I and II to operate risk-based cybersecurity management. It requires binding technical and organisational minimum measures, active responsibility of the management bodies and a staged reporting procedure for significant incidents. Infringements carry fines; the management is personally liable.",
+    "bullets": [
+      "Art. 21(1) NIS2: appropriate and proportionate technical, operational and organisational risk management measures reflecting the state of the art (all-hazards approach).",
+      "Art. 21(2) NIS2: a minimum catalogue of 10 areas of measures — among others risk analysis and information system security (point a), incident handling (point b), business continuity/backup/crisis management (point c), supply chain security (point d), security in acquisition, development and maintenance (point e), assessment of effectiveness (point f), cyber hygiene and training (point g), cryptography/encryption (point h), human resources security, access control and asset management (point i), MFA and secured communications (point j).",
+      "Art. 20 NIS2: management bodies must approve the risk management measures, oversee their implementation and attend training; responsibility and liability rest with the management.",
+      "Art. 23 NIS2: reporting obligation for significant incidents — early warning within 24 hours, incident notification within 72 hours, final report no later than 1 month after the notification (intermediate report on request).",
+      "Annex I (essential entities, e.g. energy, transport, banking, health, water, digital infrastructure) and Annex II (important entities, e.g. postal services, waste, chemicals, food, manufacturing, digital providers) determine the classification and the supervisory regime.",
+      "Art. 24–25 NIS2: the possibility of relying on European cybersecurity certification schemes and standards to demonstrate conformity."
+    ]
+  },
+  "implementation": {
+    "title": "How to work in the module",
+    "intro": "In the module you first determine the entity class (essential/important); after that the requirements catalogue is assessed along the chapters governance (Art. 20), risk management/technical measures (Art. 21), reporting obligations (Art. 23) and supply chain security. Every requirement receives a maturity level on a 0–5 scale with a reference to evidence; the overall state is condensed and exported as a report.",
+    "bullets": [
+      "Determine the entity class first — it governs the depth of supervision and record-keeping and thereby the prioritisation of the measures.",
+      "Assess each of the 10 measures from Art. 21(2) individually and record concrete evidence per requirement (policies, logs, training records, backup/BCM concepts).",
+      "Award the maturity level consistently: 0 not assessed, 1 not fulfilled, 2 planned, 3 partially, 4 largely, 5 fully fulfilled; mind the weighting.",
+      "Document management responsibility (approval of the measures, oversight, management training) as evidence for Art. 20.",
+      "Define and rehearse the reporting process in advance: record escalation paths, responsibilities and the 24h/72h/1 month deadlines as a runbook.",
+      "Consider supply chain security separately (supplier assessment, contractual clauses) — Art. 21(2)(d).",
+      "Transfer open and only partially fulfilled requirements into measures with responsible persons and deadlines, and follow them up via the report."
+    ]
+  },
+  "moduleSpecific": {
+    "title": "Particularities of the NIS2 module",
+    "intro": "The module is tailored to the specific structure of the NIS2 obligations and combines the catalogue of measures, the reporting deadlines and the entity classification in one assessment workflow.",
+    "bullets": [
+      "Catalogue of measures per Art. 21: the 10 minimum measures are provided as individually assessable requirements with an article reference and notes on evidence.",
+      "Entity classification: a choice between essential entity (Annex I), important entity (Annex II) or both; it governs the assessment context.",
+      "Deadline logic per Art. 23: 24h early warning, 72h incident notification, 1-month final report as fixed reference values in the module.",
+      "Chapter structure: governance (Art. 20), risk management/technical (Art. 21), reporting obligations (Art. 23), supply chain (Art. 21(2)(d)) and implementation/certification (Art. 24–25).",
+      "A 0–5 assessment scale with a weighting per requirement and a condensed maturity level for the overall view.",
+      "Report export to document the state of implementation towards the management and the supervisory authority."
+    ]
+  },
+  "areas": [
+    {
+      "id": "pflichtdoku",
+      "title": "📋 Documentation (mandatory records)",
+      "zweck": "Collecting and evidencing the mandatory NIS2 documentation along the 10 areas of measures (asset inventory, risk management, CSIRT/incident handling, suppliers, BCP), including token-aware repository auto-fill (N1–N5).",
+      "rechtsgrundlage": "Art. 21(2) NIS2 (minimum measures); transposition in the BSIG",
+      "pflichtfelder": [
+        "N1 asset inventory (systems, services, compose/Helm/k8s/Terraform, topics).",
+        "N3 CSIRT/incident handling (contact + process, e.g. from SECURITY.md).",
+        "N4 suppliers/supply chain (from SBOM/package.json/requirements).",
+        "N5 business continuity/backup notes.",
+        "Per item of evidence: a reference or record rather than free text."
+      ],
+      "anleitung": "1) Run the repository auto-fill (N1–N5) – it detects assets, CSIRT, suppliers and BCP notes. 2) Review and confirm the suggestions. 3) Create and link the missing mandatory artefacts. 4) Maintain the status per area.",
+      "tipps": [
+        "Auto-fill supplies suggestions – confirmation on the merits is still required.",
+        "N2 (risks) is not maintained here but in the linked risk assessment (read-only)."
+      ]
+    },
+    {
+      "id": "cockpit",
+      "title": "📊 Risk cockpit",
+      "zweck": "Company-wide, cross-module read-only view of the open risks (risk assessment) and vulnerabilities of the assigned company.",
+      "rechtsgrundlage": "Art. 21(1) NIS2 (risk-based all-hazards approach)",
+      "pflichtfelder": [
+        "No input – aggregation per company (firmen_id)."
+      ],
+      "anleitung": "1) Make sure the project is assigned to a company. 2) Review the open risks. 3) Treat them in the linked risk assessment – the cockpit mirrors its state.",
+      "tipps": [
+        "NIS2 N2 is read-only: risks come from the risk assessment, not from the NIS2 module."
+      ]
+    },
+    {
+      "id": "incidents",
+      "title": "🚨 Incidents (Art. 23)",
+      "zweck": "Deadline-driven reporting management for significant incidents with the three reporting stages 24h/72h/1 month (plus an optional intermediate report).",
+      "rechtsgrundlage": "Art. 23(4) NIS2 (early warning 24h point a · incident notification 72h point b · final report 1 month point c)",
+      "pflichtfelder": [
+        "Incident ID and title.",
+        "Time of becoming aware (starts the 24h/72h deadlines).",
+        "Significant (flag) – only significant incidents are notifiable.",
+        "Severity and affected assets.",
+        "Cross-border (flag) and root cause.",
+        "Reporting stages per incident: 24h (early warning), 72h (incident notification), optionally 'intermediate', 1M (final) – each with the actual time, text and BSI reference."
+      ],
+      "anleitung": "1) Create the incident when you become aware of it and set the time of awareness correctly. 2) Assess significance. 3) Send the early warning within 24h (stage 24h). 4) Full incident notification within 72h (stage 72h). 5) Intermediate report on request. 6) Final report within 1 month (stage 1M).",
+      "tipps": [
+        "The deadlines run from the time of becoming aware; the final report runs 1 month from the 72h notification.",
+        "Document non-significant incidents internally, but do not notify them."
+      ]
+    },
+    {
+      "id": "scoping",
+      "title": "🎯 Scoping (Art. 2/3)",
+      "zweck": "Deterministic determination of whether the entity is in scope and of its classification (essential/important/out of scope) on the basis of size thresholds, sector and jurisdiction.",
+      "rechtsgrundlage": "Art. 2/3 NIS2 (scope, size thresholds); Art. 26 (jurisdiction); Annex I/II",
+      "pflichtfelder": [
+        "Number of employees, annual turnover (EUR million), balance sheet total (EUR million).",
+        "Sector + sub-sector and annex (I = essential, II = important, none).",
+        "Group affiliation (for consolidating the thresholds).",
+        "Main establishment, competent authority (default BSI), established in the EU + an EU representative where applicable.",
+        "Result: size_class + justification (calculated deterministically)."
+      ],
+      "anleitung": "1) Record the company's key figures and sector/sub-sector. 2) Choose the annex assignment (I/II). 3) State the group affiliation and jurisdiction. 4) Have the class + justification derived. 5) Document a new version on any change.",
+      "tipps": [
+        "The size thresholds are to be consolidated across the group.",
+        "Out of scope is to be documented with a justification, not left empty."
+      ]
+    },
+    {
+      "id": "registrierung",
+      "title": "📝 Registration (Art. 27)",
+      "zweck": "Recording of the 6 mandatory details for registration with the competent authority, including tracking of the submission and of the annual confirmation.",
+      "rechtsgrundlage": "Art. 27 NIS2 (registration obligation, 6 mandatory details in paragraph 2)",
+      "pflichtfelder": [
+        "Name of the entity.",
+        "Sector + sub-sector (Annex I/II) and type of entity.",
+        "Address and EU establishments.",
+        "Contact (email, telephone).",
+        "Member States in which the service is provided and, where applicable, IP ranges (for DNS/cloud/digital infrastructure).",
+        "Status, date of registration, confirmation reference, next annual confirmation."
+      ],
+      "anleitung": "1) Record the 6 mandatory details in full (name, sector/sub-sector + type of entity, address/EU establishments, contact, Member States, IP ranges where applicable). 2) Submit the registration and document the date and reference. 3) Set the annual confirmation as a follow-up.",
+      "tipps": [
+        "Certain digital services must also state IP ranges/domains.",
+        "Changes are to be kept current; the annual confirmation appears in the deadlines dashboard."
+      ]
+    },
+    {
+      "id": "audits",
+      "title": "🔍 Audits (Art. 32)",
+      "zweck": "Register of audits/conformity assessments on a 3-year cycle, with linked findings as a CAPA register.",
+      "rechtsgrundlage": "Art. 32 NIS2 (supervision/evidence on a 3-year cycle); CAPA for Art. 21(4)",
+      "pflichtfelder": [
+        "Title, audit type (internal/external/certification), scope, auditor.",
+        "Carried out on → next audit due (36 months, automatic).",
+        "For certification: certificate URL + expiry.",
+        "Result (open/passed/…).",
+        "Findings/CAPA: description, severity, measure, responsible person, deadline, status and an object reference where applicable."
+      ],
+      "anleitung": "1) Create the audit (type/scope/auditor). 2) Set the date it was carried out – the 3-year follow-up is calculated. 3) Record findings as CAPA (measure, responsible person, deadline). 4) Follow findings up until the status is closed.",
+      "tipps": [
+        "The 3-year cycle (36 months) is derived from 'carried out on' and appears in the deadlines dashboard.",
+        "Findings are the CAPA register – keep open findings with a deadline and a responsible person."
+      ]
+    },
+    {
+      "id": "governance",
+      "title": "🏛️ Governance (Art. 20)",
+      "zweck": "Evidence of management responsibility: the decision approving the risk management measures, oversight, and management training.",
+      "rechtsgrundlage": "Art. 20 NIS2 (approval/oversight by the management bodies; training obligation)",
+      "pflichtfelder": [
+        "Type (e.g. approval decision/training), date, body.",
+        "Subject matter and reference to the risk management version (rm_version).",
+        "Document URL (decision/minutes) and next review.",
+        "Training: participants (name, role, status, quiz score) and quiz reference."
+      ],
+      "anleitung": "1) Record the approval decision with date/body/subject matter and the risk management version approved, and link the minutes. 2) Create management training sessions and document participants/status/quiz score. 3) Set the next review.",
+      "tipps": [
+        "The management is personally liable – approval and attendance at training must be demonstrable.",
+        "Name the risk management version in the decision so that the version approved remains traceable."
+      ]
+    },
+    {
+      "id": "fristen",
+      "title": "📅 Deadlines",
+      "zweck": "A control cycle/follow-up dashboard that aggregates due dates across all areas (risk reviews, supplier assessments, audit cycle, annual confirmation).",
+      "rechtsgrundlage": "Art. 21(2)(f) (assessment of effectiveness) / Art. 27(4) NIS2",
+      "pflichtfelder": [
+        "No direct input – it aggregates review_datum/assessment_datum (N2/N4), naechster_audit_soll (audits) and naechste_jahres_bestaetigung (registration)."
+      ],
+      "anleitung": "1) Read off due/overdue dates (traffic light, warning from 30 days). 2) Work on them in the respective source tab (risk, supplier, audit, registration). 3) Set a new follow-up date once completed.",
+      "tipps": [
+        "The dates come from the subject-matter tabs – only monitored here, maintained there."
+      ]
+    },
+    {
+      "id": "dvo",
+      "title": "📜 IR 2690",
+      "zweck": "Sector requirement set of Implementing Regulation (EU) 2024/2690: the 13 sections of the regulation as assessable controls, activated depending on the sector.",
+      "rechtsgrundlage": "Implementing Regulation (EU) 2024/2690 (technical/methodological requirements, digital infrastructure/providers)",
+      "pflichtfelder": [
+        "Activation of the IR set (tied to the sector from scoping/the classifier).",
+        "Per section of the regulation (DVO-1 … DVO-13): maturity level/status and evidence."
+      ],
+      "anleitung": "1) Check whether the company falls under IR 2024/2690 (digital infrastructure/providers – this is checked against the sector). 2) Activate the IR set – the 13 sections appear as controls (chapter DVO2690). 3) Assess each section and record evidence.",
+      "tipps": [
+        "IR 2024/2690 applies only to certain digital sectors – do not activate it outside them.",
+        "The 13 sections give substance to Art. 21 – reference evidence from existing mandatory documentation wherever possible."
+      ]
+    },
+    {
+      "id": "anforderungen",
+      "title": "✅ Requirements",
+      "zweck": "Assessment of the NIS2 requirements catalogue (governance Art. 20, measures Art. 21, reporting obligations Art. 23, supply chain) with a maturity level and a reference to evidence.",
+      "rechtsgrundlage": "Art. 20, 21, 23 NIS2; Art. 24–25 (certification)",
+      "pflichtfelder": [
+        "Per requirement: maturity level 0–5 (0 not assessed … 5 fully fulfilled) and evidence.",
+        "For your own requirements: chapter, title, description, notes, weighting."
+      ],
+      "anleitung": "1) Work through chapter by chapter (governance/risk management/reporting obligations/supply chain). 2) Set the maturity level consistently per requirement. 3) Link the evidence. 4) Transfer open/partial requirements into measures/issues.",
+      "tipps": [
+        "Mind the weighting – it affects the condensed overall maturity level."
+      ]
+    },
+    {
+      "id": "assistenten",
+      "title": "🤖 Assistants",
+      "zweck": "AI-supported wizards (copy/paste prompts) for pre-filling the mandatory documentation and the requirements assessment (N1–N5, IR).",
+      "rechtsgrundlage": "— (an aid; the assessment remains with the responsible person)",
+      "pflichtfelder": [
+        "No mandatory fields – the inputs depend on the context of each assistant."
+      ],
+      "anleitung": "1) Choose the assistant. 2) Generate the prompt with the project context and copy it into the AI tool. 3) Paste the answer back and review it. 4) Take the result over into the subject-matter tab.",
+      "tipps": [
+        "Review AI suggestions on their merits before they count as evidence."
+      ]
+    },
+    {
+      "id": "dokumente",
+      "title": "📄 Documents",
+      "zweck": "Storage and management of uploaded evidence and records (policies, logs, concepts) for the project.",
+      "rechtsgrundlage": "Art. 21 NIS2 (keeping records of the measures)",
+      "pflichtfelder": [
+        "File + a meaningful title; useful: a reference to the measure/requirement."
+      ],
+      "anleitung": "1) Upload the evidence. 2) Name and assign it unambiguously. 3) On an update, store a new version instead of overwriting.",
+      "tipps": [
+        "Meaningful names and a reference to the measure make the audit and the report easier."
+      ]
+    },
+    {
+      "id": "berichte",
+      "title": "📄 Reports",
+      "zweck": "Export of the NIS2 state of implementation (maturity level, open measures, evidence) towards the management and the supervisory authority.",
+      "rechtsgrundlage": "Art. 21(2)(f) / Art. 32 NIS2 (demonstrating implementation)",
+      "pflichtfelder": [
+        "Selection of the report sections and the format.",
+        "Prerequisite: requirements, governance, reporting process and supply chain are maintained."
+      ],
+      "anleitung": "1) Finalise all subject-matter tabs beforehand. 2) Choose the sections and the format. 3) Produce the report and file or present it as evidence.",
+      "tipps": [
+        "The quality of the report depends directly on a maintained maturity level and on the evidence."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "NIS2 module documentation",
+      "href": "docs:/modules/nis2/"
+    },
+    {
+      "label": "NIS2 Directive (EU) 2022/2555 (EUR-Lex)",
+      "href": "https://eur-lex.europa.eu/eli/dir/2022/2555/oj"
+    }
+  ],
+  "module": "nis2"
+}

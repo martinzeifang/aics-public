@@ -1,0 +1,42 @@
+{
+  "aiact": {
+    "label": "AI Act",
+    "tooltip": "EU AI Act (EU 2024/1689)"
+  },
+  "compliance-audit": {
+    "label": "Compliance audit",
+    "tooltip": "Position assessment against a framework — status report"
+  },
+  "cra": {
+    "label": "CRA",
+    "tooltip": "Cyber Resilience Act (EU 2024/2847)"
+  },
+  "dsgvo": {
+    "label": "GDPR",
+    "tooltip": "GDPR / DSGVO"
+  },
+  "firmen": {
+    "label": "Companies",
+    "tooltip": "Company management"
+  },
+  "gutachten": {
+    "label": "Expert reports",
+    "tooltip": "Court and private expert reports"
+  },
+  "nis2": {
+    "label": "NIS2",
+    "tooltip": "NIS2 Directive"
+  },
+  "pentest": {
+    "label": "Penetration tests",
+    "tooltip": "Penetration test reports as evidence"
+  },
+  "risikobewertung": {
+    "label": "Risk assessment",
+    "tooltip": "Multi-framework risk assessment"
+  },
+  "wiba": {
+    "label": "WiBA",
+    "tooltip": "BSI \"Weg in die Basis-Absicherung\" (baseline protection)"
+  }
+}

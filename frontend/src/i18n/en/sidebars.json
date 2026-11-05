@@ -1,0 +1,107 @@
+{
+  "aIActSidebar": {
+    "aIActBewertungen": "AI Act assessments",
+    "art": "Type",
+    "dieOrganisationsBewertungEntstehtAut": "The organisation assessment is created automatically when the AI Act module is active in company management. AI systems are then created per product inside the assessment.",
+    "eintrageVerbergen": "Hide entries",
+    "eintrageZeigen": "Show entries",
+    "kISystem": "🤖 AI system",
+    "keinTrefferFurV0": "No match for \"{v0}\"",
+    "keineAIActBewertungen": "No AI Act assessments.",
+    "ohneFirma": "— Without company —",
+    "organisation": "🏢 Organisation",
+    "firmaOderKISystem": "Company or AI system …"
+  },
+  "cRASidebar": {
+    "cRAProjekte": "CRA projects",
+    "cRAProjekteWerdenAutomatischAngelegt": "CRA projects are created automatically when products are added in company management (1 project per product).",
+    "firmaV0V1": "Company · {v0} {v1}",
+    "keinProjektPasstZumFilter": "No project matches the filter",
+    "keinTrefferFurV0": "No match for \"{v0}\"",
+    "keineCRAProjekte": "No CRA projects.",
+    "klasse": "Class",
+    "ohneKlasse": "Without class",
+    "produkt": "product",
+    "produkte": "products",
+    "produkteVerbergen": "Hide products",
+    "produkteZeigen": "Show products",
+    "standardprodukt": "Standard product",
+    "wichtigKlasseI": "Important class I",
+    "wichtigKlasseII": "Important class II",
+    "firmaProduktOderProjekt": "Company, product or project …"
+  },
+  "complianceAuditSidebar": {
+    "audits": "Audits"
+  },
+  "dSGVOSidebar": {
+    "dSGVOBewertungen": "GDPR assessments"
+  },
+  "firmenSidebar": {},
+  "firmenSidebarModul": {
+    "anModulProjektWirdAutomatischErzeugt": "— the module project is created automatically.",
+    "berater": "Consultant",
+    "keinTrefferFurV0": "No match for \"{v0}\"",
+    "keineV0BewertungenVorhanden": "No {v0} assessments available.",
+    "klasse": "Class",
+    "neueFirmaLegeSieInDer": "New company? Create it in",
+    "proFirmaEineBewertungLegeEineFirmaMi": "— one assessment per company. Create a company with the {v0} module enabled in company management.",
+    "mandantSuchen": "Search clients …"
+  },
+  "gutachtenSidebar": {},
+  "nIS2Sidebar": {},
+  "projektSidebar": {
+    "alleProjekte": "— All projects —",
+    "keinTrefferFurV0": "No match for \"{v0}\"",
+    "keineEintrage": "No entries",
+    "neuAnlegen": "Create new",
+    "nameOderFirma": "Name or company …"
+  },
+  "risikobewertungSidebar": {
+    "alleProjekte": "— All projects —",
+    "bewertung": "assessment",
+    "bewertungen": "assessments",
+    "bewertungenVerbergen": "Hide assessments",
+    "bewertungenZeigen": "Show assessments",
+    "firmaV0V1": "Company · {v0} {v1}",
+    "keinTrefferFurV0": "No match for \"{v0}\"",
+    "keineBewertungPasstZumFilter": "No assessment matches the filter",
+    "keineProjekte": "No projects",
+    "neubewertung": "⚠️ Reassessment",
+    "neubewertungErforderlich": "Neubewertung erforderlich",
+    "nurBewertungenMitMindestensEinemOffe": "Only assessments with at least one open risk",
+    "nurBewertungenMitMindestensEinemRisi": "Only assessments with at least one risk marked „Neubewertung erforderlich\"",
+    "offeneRisiken": "Open risks",
+    "offeneRisiken2": "open risks",
+    "projekt": "project",
+    "projekte": "projects",
+    "risiken": "risks",
+    "risiko": "risk",
+    "firmaProduktOderBewertung": "Company, product or assessment …"
+  },
+  "sidebarSearch": {
+    "alleAufklappen": "expand all",
+    "eintragen": "entries",
+    "sucheZurucksetzen": "Reset search",
+    "sucheZurucksetzenEsc": "Reset search (Esc)",
+    "suchen": "Search …",
+    "suchen2": "Search"
+  },
+  "sidebarSortFilter": {
+    "sortierung": "Sort order"
+  },
+  "sidebarWerkzeuge": {
+    "eintragen": "entries",
+    "suchen": "Search …"
+  },
+  "wiBASidebar": {
+    "berater": "Consultant",
+    "keinTrefferFurV0": "No match for \"{v0}\"",
+    "keineWiBAProjekte": "No WiBA projects.",
+    "legeImWiBAModulEinProjektAnUndOrdneE": "Create a project in the WiBA module and assign it to a company.",
+    "ohneFirma": "— Without company —",
+    "projekteVerbergen": "Hide projects",
+    "projekteZeigen": "Show projects",
+    "wiBAProjekte": "WiBA projects",
+    "firmaOderProjekt": "Company or project …"
+  }
+}
