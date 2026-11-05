@@ -1,0 +1,20 @@
+{
+  "activate": "Activate",
+  "activated": "License active",
+  "bannerDemo": [
+    "Demo license expires today. Please activate a license.",
+    "Demo license expires tomorrow. Please activate a license.",
+    "Demo license expires in {n} days. Please activate a license."
+  ],
+  "bannerReadOnly": "License violation: {grund}. Write access is disabled.",
+  "bannerUngueltig": "License not valid",
+  "deactivate": "Deactivate",
+  "expired": "License expired",
+  "expires": "Expires",
+  "expiringSoon": "License expiring soon",
+  "notActivated": "No active license — please enter a license key.",
+  "plan": "Plan",
+  "readOnlyMode": "Read-only mode — write access disabled",
+  "status": "Status",
+  "title": "License"
+}

@@ -1,0 +1,462 @@
+{
+  "title": "GDPR",
+  "regulation": "Regulation (EU) 2016/679 (General Data Protection Regulation, GDPR) – supplemented by the German Federal Data Protection Act (BDSG)",
+  "purpose": "The module supports compliance with the obligations of the General Data Protection Regulation. It brings together the keeping of the record of processing activities, the documentation of technical and organisational measures, the assessment of triggers for a data protection impact assessment, and the records for data subject rights and personal data breaches.",
+  "legalBasis": {
+    "title": "Legal basis",
+    "intro": "The GDPR requires controllers to demonstrate the lawful, transparent and secure processing of personal data (accountability, Art. 5(2)). Every processing operation needs a legal basis; data subject rights must be upheld, the processing must be documented and secured by appropriate measures. Where the risk is high, additional assessment and notification obligations apply.",
+    "bullets": [
+      "Principles of processing: lawfulness, purpose limitation, data minimisation, accuracy, storage limitation, integrity/confidentiality and accountability (Art. 5(1) and (2)).",
+      "Legal bases: every processing operation must rest on a basis under Art. 6(1) (e.g. consent, contract, legal obligation, legitimate interests); special categories additionally under Art. 9.",
+      "Data subject rights: information (Art. 13/14), access (Art. 15), rectification (Art. 16), erasure (Art. 17), restriction (Art. 18), data portability (Art. 20), objection (Art. 21) and automated individual decision-making (Art. 22); modalities and time limits under Art. 12.",
+      "Record of processing activities: to be kept under Art. 30 (the mandatory details in paragraph 1 for controllers, paragraph 2 for processors).",
+      "Technical and organisational measures: security of processing under Art. 32 (including pseudonymisation/encryption, confidentiality, integrity, availability, resilience, regular review).",
+      "Data protection impact assessment (DPIA): required where the risk is likely to be high, under Art. 35; consultation of the supervisory authority under Art. 36.",
+      "Personal data breaches: notification to the supervisory authority within 72 hours under Art. 33, communication to the data subjects where the risk is high under Art. 34.",
+      "Data protection by design/by default (Art. 25) and processing on behalf of a controller by contract (Art. 28)."
+    ]
+  },
+  "implementation": {
+    "title": "How to work in the module",
+    "intro": "First maintain the record of processing activities per processing operation, assign a legal basis and technical and organisational measures to each activity, and check the DPIA triggers. From this the module produces records and supports the management of data subject requests and personal data breaches.",
+    "bullets": [
+      "Create the processing activity and record the mandatory fields under Art. 30: purpose, categories of data subjects and of data, recipients, transfers to third countries, erasure periods.",
+      "Document the legal basis under Art. 6(1) per activity; for special categories additionally state Art. 9 and record the evidence of consent.",
+      "Assign the measures by category (physical access, system access, data access, transfer, input, availability, separation) and link them to Art. 32; review their effectiveness regularly.",
+      "Check the DPIA triggers per activity (e.g. systematic evaluation/profiling, processing of special categories on a large scale, systematic monitoring); where the risk is high, start a DPIA under Art. 35.",
+      "Determine and monitor erasure periods and storage limitation; document the retention obligations.",
+      "Use the workflows for data subject requests with deadline monitoring (a reply as a rule within one month, Art. 12(3)) and for personal data breaches with the 72-hour deadline (Art. 33).",
+      "Record the processors and store the processing agreements under Art. 28 as well as the safeguards for third countries (Chapter V).",
+      "Export the results as audit-proof records for accountability (Art. 5(2))."
+    ]
+  },
+  "moduleSpecific": {
+    "title": "Particularities of the module",
+    "intro": "The module is tailored to three central building blocks: the record of processing activities, the categories of measures and the DPIA triggers. These are linked with each other, so that a processing activity directly yields a reference to risks and measures.",
+    "bullets": [
+      "Record of processing activities: structured recording of all mandatory details under Art. 30 with separate views for controllers (paragraph 1) and processors (paragraph 2).",
+      "Categories of measures: predefined categories of measures (physical access, system access, data access, transfer, input, availability and separation control) as a template for documentation under Art. 32.",
+      "DPIA triggers: a rule-based assessment on the basis of the criteria in Art. 35(3) and the lists published by the supervisory authorities, to decide whether a DPIA is mandatory.",
+      "Linking of the activity, the legal basis, the measures and the DPIA status for consistent record-keeping."
+    ]
+  },
+  "areas": [
+    {
+      "id": "pflichtdoku",
+      "title": "📋 Documentation (RoPA, Art. 30)",
+      "zweck": "Keeping the record of processing activities (RoPA) as the central mandatory documentation – one entry per processing operation with all the mandatory details of Art. 30.",
+      "rechtsgrundlage": "Art. 30 GDPR (paragraph 1 for controllers, paragraph 2 for processors)",
+      "pflichtfelder": [
+        "RoPA ID + name: an unambiguous identifier (e.g. RoPA-001) and a meaningful designation of the processing.",
+        "Role: 'controller' or 'processor' – it governs whether paragraph 1 or paragraph 2 is decisive.",
+        "Purpose: the specific purpose of the processing (no blanket collective purposes).",
+        "Legal basis: the point(s) under Art. 6(1); for special categories additionally an 'Art. 9' basis (Art. 9(2), points).",
+        "Categories of data subjects and categories of personal data.",
+        "Recipients: to whom data is disclosed (internal/external, processors).",
+        "Third country: 'no' or the destination country, including a reference to the transfer safeguard.",
+        "Erasure period + a reference to the erasure concept (loeschfrist_ref).",
+        "Reference to the measures (Art. 32, tom_ref) and the responsible person.",
+        "DPIA trigger: set it where a trigger under Art. 35 is present (linked into the DPIA)."
+      ],
+      "anleitung": "1) Create one entry per processing activity. 2) Determine the role. 3) Name the purpose and the legal basis or bases exactly. 4) Record the categories of persons/data, the recipients and any third country. 5) Link the erasure period and the measures instead of describing them freely. 6) Check the DPIA trigger and set it where applicable – then continue in the DPIA.",
+      "tipps": [
+        "One activity = one purpose. Separate mixed purposes.",
+        "Art. 9 data always requires an additional basis – without it the entry is incomplete.",
+        "Do not maintain the erasure period/measures twice; reference the erasure concept and the catalogue of measures instead."
+      ]
+    },
+    {
+      "id": "dashboard",
+      "title": "📊 Dashboard",
+      "zweck": "A read-only overall view (formerly the \"DPMS cockpit\") of the maturity level of all areas of the data protection management system, the open items/deadlines, the target/actual state of the documents and the open risks – a management and record-keeping instrument for accountability.",
+      "rechtsgrundlage": "Art. 5(2) GDPR (accountability)",
+      "pflichtfelder": [
+        "No direct input – the cockpit aggregates from the RoPA, the catalogue of measures, the DPIA, data subject rights, the erasure concept, consent and the DPO."
+      ],
+      "anleitung": "1) Read off the maturity levels per area. 2) Prioritise areas with a low maturity level or with open deadlines. 3) Maintain them via the respective area tab – the cockpit updates from that.",
+      "tipps": [
+        "Gaps here show which subject-matter tab is next to be filled."
+      ]
+    },
+    {
+      "id": "cockpit",
+      "title": "📊 Risk cockpit",
+      "zweck": "A company-wide, cross-module view of all open data protection/security risks (from the risk assessment and from CRA) of the assigned company.",
+      "rechtsgrundlage": "Art. 24/32 GDPR (risk-based approach)",
+      "pflichtfelder": [
+        "No input – read-only aggregation per company (firmen_id)."
+      ],
+      "anleitung": "1) Make sure the project is assigned to a company (otherwise there is no aggregation). 2) Review the open risks. 3) Carry out the treatment in the linked risk assessment – the cockpit mirrors its state.",
+      "tipps": [
+        "Risks are maintained in the risk assessment, not here."
+      ]
+    },
+    {
+      "id": "anforderungen",
+      "title": "✅ Requirements",
+      "zweck": "A structured self-assessment of the GDPR requirements per chapter with a calculated maturity level.",
+      "rechtsgrundlage": "The GDPR as a whole (Art. 5, 6, 12–22, 24, 25, 28, 30, 32, 35)",
+      "pflichtfelder": [
+        "Per requirement: the state of fulfilment/maturity level and a justification/evidence.",
+        "The responsible person and, where there are gaps, a measure/deadline."
+      ],
+      "anleitung": "1) Work through chapter by chapter. 2) Set the status realistically per requirement. 3) Add the evidence or a reference (RoPA/measures/erasure concept). 4) Transfer gaps into measures/issues.",
+      "tipps": [
+        "Only set the status to 'fulfilled' where specific evidence exists – it feeds into the maturity level."
+      ]
+    },
+    {
+      "id": "assistenten",
+      "title": "🤖 Assistants",
+      "zweck": "AI-supported wizards (copy/paste prompts) that supply drafts for the RoPA, the legal basis, sector specifics, the assessment of personal data breaches, data subject rights, training and the privacy notice.",
+      "rechtsgrundlage": "— (an aid; the legal assessment remains with the controller)",
+      "pflichtfelder": [
+        "No mandatory fields – the inputs depend on the context of each assistant."
+      ],
+      "anleitung": "1) Choose the appropriate assistant. 2) Generate the prompt with the project context and copy it into the AI tool. 3) Paste the answer back and review it. 4) Take the result over into the respective subject-matter tab – the assistants do not replace an assessment on the merits.",
+      "tipps": [
+        "Always review AI suggestions on their merits and in law before they count as evidence."
+      ]
+    },
+    {
+      "id": "dokumente",
+      "title": "📄 Documents",
+      "zweck": "Storage and management of uploaded evidence and records (e.g. processing agreements, policies, screenshots) for the project.",
+      "rechtsgrundlage": "Art. 5(2) GDPR (record-keeping)",
+      "pflichtfelder": [
+        "File + a meaningful title; useful: a reference to the processing/requirement."
+      ],
+      "anleitung": "1) Upload the evidence. 2) Name and assign it unambiguously. 3) On an update, store a new version instead of overwriting.",
+      "tipps": [
+        "Files are referenced for record-keeping – meaningful names make the audit easier."
+      ]
+    },
+    {
+      "id": "tom-katalog",
+      "title": "🔐 Catalogue of measures (Art. 32 + SDM)",
+      "zweck": "Structured documentation of technical and organisational measures along the 7 protection goals of the German Standard Data Protection Model (SDM), including a review of effectiveness.",
+      "rechtsgrundlage": "Art. 32 GDPR; Standard Data Protection Model (SDM)",
+      "pflichtfelder": [
+        "Goal: one of the 7 SDM goals (data minimisation, availability, integrity, confidentiality, unlinkability, transparency, intervenability).",
+        "Measure (key/title) and description.",
+        "Status (actual maturity level 0–5) and target (target maturity level, default 5).",
+        "Responsible person.",
+        "Review of effectiveness: date + result (Art. 32(1)(d) – regular review).",
+        "RoPA reference (which processing operations the measure protects)."
+      ],
+      "anleitung": "1) Record the measures implemented per SDM goal. 2) Set the actual status and the target. 3) Name the responsible person. 4) Date the review of effectiveness and document its result. 5) Link the measure to the relevant RoPA entries.",
+      "tipps": [
+        "Without a documented review of effectiveness, Art. 32(1)(d) is not fulfilled.",
+        "A status below the target produces a visible gap – that belongs in the planning of measures."
+      ]
+    },
+    {
+      "id": "betroffenenrechte",
+      "title": "📨 Data subject rights",
+      "zweck": "Case and deadline management for data subject requests (access, rectification, erasure etc.) with identity verification and the communication to recipients under Art. 19.",
+      "rechtsgrundlage": "Art. 15–22 GDPR; time limits/modalities Art. 12; duty to communicate Art. 19",
+      "pflichtfelder": [
+        "Request ID and type (access Art. 15, rectification 16, erasure 17, restriction 18, portability 20, objection 21, Art. 22).",
+        "Date of receipt and deadline date (as a rule 1 month from receipt, Art. 12(3)).",
+        "Extension (max. +2 months where the matter is complex, with a justification) – set the flag.",
+        "Identity verified (mandatory before access is granted).",
+        "Status, handler, result/notes.",
+        "Communication to recipients (Art. 19): status, list of recipients, date – for rectification/erasure/restriction."
+      ],
+      "anleitung": "1) Create the request with its type and the date of receipt; the deadline is calculated from that. 2) Verify the identity and set the flag. 3) Handle the request and document the result. 4) For rectification/erasure/restriction, inform the recipients concerned under Art. 19 and document it. 5) Complete it before the deadline expires or extend it with reasons.",
+      "tipps": [
+        "The time limit starts on receipt, not when the handling begins.",
+        "Granting access without verifying identity can itself cause a personal data breach."
+      ]
+    },
+    {
+      "id": "loeschkonzept",
+      "title": "🗑️ Erasure concept",
+      "zweck": "A rule-based erasure concept per category of data, with retention periods and erasure classes per DIN 66398.",
+      "rechtsgrundlage": "Art. 17 GDPR (erasure) / Art. 5(1)(e) (storage limitation); DIN 66398",
+      "pflichtfelder": [
+        "Rule ID and category of data.",
+        "Retention period and the legal basis for the period ('statutory' / contractual / legitimate interests).",
+        "Erasure class (DIN 66398) and erasure trigger (the event that starts the period).",
+        "Responsible person and status.",
+        "RoPA reference (which processing operation the rule concerns)."
+      ],
+      "anleitung": "1) Create an erasure rule per category of data. 2) Name the period and its legal basis. 3) Determine the erasure class and the triggering event. 4) Assign a responsible person and link it to the RoPA.",
+      "tipps": [
+        "A period without a named trigger cannot be operationalised.",
+        "Weigh statutory retention (e.g. under the Commercial Code or the Fiscal Code) against erasure under the GDPR."
+      ]
+    },
+    {
+      "id": "transfer",
+      "title": "🌍 Third country transfers + TIA",
+      "zweck": "A register of all transfers to third countries with the basis for the transfer and a transfer impact assessment (TIA).",
+      "rechtsgrundlage": "Art. 44–49 GDPR (Chapter V)",
+      "pflichtfelder": [
+        "Transfer ID, recipient and third country.",
+        "Basis: adequacy decision (Art. 45), appropriate safeguards such as SCC/BCR (Art. 46) or a derogation (Art. 49).",
+        "Detail of the safeguard (e.g. the specific SCC modules, supplementary measures).",
+        "TIA status and TIA content (assessment of the level of law in the third country, Schrems II).",
+        "RoPA reference and, where applicable, a reference to the processing agreement."
+      ],
+      "anleitung": "1) Create an entry per transfer. 2) Choose the correct basis in the proper order (45 before 46 before 49). 3) For SCC/BCR, carry out and document a TIA, including supplementary measures. 4) Link it to the RoPA and the processing agreement.",
+      "tipps": [
+        "The derogations in Art. 49 are to be construed narrowly and are not intended for regular bulk transfers.",
+        "Without a TIA, standard contractual clauses are as a rule not sufficient after Schrems II."
+      ]
+    },
+    {
+      "id": "einwilligung",
+      "title": "✍️ Consents",
+      "zweck": "Evidence of the consents given, including the version of the text, the time, the channel and any withdrawal.",
+      "rechtsgrundlage": "Art. 7 GDPR (conditions for consent); Art. 6(1)(a) / Art. 9(2)(a)",
+      "pflichtfelder": [
+        "Consent ID and purpose (narrowly framed, one consent per purpose).",
+        "Text of the consent + version of the text (versioning for the record).",
+        "Time at which it was given, channel (e.g. web form, in writing) and the source of the data subject.",
+        "Status (active/withdrawn) and the time of withdrawal where applicable."
+      ],
+      "anleitung": "1) Create one consent per purpose with the specific text and its version. 2) Record the time it was given and the channel (evidence that it was freely given and informed). 3) On withdrawal, enter the time and set the status – withdrawal must be as easy as giving consent.",
+      "tipps": [
+        "Bundled or pre-ticked consents are ineffective (Art. 7(4) / opt-in).",
+        "Archive the exact text of the consent – blanket references do not suffice."
+      ]
+    },
+    {
+      "id": "dsgvo-dsb",
+      "title": "🛡️ DPO (data protection officer)",
+      "zweck": "Master data and mandatory records on the data protection officer, including publication and notification to the supervisory authority.",
+      "rechtsgrundlage": "Art. 37–39 GDPR",
+      "pflichtfelder": [
+        "Type (internal/external) and name.",
+        "Date of designation.",
+        "Contact email; flag 'contact published' (Art. 37(7)).",
+        "Flag 'notified to the supervisory authority' (Art. 37(7)).",
+        "Record of tasks/activities (Art. 39) and notes."
+      ],
+      "anleitung": "1) Create the DPO (internal/external) with the date of designation. 2) Record the contact details and publish them (website/privacy notice) – set the flag. 3) Notify the supervisory authority – set the flag. 4) Document the performance of the tasks/an activity report.",
+      "tipps": [
+        "Publication AND notification to the supervisory authority are separate obligations – meet both.",
+        "Check whether there is an obligation to designate a DPO at all (Art. 37(1), and § 38 BDSG where applicable)."
+      ]
+    },
+    {
+      "id": "datenpannen",
+      "title": "🚨 Personal data breaches",
+      "zweck": "An incident register for personal data breaches with the 72-hour notification deadline and communication to the data subjects.",
+      "rechtsgrundlage": "Art. 33 GDPR (notification to the supervisory authority, 72 h); Art. 34 (communication to the data subjects)",
+      "pflichtfelder": [
+        "Breach ID, title, description.",
+        "Nature of the breach (confidentiality/integrity/availability).",
+        "Established on (starts the 72-hour deadline) and the number of data subjects.",
+        "Categories of data affected and the risk assessment (low/medium/high).",
+        "Obligation to notify the supervisory authority (Art. 33) + date of notification.",
+        "Obligation to communicate to the data subjects (Art. 34, where the risk is high) + date.",
+        "Immediate measures, cause, lessons learned, status (open/notified/closed)."
+      ],
+      "anleitung": "1) Create the incident immediately on becoming aware of it (with the correct 'established on' date). 2) Assess the nature and the risk. 3) Where there is an obligation to notify: notify the supervisory authority within 72 h and record the date. 4) Where the risk is high, communicate to the data subjects without undue delay. 5) Document the immediate measures, the cause and the lessons learned, then close it.",
+      "tipps": [
+        "The 72-hour deadline begins on becoming aware, not when the analysis is complete.",
+        "An incident that need not be notified is still to be documented internally (Art. 33(5))."
+      ]
+    },
+    {
+      "id": "lia",
+      "title": "⚖️ LIA register (legitimate interests)",
+      "zweck": "A guided legitimate interests assessment (three-step test) as evidence for processing on the basis of legitimate interests.",
+      "rechtsgrundlage": "Art. 6(1)(f) GDPR (balancing)",
+      "pflichtfelder": [
+        "LIA ID, the processing concerned and the RoPA reference.",
+        "Step 1 (purpose/legitimacy): purpose, legitimate interest, flag 'legitimate'.",
+        "Step 2 (necessity): necessity, examination of less intrusive means + result.",
+        "Step 3 (balancing): interests of the data subjects, reasonable expectation, safeguards/opt-out.",
+        "Result + justification, reviewer, review date, review cycle (months) and next review."
+      ],
+      "anleitung": "1) Name the processing and link it to the RoPA. 2) Step 1: set out the legitimate interest and confirm its legitimacy. 3) Step 2: examine necessity and rule out less intrusive means. 4) Step 3: balance the interests of the data subjects and state the safeguards/opt-out. 5) Justify the result, set the reviewer/date and the follow-up.",
+      "tipps": [
+        "Where the legitimate interest does not clearly prevail, Art. 6(1)(f) is not a suitable basis.",
+        "A simple opt-out strengthens the balancing considerably."
+      ]
+    },
+    {
+      "id": "subprozessoren",
+      "title": "🔗 Sub-processors",
+      "zweck": "A register of the sub-processors per processing agreement, with their authorisation and third country status.",
+      "rechtsgrundlage": "Art. 28(2) and (4) GDPR",
+      "pflichtfelder": [
+        "Assignment to the processing agreement (avv_pk), name of the sub-processor and the service.",
+        "Third country flag + safeguard (SCC/adequacy/BCR) where a third country is involved.",
+        "Authorisation status (pending/given) + date (Art. 28(2) – prior authorisation).",
+        "Sub-processing agreement present + URL/date.",
+        "Back-to-back obligations passed on (Art. 28(4) – identical obligations)."
+      ],
+      "anleitung": "1) Assign the sub-processor to the respective processing agreement. 2) Describe the service. 3) Where a third country is involved, state the safeguard. 4) Document the authorisation (general/specific). 5) Confirm that a sub-processing agreement exists and that identical obligations have been passed on.",
+      "tipps": [
+        "Without back-to-back obligations being passed on, the main processor is fully liable (Art. 28(4)).",
+        "Where authorisation is general, ensure there is a right to object when a sub-processor changes."
+      ]
+    },
+    {
+      "id": "zweckaenderung",
+      "title": "🔄 Change of purpose",
+      "zweck": "A compatibility assessment for further processing for another purpose, using the 5 criteria of Art. 6(4).",
+      "rechtsgrundlage": "Art. 6(4) GDPR",
+      "pflichtfelder": [
+        "Change ID, RoPA reference, the original and the new purpose.",
+        "Criterion (a): the link between the original and the new purpose.",
+        "Criterion (b): the context of the collection / the relationship with the data subjects.",
+        "Criterion (c): the nature of the data (in particular special categories).",
+        "Criterion (d): the possible consequences for the data subjects.",
+        "Criterion (e): appropriate safeguards (e.g. encryption/pseudonymisation).",
+        "Result + justification and, where applicable, a new legal basis."
+      ],
+      "anleitung": "1) Set the original and the new purpose side by side. 2) Assess the 5 criteria (a)–(e) individually. 3) Establish and justify compatibility. 4) Where the new purpose is not compatible, document a separate legal basis (e.g. new consent).",
+      "tipps": [
+        "With special categories (criterion c) the threshold for compatibility is considerably higher."
+      ]
+    },
+    {
+      "id": "joint-controller",
+      "title": "🤝 Joint controllers",
+      "zweck": "A register of joint controllerships with the allocation of responsibilities and the summary for data subjects.",
+      "rechtsgrundlage": "Art. 26 GDPR",
+      "pflichtfelder": [
+        "JC ID, partner + contact, RoPA reference, the processing and the joint determination of purposes/means.",
+        "Allocation of responsibilities (Art. 26(1)): point of contact for data subjects, responsibility for information (Art. 13/14), measures (Art. 32), notification (Art. 33/34).",
+        "Arrangement present + URL/date.",
+        "Summary of the essence for data subjects (Art. 26(2)): status/text/URL.",
+        "Reviewer, review date, review cycle and next review."
+      ],
+      "anleitung": "1) Record the partner and the joint processing. 2) Allocate the responsibilities unambiguously per area and determine the point of contact. 3) Store the joint controller arrangement. 4) Make the essence of the arrangement available to data subjects.",
+      "tipps": [
+        "Data subjects may exercise their rights in respect of each controller – the internal allocation does not change that."
+      ]
+    },
+    {
+      "id": "eu-vertreter",
+      "title": "🇪🇺 EU representative",
+      "zweck": "An applicability assessment (Art. 3(2)) and a designation register for the EU representative of controllers not established in the Union.",
+      "rechtsgrundlage": "Art. 27 GDPR (in conjunction with Art. 3(2))",
+      "pflichtfelder": [
+        "Applicability assessment: establishment outside the EU, offering to data subjects in the EU, monitoring of behaviour, derogation under Art. 27(2) + an assessment note.",
+        "Where designation is required: name of the representative, address (in a Member State of the data subjects), contact.",
+        "Mandate present + date.",
+        "Named in the privacy notice (flag)."
+      ],
+      "anleitung": "1) Assess applicability (Art. 3(2)) and evaluate the derogations. 2) Where it is required, designate a representative established in the EU. 3) Store the written mandate. 4) State the representative in the privacy notice.",
+      "tipps": [
+        "Where a derogation under paragraph 2 applies, document an assessment note with reasons instead of leaving the register empty."
+      ]
+    },
+    {
+      "id": "tom",
+      "title": "🔒 Generator for the measures document",
+      "zweck": "Generates a document on the technical and organisational measures as evidence or as an annex (e.g. to a processing agreement) from the measures recorded.",
+      "rechtsgrundlage": "Art. 32 GDPR (in conjunction with Art. 28(3))",
+      "pflichtfelder": [
+        "Document metadata (organisation/version date) and the underlying content of the measures.",
+        "Recommendation: maintain them primarily in the catalogue of measures, and use this only for the document export/compilation."
+      ],
+      "anleitung": "1) Maintain the content of the measures in the catalogue of measures. 2) In the generator, set the metadata and produce the document. 3) File it as an annex/record.",
+      "tipps": [
+        "Avoid maintaining things twice – the catalogue of measures (Art. 32 + SDM) is the source, the generator is the output format."
+      ]
+    },
+    {
+      "id": "privacy",
+      "title": "📜 Privacy notice",
+      "zweck": "Produces a privacy notice/information document on the basis of the intake details recorded.",
+      "rechtsgrundlage": "Art. 13/14 GDPR (information obligations); Art. 12 (transparency)",
+      "pflichtfelder": [
+        "Controller (name/address/contact) and the DPO's contact details where applicable.",
+        "Purposes and legal bases of the processing; where Art. 6(1)(f) applies, the legitimate interest.",
+        "Recipients/categories, transfers to third countries + safeguards.",
+        "Storage period/erasure periods.",
+        "Data subject rights and the right to lodge a complaint with the supervisory authority; where applicable, whether provision is obligatory, and automated decision-making."
+      ],
+      "anleitung": "1) Fill the intake fields completely (the module marks missing mandatory details). 2) Take the purposes/legal bases over from the RoPA. 3) Produce the document and have it checked in law. 4) Publish it and keep versions.",
+      "tipps": [
+        "Keep the content consistent with the RoPA – divergences between the RoPA and the privacy notice are a typical audit finding."
+      ]
+    },
+    {
+      "id": "training",
+      "title": "🎓 Training",
+      "zweck": "Produces training and awareness material and documents the awareness measures.",
+      "rechtsgrundlage": "Art. 39(1)(b) GDPR (awareness-raising/training); Art. 32 (reliability)",
+      "pflichtfelder": [
+        "Target group(s) of the training (it governs the scope/duration).",
+        "Content/key topics and version date.",
+        "Recommendation: evidence that it was delivered as an annual control (Controls tab)."
+      ],
+      "anleitung": "1) Choose the target group(s). 2) Compile the content and produce the document. 3) Deliver the training and file the attendance/date as evidence (controls/documents).",
+      "tipps": [
+        "Training records (who/when) matter more for accountability than the slide decks themselves."
+      ]
+    },
+    {
+      "id": "kontrollen",
+      "title": "🗓️ Controls",
+      "zweck": "An annual data protection control plan with an approval workflow (management/DPO) and audit-proof attachments.",
+      "rechtsgrundlage": "Art. 5(2) / Art. 24 GDPR (accountability, review of effectiveness)",
+      "pflichtfelder": [
+        "Control ID, title, area and year.",
+        "Frequency (e.g. annual) and the responsible person.",
+        "Status (planned → approved → in progress → completed).",
+        "Planned for; once carried out: carried out on/by + result.",
+        "Approval (by/on) by the management/DPO – after that the master data is locked.",
+        "Reference (bezug_ref) and attachments where applicable (evidence with a SHA-256)."
+      ],
+      "anleitung": "1) Seed the standard annual controls or create your own. 2) Have the plan approved (management/DPO) – after that the master data can no longer be changed. 3) Carry out the control, record the result and the date, and attach the evidence. 4) Close it; open controls appear in the cockpit.",
+      "tipps": [
+        "After approval the master data is locked – review the content finally beforehand.",
+        "Attachments are secured with a SHA-256 and can only be soft-deleted (audit security)."
+      ]
+    },
+    {
+      "id": "jahresbericht",
+      "title": "📅 Annual report",
+      "zweck": "An aggregated annual data protection report with an approval/signature workflow as the central record of accountability.",
+      "rechtsgrundlage": "Art. 5(2) GDPR (accountability)",
+      "pflichtfelder": [
+        "Year; the report aggregates the controls, DPIAs, personal data breaches, data subject rights, withdrawals of consent, the maturity level of the measures and company-wide risks.",
+        "Status workflow: draft → approved (management, permission DSGVO_APPROVE) → signed (DPO, permission DSGVO_SIGN).",
+        "On signature: the finalised PDF (SHA-256, immutable thereafter)."
+      ],
+      "anleitung": "1) Choose the reporting year – the content is aggregated from the areas automatically. 2) Review the draft. 3) The management approves it (DSGVO_APPROVE). 4) The DPO signs it (DSGVO_SIGN); after that the report including the PDF is immutable.",
+      "tipps": [
+        "Update all subject-matter tabs before approval – after signature no change is possible.",
+        "Approval and signature are separate roles/permissions (management vs. DPO)."
+      ]
+    },
+    {
+      "id": "berichte",
+      "title": "📄 Reports (report centre)",
+      "zweck": "Produces individual reports per area of the data protection management system (RoPA, measures, erasure concept, data subject rights, transfers, consent, DPIA, DPO) as DOCX/PDF.",
+      "rechtsgrundlage": "Art. 5(2) GDPR (records/reporting)",
+      "pflichtfelder": [
+        "Selection of the area and the report format (DOCX/PDF).",
+        "Prerequisite: the respective area is maintained in its tab."
+      ],
+      "anleitung": "1) Choose the area. 2) Choose the format (DOCX/PDF). 3) Produce the report and file or pass it on.",
+      "tipps": [
+        "The quality of the report depends directly on how well the data is maintained in the respective subject-matter tab."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "GDPR module documentation (online)",
+      "href": "docs:/modules/dsgvo/"
+    },
+    {
+      "label": "GDPR full text (EUR-Lex, Regulation (EU) 2016/679)",
+      "href": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32016R0679"
+    },
+    {
+      "label": "EDPB – European Data Protection Board",
+      "href": "https://www.edpb.europa.eu/"
+    }
+  ],
+  "module": "dsgvo"
+}

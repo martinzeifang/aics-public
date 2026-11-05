@@ -1,0 +1,328 @@
+{
+  "title": "CRA",
+  "regulation": "Regulation (EU) 2024/2847 (Cyber Resilience Act, CRA)",
+  "purpose": "The CRA module helps manufacturers of products with digital elements to demonstrate the cybersecurity requirements of the Cyber Resilience Act. It classifies the product into the correct product class, assesses the fulfilment of the OWASP Proactive Controls (C1–C10) as a maturity level and collects the mandatory security documentation for the conformity assessment.",
+  "legalBasis": {
+    "title": "What the CRA requires",
+    "intro": "The Cyber Resilience Act obliges manufacturers to design products with digital elements securely across the entire lifecycle and to maintain products placed on the market. The essential cybersecurity requirements and the requirements for vulnerability handling are set out in Annex I; the obligations of manufacturers and the reporting obligations are governed by Art. 13 and 14. The product class determines the permissible conformity assessment route.",
+    "bullets": [
+      "Essential cybersecurity requirements for the product (secure by design/default, secure configuration, protection of data, minimising the attack surface): Annex I Part I.",
+      "Requirements for vulnerability handling (identifying/remedying vulnerabilities, regular security updates, SBOM, coordinated vulnerability disclosure): Annex I Part II.",
+      "Due diligence obligations of the manufacturer (risk assessment, technical documentation Annex VII, support/update period, CE marking): Art. 13.",
+      "Reporting obligations: actively exploited vulnerabilities and severe incidents are to be reported to the CSIRT and to ENISA via the single reporting platform (early warning within 24 h): Art. 14.",
+      "Conformity assessment depending on the product class: self-assessment (standard products) or involved procedures/a notified body for important class I/II and critical: Art. 32 in conjunction with Annex III/IV.",
+      "Deadlines: the reporting obligations under Art. 14 apply from 11 September 2026; the Regulation applies in full from 11 December 2027."
+    ]
+  },
+  "implementation": {
+    "title": "How to work in the module",
+    "intro": "In the module you first determine the product class, derive the conformity route from it, then assess the OWASP Proactive Controls and collect the mandatory documentation. AI wizards and repository/code analysis help with pre-filling the requirements; the result is exported as a conformity report.",
+    "bullets": [
+      "Classify the product: choose the class (default / important class I / important class II / critical); the module derives the permissible conformity assessment route from it.",
+      "Work through the OWASP Proactive Controls C1–C10 and award a maturity level of 0–5 per control; every control is mapped to specific CRA articles/Annex I points.",
+      "Record evidence: link evidence for every requirement (e.g. SECURITY.md, threat model, SBOM, scan reports). The evidence hint per control names typical records.",
+      "Use the repository/code analysis and auto-detect in order to recognise existing mandatory documentation (SBOM, SECURITY.md, CVD policy) automatically and to propose answers.",
+      "Check the mandatory documentation: document the SBOM, the PSIRT/coordinated vulnerability disclosure, the threat model, CVE/vulnerability handling and the support period in full.",
+      "Export the conformity report (maturity overview, open gaps, list of evidence) as the basis for the technical documentation under Annex VII."
+    ]
+  },
+  "moduleSpecific": {
+    "title": "Particularities of the CRA module",
+    "intro": "The module combines the regulatory structure of the CRA with the practical OWASP Proactive Controls framework and a maturity assessment. Classification and deadlines are central to this.",
+    "bullets": [
+      "The product classes govern the effort: default = self-assessment; important class I/II and critical require stricter procedures or a notified body.",
+      "The OWASP Proactive Controls C1–C10 (v3) serve as an operationalised checklist mapped to Annex I and Art. 13.",
+      "A maturity scale of 0–5 per control makes progress and gaps measurable and open to prioritisation.",
+      "The mandatory artefacts are bundled: SBOM, PSIRT/CVD process, threat model, CVE handling, a defined support/update period.",
+      "Timing: the reporting obligations apply from September 2026, the Regulation in full from December 2027 – the module helps to raise the maturity level in good time.",
+      "Auto-detect and AI wizards reduce manual effort but do not replace the assessment of conformity on the merits."
+    ]
+  },
+  "areas": [
+    {
+      "id": "dashboard",
+      "title": "📊 Dashboard",
+      "zweck": "Overview of the product class, the conformity route, the OWASP/requirements maturity level and the open gaps of the project.",
+      "rechtsgrundlage": "Art. 13 CRA (due diligence obligations of the manufacturer)",
+      "pflichtfelder": [
+        "No direct input – the dashboard condenses the data of the subject-matter tabs.",
+        "Prerequisite: the product class has been chosen (it governs the permissible assessment route)."
+      ],
+      "anleitung": "1) Check the product class/project master data. 2) Read off the maturity tiles and the open gaps. 3) Close the prioritised gaps in the respective subject-matter tab (OWASP, requirements, documentation).",
+      "tipps": [
+        "The key figures update from the subject-matter tabs – gaps here are the entry point for working on them."
+      ]
+    },
+    {
+      "id": "cockpit",
+      "title": "📊 Risk cockpit",
+      "zweck": "Company-wide, cross-module read-only view of the open risks (risk assessment) and vulnerabilities (cra_vuln) of the assigned company.",
+      "rechtsgrundlage": "Annex I Part I CRA (risk-based product security)",
+      "pflichtfelder": [
+        "No input – aggregation per company (firmen_id); CRA vulnerabilities are deduplicated against the risk assessment."
+      ],
+      "anleitung": "1) Click the company (🏢) in the sidebar — the company overview shows all products with their maturity level and open risks. 2) Open the '📊 Risk cockpit' tab and review open high/critical items first. 3) Carry out the treatment in the linked risk assessment or via the product's vulnerability/corrective action tabs.",
+      "tipps": [
+        "The cockpit exists at company level only, not per product (#1569) — in the product dashboard, 'Risks' leads straight there.",
+        "Risks are maintained in the risk assessment; the cockpit only mirrors their state."
+      ]
+    },
+    {
+      "id": "pflichtdoku",
+      "title": "📋 Documentation (mandatory records)",
+      "zweck": "Collecting and assessing the mandatory CRA artefacts (SBOM, coordinated vulnerability disclosure/SECURITY.md, threat model, CVE handling, support/update period) including auto-detect and vulnerability reconciliation.",
+      "rechtsgrundlage": "Annex I Part II CRA (vulnerability handling); Art. 13 (technical documentation)",
+      "pflichtfelder": [
+        "SBOM present + format/reference (Annex I Part II No. 1).",
+        "Coordinated vulnerability disclosure / SECURITY.md (contact + process).",
+        "Security update process and a defined support/update period.",
+        "Threat model / risk assessment linked.",
+        "Vulnerability reconciliation (GitHub/GitLab) into cra_vuln – with triage per finding."
+      ],
+      "anleitung": "1) Run the repository/code analysis and auto-detect (it recognises the SBOM, SECURITY.md and the CVD policy). 2) Confirm the artefacts recognised or add evidence. 3) Run the vulnerability reconciliation and triage the findings. 4) Create and link the missing mandatory artefacts.",
+      "tipps": [
+        "Auto-detect only suggests – confirmation of the evidence on the merits is still required.",
+        "The support/update period must be stated explicitly (at least 5 years as a guide value)."
+      ]
+    },
+    {
+      "id": "meldungen",
+      "title": "🚨 Reports (Art. 14)",
+      "zweck": "Deadline-driven reporting management for actively exploited vulnerabilities and severe incidents to the CSIRT/ENISA via the single reporting platform.",
+      "rechtsgrundlage": "Art. 14 CRA (early warning 24h · notification 72h · final report 14 days or 1 month); Art. 14(8) user advisory",
+      "pflichtfelder": [
+        "Type: 'vuln_exploited' (actively exploited vulnerability, final report 14 days) or incident (final report 1 month).",
+        "Title and description of the incident/vulnerability.",
+        "Detected on (starts the 24h/72h/14d chain of deadlines – see the traffic light).",
+        "Member States affected (betroffene_ms) and the suspected cause.",
+        "Mitigation/immediate measures.",
+        "Reported on per stage: early warning (24h), notification (72h), final report.",
+        "Optional: a link to the vulnerability (vuln_id) and a user advisory (Art. 14(8))."
+      ],
+      "anleitung": "1) Create the report immediately on becoming aware and set 'detected on' correctly. 2) Choose the type (vulnerability vs. incident) – it determines the deadline for the final report. 3) Send the early warning within 24h and record the date. 4) Full notification within 72h. 5) Final report within 14 days (vulnerability) or 1 month (incident). 6) Produce a user advisory if needed.",
+      "tipps": [
+        "The deadlines run from 'detected on' – the traffic light shows the time remaining (yellow < 50 %, red < 10 %).",
+        "The reporting obligations under Art. 14 apply from 11 September 2026."
+      ]
+    },
+    {
+      "id": "konformitaet",
+      "title": "✅ Conformity (Art. 32 / Annex VIII)",
+      "zweck": "Conformity assessment per release: choice of the assessment route, a checklist of evidence per module, notified body/EUCC, CE status and the structured EU declaration of conformity (DoC) with an approval/lock workflow.",
+      "rechtsgrundlage": "Art. 32 CRA in conjunction with Annex VIII (assessment procedures); Annex V (content of the DoC); CE under Art. 30",
+      "pflichtfelder": [
+        "Release version (unique per assessment record).",
+        "Product class and assessment route: A (self-assessment), B+C, H or EUCC – as permissible for the class.",
+        "A checklist of evidence per module (e.g. technical documentation; for B+C/H/EUCC additional records/a certificate).",
+        "Where a notified body is involved: the notified body's identification number; for EUCC: the EUCC level/certificate.",
+        "CE status and the structured DoC (Annex V) including its version.",
+        "Approval status (draft → approved) – locked once approved (#1220-A).",
+        "Security tests (Annex I Part II No. 3): how the obligation is substantiated – an external or internal test, automated tests, or the declared waiver with a justification and a follow-up date."
+      ],
+      "anleitung": "1) Create the release record and choose the product class + the permissible assessment route. 2) Work through the checklist of evidence per module (default = self-assessment A). 3) For important I/II/critical, record the notified body's identification number or the EUCC certificate. 4) Complete the assessment – only then can the DoC be issued. 5) Issue the DoC (Annex V) and apply the CE marking. 6) Approve (lock).",
+      "tipps": [
+        "The DoC can only be issued once the assessment route is complete (a gate).",
+        "The product class determines the permissible route – self-assessment A does not suffice for important/critical.",
+        "\"No test\" is permissible and does not turn green: Annex I Part II No. 3 is then not fulfilled, and the point is reported in the release check, in the conformity record and in the customer version.",
+        "A test report that is older than the last functionality update no longer substantiates the version shipped. A security update does not supersede it (recital 39).",
+        "\"⚙ Fill from the sources\" fills all empty fields of the declaration – the version and the subject matter from the release history and the SBOM, the manufacturer and the signatory from the client. What is already filled stays as it is; replacing it is a separate click at the field.",
+        "No. 4 is produced without AI. If a detail is missing, the corresponding sentence is omitted – no placeholder is inserted. The sentence on the SBOM binding appears only with a stored digest (\"🛡️ Fetch SBOM from the image\").",
+        "No. 6 needs a statement: either the switch \"no harmonised standards applied\" or the specifications named. A dash is neither. The catalogue separates harmonised standards (presumption of conformity under Art. 27) from other specifications.",
+        "The manufacturer's details (address, place, signatory) apply to all products of the client and are recorded once.",
+        "A cross-check runs before issuing: a placeholder in the text or a version that contradicts the file prevents issuance – there is deliberately no confirmation for this.",
+        "In day-to-day work the same form appears in the \"🚦 Releases\" tab per release, there with the version bound. \"Save draft\" preserves the state even while details are still missing."
+      ]
+    },
+    {
+      "id": "releases",
+      "title": "🚦 Releases (evidence per release)",
+      "zweck": "Phase 2 of the CRA — day-to-day work: demonstrating with every release that the product has remained conform. At the top, the phase 1 determination \"CRA-ready\" as a single line; below it, the processes per release with a checklist, four-eyes approval and an evidence archive.",
+      "rechtsgrundlage": "Art. 3(30) (substantial modification), Art. 13(8)/(18), Art. 14, Annex I Part II, Annex V/VII CRA",
+      "pflichtfelder": [
+        "Release version (the process identifier; suggestions come from the tags of the linked repository).",
+        "Type of release: security update, functionality update or substantial modification.",
+        "Substantial modification yes/no with a justification – 'no' also has to be justified (Art. 3(30)).",
+        "A checklist per release in three kinds: calculated (a result from the application's data, not tickable), decision (to be answered every time, with a justification), unchanged (only to be confirmed per release).",
+        "Status of the process: draft → under review → approved | rejected → published.",
+        "On rejection: a justification (mandatory)."
+      ],
+      "anleitung": "1) Check the phase 1 line: without an established CRA readiness, every release record stands on sand (the determination requires cra:approve and a green traffic light). 2) Choose the version and open the process. 3) Declare the type of release – with a security update, the key question is pre-filled accordingly. 4) Answer and justify the question of substantial modification. 5) Work through the decision and unchanged points; the calculated points only show the result – resolve any open ones at their source via \"→ maintain here\". 6) Submit for review (development, cra:write) – this freezes the calculated state. 7) Compliance (cra:approve) approves or rejects with a justification. 8) After approval, publish and archive the conformity record immutably as a PDF.",
+      "tipps": [
+        "A security update that does not change the intended purpose is not a substantial modification under recital 39 – a new conformity assessment, a new EU declaration of conformity and updating Annex VII are then not required.",
+        "A functionality update does not become harmless because a security fix travels with it: Annex I Part II No. 2 requires separate provision as far as technically feasible.",
+        "Four-eyes principle: whoever submits must not approve – that requires a second person with the role cra_approver.",
+        "Calculated points deliberately cannot be ticked – a checklist that ticks itself is worthless as evidence.",
+        "Download the archived records before deleting a project: they are deleted with it and they are the evidence towards third parties."
+      ]
+    },
+    {
+      "id": "akteure",
+      "title": "🏷️ Economic operators (Art. 19–24)",
+      "zweck": "Recording and evidencing the obligations of the other economic operators (importer, distributor, authorised representative, open-source steward) with a role-specific checklist.",
+      "rechtsgrundlage": "Art. 19 (authorised representative), Art. 20 (importers), Art. 22 (distributors), Art. 24 (open-source software stewards) CRA",
+      "pflichtfelder": [
+        "Role: importer | distributor | authorised representative | open-source steward.",
+        "Name, address, contact.",
+        "Product (to which the role relates).",
+        "Role checklist (the role-specific due diligence obligations as evidence).",
+        "For an authorised representative: the mandate reference (mandat_ref) and the scope of tasks.",
+        "Status (open/completed)."
+      ],
+      "anleitung": "1) Create an entry with its role per operator. 2) Record the master data (name/address/contact) and the product concerned. 3) Work through the role checklist (e.g. importer: checking the CE marking/DoC/technical documentation before placing on the market). 4) For an authorised representative, record the mandate and describe the scope of tasks.",
+      "tipps": [
+        "The authorised representative needs a written mandate (Art. 19) – incomplete without mandat_ref.",
+        "Importers/distributors may only make available products that comply with the CE requirements.",
+        "The open-source steward (Art. 24) is not a manufacturer: their checklist covers the cybersecurity policy, reporting channels and the distinction from the manufacturer's role — deliberately no CE/DoC check."
+      ]
+    },
+    {
+      "id": "korrektur",
+      "title": "↩️ Corrective action & authorities (recall, market surveillance)",
+      "zweck": "Two registers in one tab: corrective action, withdrawal and recall measures for non-conform products (the manufacturer acts) and the market surveillance processes — requests from authorities, orders, deadlines, documents provided (the authority acts).",
+      "rechtsgrundlage": "Art. 13(19)–(22) CRA (corrective measures, withdrawal/recall, informing market surveillance); Art. 52–56 CRA (market surveillance)",
+      "pflichtfelder": [
+        "Type of measure: corrective action | withdrawal | recall.",
+        "Title and trigger (the finding of non-conformity).",
+        "Versions affected and Member States affected.",
+        "Authority informed (flag) + date + name of the authority.",
+        "Optional: a link to a vulnerability (vuln_id) / a report (meldung_id).",
+        "Status (open → in progress → completed) + completion date + description."
+      ],
+      "anleitung": "1) On a non-conformity, create a measure with its trigger. 2) Determine the type of measure and the versions/States affected. 3) Where there is a risk, inform the market surveillance authority/authorities and document the date and name. 4) Implement the measure, maintain the description and complete it. All steps are recorded in the audit trail.",
+      "tipps": [
+        "Where there is a significant cyber risk, the authorities are to be informed (Art. 13(19) et seq.) – do not forget the flag and the date.",
+        "A link to a vulnerability/report establishes traceability.",
+        "Market surveillance (Art. 52–56): a missed deadline from an authority turns the release check red — just like a missed reporting deadline under Art. 14.",
+        "The state 'answered' can only be saved once at least one document provided or one result has been recorded: what the authority received is later the only answer to 'what did you submit?'."
+      ]
+    },
+    {
+      "id": "traceability",
+      "title": "🔗 Traceability (Annex VII)",
+      "zweck": "A completeness matrix for the technical file: it assigns evidence/requirements/OWASP controls to each Annex VII building block and shows substantiated/missing.",
+      "rechtsgrundlage": "Art. 13(1) CRA in conjunction with Annex VII (content of the technical documentation)",
+      "pflichtfelder": [
+        "Per Annex VII building block: the assigned document(s)/evidence.",
+        "A link to a requirement (anforderung_id) and/or an OWASP control (owasp_id).",
+        "Building block assignment (annex_baustein) per document."
+      ],
+      "anleitung": "1) Upload documents in the Documents tab and tag each document with a requirement/OWASP control/Annex building block. 2) Check in the matrix which Annex VII building blocks are still unsubstantiated (red). 3) Close the gaps with additional evidence. 4) Use the complete matrix as the basis for the technical file (Annex VII).",
+      "tipps": [
+        "A building block marked red means: the technical file is incomplete.",
+        "Maintain it primarily via the tags of the documents – the matrix condenses them."
+      ]
+    },
+    {
+      "id": "dokumente",
+      "title": "📄 Documents",
+      "zweck": "Storage and management of uploaded evidence (SBOM, SECURITY.md, threat model, scan reports) with tagging for requirement/OWASP control/Annex building block.",
+      "rechtsgrundlage": "Art. 13 CRA (technical documentation/record-keeping)",
+      "pflichtfelder": [
+        "File + a meaningful name; document type.",
+        "Tags: requirement (anforderung_id), OWASP control (owasp_id), Annex building block (annex_baustein) – they govern the traceability matrix."
+      ],
+      "anleitung": "1) Upload the evidence and name it unambiguously. 2) Tag it with the requirement/OWASP control/Annex building block. 3) On an update, store a new version instead of overwriting.",
+      "tipps": [
+        "Consistent tagging fills the traceability matrix (Annex VII) automatically."
+      ]
+    },
+    {
+      "id": "requirements",
+      "title": "✅ Requirements",
+      "zweck": "Assessment of the detailed CRA requirements per chapter with a maturity level and a reference to evidence; your own requirements can be added.",
+      "rechtsgrundlage": "Annex I CRA (essential cybersecurity and vulnerability handling requirements); Art. 13",
+      "pflichtfelder": [
+        "Per requirement: maturity level 0–5 and evidence/justification.",
+        "For your own requirements: chapter, title, description, notes, weighting."
+      ],
+      "anleitung": "1) Work through chapter by chapter. 2) Set the maturity level realistically per requirement. 3) Link the evidence (document/repository record). 4) Transfer gaps into corrective actions/measures or issues.",
+      "tipps": [
+        "Maturity level 5 only with specific evidence – it feeds into the overall maturity level and into the technical file."
+      ]
+    },
+    {
+      "id": "owasp",
+      "title": "🛡️ OWASP Secure by Design (C1–C10)",
+      "zweck": "An operationalised security checklist: the OWASP Proactive Controls C1–C10 with a maturity level and a mapping to Annex I / Art. 13.",
+      "rechtsgrundlage": "Annex I Part I CRA (secure by design/default), mapped via the OWASP Proactive Controls v3",
+      "pflichtfelder": [
+        "Per control C1–C10: maturity level 0–5.",
+        "Evidence per control (the evidence hint names typical records)."
+      ],
+      "anleitung": "1) Work through each control C1–C10. 2) Award the maturity level and link at least one item of evidence. 3) Observe the article/Annex I assignment per control. 4) Transfer weak controls into measures.",
+      "tipps": [
+        "Auto-detect can suggest initial maturity levels – review them on the merits before they count as evidence."
+      ]
+    },
+    {
+      "id": "assistenten",
+      "title": "🤖 Assistants",
+      "zweck": "AI-supported wizards (copy/paste prompts) that supply drafts for the mandatory documentation, the requirements/OWASP assessment and texts.",
+      "rechtsgrundlage": "— (an aid; the conformity assessment remains with the manufacturer)",
+      "pflichtfelder": [
+        "No mandatory fields – the inputs depend on the context of each assistant."
+      ],
+      "anleitung": "1) Choose the assistant. 2) Generate the prompt with the project context and copy it into the AI tool. 3) Paste the answer back and review it. 4) Take the result over into the respective subject-matter tab.",
+      "tipps": [
+        "Review AI suggestions on their merits – they do not replace a conformity assessment."
+      ]
+    },
+    {
+      "id": "fragebogen",
+      "title": "📥 Questionnaire",
+      "zweck": "Import of existing questionnaire answers as a starting point for the requirements/OWASP assessment.",
+      "rechtsgrundlage": "— (a survey/import aid)",
+      "pflichtfelder": [
+        "Source file/input of the questionnaire.",
+        "Assignment of the answers to requirements/controls."
+      ],
+      "anleitung": "1) Read in the questionnaire data. 2) Assign the answers to the matching requirements/controls. 3) Take them over into the assessment (requirements/OWASP) and refine them with evidence.",
+      "tipps": [
+        "The import only supplies a starting point – verify the maturity levels and the evidence on the merits afterwards."
+      ]
+    },
+    {
+      "id": "risikoanalyse",
+      "title": "🔍 Risk analysis",
+      "zweck": "Product-related cybersecurity risk analysis as the basis for secure-by-design decisions and for the technical documentation.",
+      "rechtsgrundlage": "Art. 13(2)/(3) CRA in conjunction with Annex I (cybersecurity risk assessment)",
+      "pflichtfelder": [
+        "Risks/threats identified per asset/component.",
+        "Assessment (likelihood/impact) and the measures derived.",
+        "A reference to requirements/OWASP controls and to the linked risk assessment."
+      ],
+      "anleitung": "1) Record the product/components and the attack surface. 2) Identify and assess the threats. 3) Derive measures and link them to requirements/controls. 4) Take the result over into the technical documentation.",
+      "tipps": [
+        "The risk analysis is a mandatory part of the technical file (Annex VII) – reference the results there."
+      ]
+    },
+    {
+      "id": "berichte",
+      "title": "📄 Reports",
+      "zweck": "Export of the conformity/maturity report (plan of measures, detailed requirements, OWASP, sources) as the basis of the technical documentation.",
+      "rechtsgrundlage": "Art. 13 CRA in conjunction with Annex VII (technical documentation)",
+      "pflichtfelder": [
+        "Selection of the report sections (plan of measures, detailed requirements, OWASP, sources) and the format."
+      ],
+      "anleitung": "1) Finalise all subject-matter tabs beforehand (OWASP, requirements, mandatory documentation, conformity). 2) Choose the sections. 3) Produce the report and file it as part of the technical file.",
+      "tipps": [
+        "The quality of the report depends directly on a maintained maturity level and on the linked evidence."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "CRA module documentation (online)",
+      "href": "docs:/modules/cra/"
+    },
+    {
+      "label": "OWASP Proactive Controls",
+      "href": "https://owasp.org/www-project-proactive-controls/"
+    },
+    {
+      "label": "Regulation (EU) 2024/2847 (EUR-Lex)",
+      "href": "https://eur-lex.europa.eu/eli/reg/2024/2847/oj"
+    }
+  ],
+  "module": "cra"
+}
