@@ -1,0 +1,39 @@
+services:
+  wiki-db:
+    image: lscr.io/linuxserver/mariadb:latest
+    container_name: aics_wiki_db
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - MYSQL_ROOT_PASSWORD=<siehe .env>
+      - MYSQL_DATABASE=bookstack
+      - MYSQL_USER=bookstack
+      - MYSQL_PASSWORD=<siehe .env>
+    volumes:
+      - wiki_db:/config
+    restart: unless-stopped
+  wiki:
+    image: lscr.io/linuxserver/bookstack:latest
+    container_name: aics_wiki
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - APP_URL=http://aics.example.com:6875
+      - APP_KEY=<siehe .env>
+      - DB_HOST=wiki-db
+      - DB_PORT=3306
+      - DB_USER=bookstack
+      - DB_PASS=<siehe .env>
+      - DB_DATABASE=bookstack
+    ports:
+      - "6875:80"
+    volumes:
+      - wiki_app:/config
+    restart: unless-stopped
+    depends_on:
+      - wiki-db
+volumes:
+  wiki_db:
+  wiki_app:

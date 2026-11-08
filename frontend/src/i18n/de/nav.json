@@ -1,0 +1,42 @@
+{
+  "aiact": {
+    "label": "AI Act",
+    "tooltip": "EU AI Act (EU 2024/1689)"
+  },
+  "compliance-audit": {
+    "label": "Compliance-Audit",
+    "tooltip": "Standortbestimmung gegen ein Framework — Wasserstandsmeldung"
+  },
+  "cra": {
+    "label": "CRA",
+    "tooltip": "Cyber Resilience Act (EU 2024/2847)"
+  },
+  "dsgvo": {
+    "label": "DSGVO",
+    "tooltip": "DSGVO / GDPR"
+  },
+  "firmen": {
+    "label": "Firmen",
+    "tooltip": "Firmenverwaltung"
+  },
+  "gutachten": {
+    "label": "Gutachten",
+    "tooltip": "Gerichts- und Privatgutachten"
+  },
+  "nis2": {
+    "label": "NIS2",
+    "tooltip": "NIS2-Richtlinie"
+  },
+  "pentest": {
+    "label": "Pentests",
+    "tooltip": "Pentest-Berichte als Nachweis"
+  },
+  "risikobewertung": {
+    "label": "Risikobewertung",
+    "tooltip": "Multi-Framework-Risikobewertung"
+  },
+  "wiba": {
+    "label": "WiBA",
+    "tooltip": "BSI Weg in die Basis-Absicherung"
+  }
+}

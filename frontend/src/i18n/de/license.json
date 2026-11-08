@@ -1,0 +1,20 @@
+{
+  "activate": "Aktivieren",
+  "activated": "Lizenz aktiv",
+  "bannerDemo": [
+    "Demo-Lizenz läuft heute ab. Bitte Lizenz aktivieren.",
+    "Demo-Lizenz läuft morgen ab. Bitte Lizenz aktivieren.",
+    "Demo-Lizenz läuft in {n} Tagen ab. Bitte Lizenz aktivieren."
+  ],
+  "bannerReadOnly": "Lizenz-Verstoß: {grund}. Schreibzugriff ist gesperrt.",
+  "bannerUngueltig": "Lizenz nicht gültig",
+  "deactivate": "Deaktivieren",
+  "expired": "Lizenz abgelaufen",
+  "expires": "Läuft ab",
+  "expiringSoon": "Lizenz läuft demnächst ab",
+  "notActivated": "Keine Lizenz aktiv — bitte Lizenzschlüssel eingeben.",
+  "plan": "Plan",
+  "readOnlyMode": "Lese-Modus — Schreibzugriffe gesperrt",
+  "status": "Status",
+  "title": "Lizenz"
+}
