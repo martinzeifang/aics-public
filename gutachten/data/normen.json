@@ -1,0 +1,241 @@
+{
+  "version": "2026-05-26",
+  "normen": [
+    {
+      "id": "iso-25010",
+      "titel": "ISO/IEC 25010 — Product Quality Model (SQuaRE)",
+      "version": "2023",
+      "domain": "softwarequalitaet",
+      "soll_kurz": "Vorgaben für die acht Qualitätsmerkmale eines Software-Produkts.",
+      "kategorien": [
+        {
+          "id": "iso-25010.functional-suitability",
+          "name": "Functional Suitability (Funktionale Eignung)",
+          "sub_merkmale": [
+            {"id": "completeness", "name": "Functional Completeness", "beschreibung": "Vollständigkeit der spezifizierten Funktionen."},
+            {"id": "correctness", "name": "Functional Correctness", "beschreibung": "Korrektheit der Ergebnisse."},
+            {"id": "appropriateness", "name": "Functional Appropriateness", "beschreibung": "Angemessenheit zur Aufgabenerfüllung."}
+          ]
+        },
+        {
+          "id": "iso-25010.performance-efficiency",
+          "name": "Performance Efficiency (Leistungseffizienz)",
+          "sub_merkmale": [
+            {"id": "time-behaviour", "name": "Time Behaviour", "beschreibung": "Zeitverhalten / Antwortzeiten."},
+            {"id": "resource-utilization", "name": "Resource Utilization", "beschreibung": "Ressourcennutzung."},
+            {"id": "capacity", "name": "Capacity", "beschreibung": "Kapazitätsgrenzen."}
+          ]
+        },
+        {
+          "id": "iso-25010.compatibility",
+          "name": "Compatibility (Kompatibilität)",
+          "sub_merkmale": [
+            {"id": "co-existence", "name": "Co-existence", "beschreibung": "Koexistenz mit anderer Software."},
+            {"id": "interoperability", "name": "Interoperability", "beschreibung": "Interoperabilität mit Drittsystemen."}
+          ]
+        },
+        {
+          "id": "iso-25010.usability",
+          "name": "Usability (Benutzbarkeit)",
+          "sub_merkmale": [
+            {"id": "learnability", "name": "Learnability"},
+            {"id": "operability", "name": "Operability"},
+            {"id": "user-error-protection", "name": "User Error Protection"}
+          ]
+        },
+        {
+          "id": "iso-25010.reliability",
+          "name": "Reliability (Zuverlässigkeit)",
+          "sub_merkmale": [
+            {"id": "maturity", "name": "Maturity"},
+            {"id": "availability", "name": "Availability"},
+            {"id": "fault-tolerance", "name": "Fault Tolerance", "beschreibung": "Robustheit gegenüber erwartbaren Fehlern; Exception-Handling, Retries, Circuit Breaker. Stand der Technik für transaktionale Systeme."},
+            {"id": "recoverability", "name": "Recoverability", "beschreibung": "Wiederherstellbarkeit nach Ausfällen; technische Konkretisierung des ACID-Prinzips (Atomicity + Durability) für DB-basierte Systeme."}
+          ]
+        },
+        {
+          "id": "iso-25010.security",
+          "name": "Security (Sicherheit)",
+          "sub_merkmale": [
+            {"id": "confidentiality", "name": "Confidentiality"},
+            {"id": "integrity", "name": "Integrity"},
+            {"id": "non-repudiation", "name": "Non-repudiation"},
+            {"id": "authenticity", "name": "Authenticity"},
+            {"id": "accountability", "name": "Accountability"}
+          ]
+        },
+        {
+          "id": "iso-25010.maintainability",
+          "name": "Maintainability (Wartbarkeit)",
+          "sub_merkmale": [
+            {"id": "modularity", "name": "Modularity"},
+            {"id": "reusability", "name": "Reusability"},
+            {"id": "analysability", "name": "Analysability"},
+            {"id": "modifiability", "name": "Modifiability"},
+            {"id": "testability", "name": "Testability"}
+          ]
+        },
+        {
+          "id": "iso-25010.portability",
+          "name": "Portability (Portabilität)",
+          "sub_merkmale": [
+            {"id": "adaptability", "name": "Adaptability"},
+            {"id": "installability", "name": "Installability"},
+            {"id": "replaceability", "name": "Replaceability"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "iso-27037",
+      "titel": "ISO/IEC 27037 — Digitale Beweissicherung",
+      "version": "2012",
+      "domain": "forensik",
+      "soll_kurz": "Leitfaden zur Identifikation, Erfassung, Sicherung und Übergabe digitaler Beweismittel; Chain of Custody.",
+      "kategorien": [
+        {
+          "id": "iso-27037.coc",
+          "name": "Chain of Custody (CoC)",
+          "sub_merkmale": [
+            {"id": "identifikation", "name": "Identifikation & Erfassung"},
+            {"id": "sicherung", "name": "Sicherung & Verpackung"},
+            {"id": "transport", "name": "Transport & Lagerung"},
+            {"id": "labor", "name": "Labor-Analyse"}
+          ]
+        },
+        {
+          "id": "iso-27037.hash",
+          "name": "Mathematische Integritätssicherung",
+          "sub_merkmale": [
+            {"id": "sha256", "name": "SHA-256-Hashwert bei Akquisition", "beschreibung": "Kryptografische Hashwert-Bildung unmittelbar bei Beweismittelsicherung."},
+            {"id": "verification", "name": "Hash-Verifikation vor Analyse"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "din-en-16775",
+      "titel": "DIN EN 16775 — Allgemeine Anforderungen an Sachverständigenleistungen",
+      "version": "2016",
+      "domain": "gutachten",
+      "soll_kurz": "Anforderungen an Methodik, Berichtsstruktur, Drittgutachter-Tauglichkeit der SV-Tätigkeit.",
+      "kategorien": [
+        {
+          "id": "din-16775.verfahrensgang",
+          "name": "Transparenter Verfahrensgang",
+          "sub_merkmale": [
+            {"id": "umgebung", "name": "Untersuchungsumgebung dokumentiert"},
+            {"id": "tools", "name": "Werkzeuge inkl. Versionen"},
+            {"id": "labor-setup", "name": "Labor-Setup nachvollziehbar"}
+          ]
+        },
+        {
+          "id": "din-16775.befund",
+          "name": "Disjunkter Befundbericht",
+          "sub_merkmale": [
+            {"id": "tatsachen-only", "name": "Objektive, wertungsfreie Darstellung"},
+            {"id": "trennung", "name": "Strikte Trennung Befund / Beurteilung"}
+          ]
+        },
+        {
+          "id": "din-16775.wuerdigung",
+          "name": "Gutachterliche Würdigung",
+          "sub_merkmale": [
+            {"id": "kausalitaet", "name": "Wissenschaftlich begründete Kausalität"},
+            {"id": "norm-bezug", "name": "Bezug auf anerkannte Regeln der Technik"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "owasp-asvs",
+      "titel": "OWASP ASVS — Application Security Verification Standard",
+      "version": "4.0.3",
+      "domain": "security",
+      "soll_kurz": "Verifikations-Standard für Anwendungssicherheit (V1-V14).",
+      "kategorien": [
+        {
+          "id": "asvs.v7-error-logging",
+          "name": "V7 — Error Handling and Logging",
+          "sub_merkmale": [
+            {"id": "v7.4.1", "name": "V7.4.1 Generische Fehlermeldungen", "beschreibung": "Anwendung wirft generische Fehlermeldungen statt Stack-Traces."},
+            {"id": "v7.4.2", "name": "V7.4.2 Fehlerbehandlung in Trust-Boundary"},
+            {"id": "v7.4.3", "name": "V7.4.3 Kontextuelle und sichere Behandlung unerwarteter Fehler"}
+          ]
+        },
+        {
+          "id": "asvs.v2-authentication",
+          "name": "V2 — Authentication",
+          "sub_merkmale": [
+            {"id": "v2.1", "name": "Password Security"},
+            {"id": "v2.2", "name": "General Authenticator Requirements"}
+          ]
+        },
+        {
+          "id": "asvs.v5-validation",
+          "name": "V5 — Validation, Sanitization and Encoding",
+          "sub_merkmale": [
+            {"id": "v5.1", "name": "Input Validation"},
+            {"id": "v5.3", "name": "Output Encoding and Injection Prevention"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bsi-grundschutz",
+      "titel": "BSI IT-Grundschutz",
+      "version": "2024",
+      "domain": "security",
+      "soll_kurz": "Deutscher IT-Sicherheitsstandard mit Bausteinen + Schicht-Modell.",
+      "kategorien": [
+        {
+          "id": "bsi.con.8",
+          "name": "CON.8 Software-Entwicklung",
+          "sub_merkmale": [
+            {"id": "con.8.a21", "name": "CON.8.A21 Bewährte Programmierregeln", "beschreibung": "Stand-der-Technik-Programmierregeln (Exception-Handling, defensive Programmierung)."}
+          ]
+        },
+        {
+          "id": "bsi.opsi",
+          "name": "OPS.1 Betrieb",
+          "sub_merkmale": [
+            {"id": "ops.1.1.2", "name": "OPS.1.1.2 Ordnungsgemäße IT-Administration"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dsgvo",
+      "titel": "DSGVO — Datenschutz-Grundverordnung (EU 2016/679)",
+      "version": "2018",
+      "domain": "datenschutz",
+      "soll_kurz": "EU-Datenschutzrecht.",
+      "kategorien": [
+        {
+          "id": "dsgvo.art-17",
+          "name": "Art. 17 Recht auf Löschung",
+          "sub_merkmale": [
+            {"id": "art-17.1", "name": "Löschungsanspruch der betroffenen Person"},
+            {"id": "art-17.3", "name": "Automatisierte Löschroutinen"}
+          ]
+        },
+        {
+          "id": "dsgvo.art-25",
+          "name": "Art. 25 Privacy by Design & Default",
+          "sub_merkmale": [
+            {"id": "art-25.1", "name": "Datenschutz durch Technikgestaltung"},
+            {"id": "art-25.2", "name": "Datenschutzfreundliche Voreinstellungen"}
+          ]
+        },
+        {
+          "id": "dsgvo.art-32",
+          "name": "Art. 32 Sicherheit der Verarbeitung",
+          "sub_merkmale": [
+            {"id": "art-32.1.a", "name": "Pseudonymisierung + Verschlüsselung"},
+            {"id": "art-32.1.b", "name": "Vertraulichkeit, Integrität, Verfügbarkeit"}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "title": "Companies",
+  "regulation": "Organisational basis / multi-tenancy (no dedicated statute of its own); derivable from the accountability and documentation obligations of the GDPR (Reg. (EU) 2016/679, Art. 5(2), Art. 24, Art. 30) as well as from the record-keeping obligations of the subject-matter frameworks (CRA – Reg. (EU) 2024/2847; NIS2 – Dir. (EU) 2022/2555; AI Regulation – Reg. (EU) 2024/1689).",
+  "purpose": "The Companies module is the central master-data and structural bracket of the suite: products are recorded per company, and for each product a separate project is created per compliance framework (CRA, NIS2, AI Regulation, GDPR, risk assessment). It is tied less to a single statute and instead supplies the multi-tenant base order on which the subject-matter modules build.",
+  "legalBasis": {
+    "title": "Legal and organisational framework",
+    "intro": "There is no compliance obligation to manage companies as such; the module does, however, implement the accountability and record-keeping obligations of the relevant frameworks organisationally. These require controllers to document traceably, per product or processing operation, who is responsible for what and which measures have been taken. Clean master data per company/product is the prerequisite for keeping these records consistently and in an audit-proof way.",
+    "bullets": [
+      "GDPR Art. 5(2) in conjunction with Art. 24: accountability – the controller must be able to demonstrate compliance; this requires a clear assignment of processing operations to controllers/products.",
+      "GDPR Art. 30: record of processing activities – to be kept per controller; the product-based structure supplies the basis for complete entries.",
+      "CRA (Reg. (EU) 2024/2847) Art. 13 and Annex VII: product-related technical documentation and demonstrations of conformity – they presuppose an unambiguous product/manufacturer assignment.",
+      "NIS2 (Dir. (EU) 2022/2555) Art. 20–21: responsibility of the management bodies and risk management per entity – requires an unambiguous assignment of measures to the respective organisation/service.",
+      "AI Regulation (Reg. (EU) 2024/1689) Art. 11 and Annex IV: technical documentation per AI system – requires a clear binding to the provider and to the specific system/product."
+    ]
+  },
+  "implementation": {
+    "title": "How to work in the module",
+    "intro": "Recommended workflow: first create the master data (company, then product), then create a project per product for each required compliance framework and work on it in the respective subject-matter module (CRA, NIS2, AI Regulation, GDPR, risk assessment). The Companies module remains the overview; the substantive work takes place in the module projects.",
+    "bullets": [
+      "Step 1: create the company (organisation/tenant) with an unambiguous designation.",
+      "Step 2: record the product(s) per company – one product = one assessment unit (e.g. a software/AI product or a service).",
+      "Step 3: create a project per relevant framework for each product; activate only the frameworks that actually apply, so as to avoid apparent obligations.",
+      "Record repository and documentation URLs (e.g. source code repository, documentation links) per product – they are carried over into the module projects created and used for issue/documentation linking.",
+      "Maintain the master data completely first and only then switch to the respective subject-matter module; this avoids duplicate creation and inconsistent assignments.",
+      "Choose unambiguous, lasting designations (no later renaming) so that records and linked projects remain stable."
+    ]
+  },
+  "moduleSpecific": {
+    "title": "Particularities of the module",
+    "intro": "Companies is a workflow and master-data module without a questionnaire or assessment logic of its own. Its task is the multi-tenant structuring from which the subject-matter projects emerge.",
+    "bullets": [
+      "Hierarchy: company → product → project per compliance framework (one product can have several framework projects).",
+      "Multi-tenancy: data is separated per company; this also keeps responsibilities and records cleanly apart.",
+      "Repository/documentation per product: the URLs recorded govern the link to issues and documentation in the subject-matter modules.",
+      "Dashboard (v7.0.0): overall view per company – overall degree of implementation (average of the CRA, NIS2, AI Act, GDPR and WiBA modules), degree of implementation per module and project (identical to the module dashboards), open risks from the risk cockpit, GDPR measures/BSI WiBA, open tasks/deadlines, products, evidence and the most recently produced reports.",
+      "Risk cockpit tab: all open risks and vulnerabilities of the company across modules (risk assessment, CRA).",
+      "Pentests tab (v7.1.0): upload penetration test reports as PDF, extract findings with the AI and take them over into CRA (vulnerabilities/risks), GDPR (effectiveness of the measures) and WiBA (evidence) – including retest and status feedback.",
+      "Reports tab: overall company report (management overview) and risk report as Word/PDF, storable with a history, plus an AI management summary.",
+      "No compliance assessments of its own: assessment and prompts arise in the respective module projects; the company condenses them in the dashboard and in the company reports.",
+      "Single source of truth: the master data here is referenced by all downstream modules – changes take effect across modules."
+    ]
+  },
+  "areas": [
+    {
+      "id": "stammdaten",
+      "title": "Master data",
+      "zweck": "Base data of the company/tenant – the bracket that all module projects and company-wide aggregations (risk cockpit, firmen_id) refer to.",
+      "rechtsgrundlage": "Organisational; implements accountability (GDPR Art. 5(2) / Art. 24) and product-related documentation obligations",
+      "pflichtfelder": [
+        "Company name (mandatory, unique, lasting) – on creation, projects with this name are created in the activated modules.",
+        "Company (legal designation of the organisation).",
+        "Consultant / responsible person.",
+        "Description (context on the company)."
+      ],
+      "anleitung": "1) Create the company with an unambiguous, stable name. 2) Record the organisation and the responsible person. 3) Add a description. 4) Save – after that, do not rename the company.",
+      "tipps": [
+        "The company name is the linking key (firmen_id backfill via name match) – renaming later breaks assignments.",
+        "Maintain the master data completely before modules are activated or projects created."
+      ]
+    },
+    {
+      "id": "module",
+      "title": "Modules",
+      "zweck": "Activation of the compliance modules per company; for each activated module a project of the same name can be created (direct link into the subject-matter module).",
+      "rechtsgrundlage": "Applicability of the respective frameworks (CRA Reg. (EU) 2024/2847; NIS2 Dir. (EU) 2022/2555; AI Regulation Reg. (EU) 2024/1689; GDPR)",
+      "pflichtfelder": [
+        "Module switch per framework: risk assessment, CRA, NIS2, GDPR, AI Act, WiBA, expert opinion.",
+        "Only activate frameworks that actually apply."
+      ],
+      "anleitung": "1) Activate only the applicable modules (avoid apparent obligations). 2) 'Create projects' creates the module projects for the activated modules. 3) Switch directly into the respective subject-matter module via 'Open →'.",
+      "tipps": [
+        "Activation should reflect the real exposure – the substantive work takes place in the module project.",
+        "'Create projects' is idempotent: projects that already exist are not created twice."
+      ]
+    },
+    {
+      "id": "risiko",
+      "title": "Risk projects",
+      "zweck": "Several risk assessment projects per company (e.g. per product/service) with a default framework.",
+      "rechtsgrundlage": "CRA Art. 13 (risk assessment); methodologically ISO/IEC 27005",
+      "pflichtfelder": [
+        "Default framework (rb_framework) for new projects of this company.",
+        "Per project: name (when creating it in the risk assessment module)."
+      ],
+      "anleitung": "1) Choose the default framework. 2) Create one project per assessment unit via '+ Create risk assessment project'. 3) Do the substantive risk work in the risk assessment module ('Open →').",
+      "tipps": [
+        "One project per product/service keeps risks cleanly separated and comparable.",
+        "Open risks of these projects feed into the company-wide risk cockpit."
+      ]
+    },
+    {
+      "id": "produkte",
+      "title": "Products (CRA)",
+      "zweck": "The company's products; every product automatically creates a CRA project. The assessment unit for CRA conformity.",
+      "rechtsgrundlage": "CRA (Reg. (EU) 2024/2847) Art. 13 + Annex VII (product-related technical documentation)",
+      "pflichtfelder": [
+        "Product name and product class.",
+        "Default product marker (★) – the default product corresponds to the CRA project bearing the company name."
+      ],
+      "anleitung": "1) Create an entry per product (set the class). 2) Mark the default product. 3) Work on the product-related CRA readiness via 'Open CRA →'.",
+      "tipps": [
+        "One product = one CRA assessment unit; the product class governs the depth of the CRA requirements.",
+        "Keep product names stable – they determine the CRA project name ('<Company> – <Product>')."
+      ]
+    },
+    {
+      "id": "evidence",
+      "title": "Evidence",
+      "zweck": "Central storage of the company's evidence material (files and web sources); used across modules for assessments and prompts.",
+      "rechtsgrundlage": "Record-keeping/accountability obligation (GDPR Art. 5(2)); product-related documentation of the subject-matter frameworks",
+      "pflichtfelder": [
+        "File upload (PDF/DOCX/TXT/MD/CSV/XLSX) or web URL.",
+        "Optional: type and keywords for findability."
+      ],
+      "anleitung": "1) Upload a file or add a URL. 2) Use 'Extract' to make the text content available for assessments/prompts. 3) Set keywords in order to find evidence precisely.",
+      "tipps": [
+        "Evidence is available to the modules (e.g. WiBA audit questions) company-wide – maintaining it centrally once is enough.",
+        "Meaningful names/tags make the later audit easier."
+      ]
+    },
+    {
+      "id": "gutachten",
+      "title": "Expert opinion",
+      "zweck": "Determination of the frameworks to be examined in the expert opinion and of the examination focus for this company.",
+      "rechtsgrundlage": "§§ 404a/407a ZPO (subject matter/scope); methodologically the BISG standard",
+      "pflichtfelder": [
+        "Selection of the frameworks to be examined (gutachten_frameworks).",
+        "Examination focus (priorities for the expert opinion)."
+      ],
+      "anleitung": "1) Tick the relevant frameworks. 2) Formulate the examination focus (or generate a proposal). 3) Save – the details feed into the production of the expert opinion in the expert opinion module.",
+      "tipps": [
+        "Keep the examination focus close to the specific engagement/order for evidence.",
+        "The detailed production of the expert opinion happens in the expert opinion module, not here."
+      ]
+    },
+    {
+      "id": "pentest",
+      "title": "🛡️ Penetration tests",
+      "zweck": "Upload penetration test reports (PDF) once per company, extract the findings with the AI and follow them across modules as evidence and as risks: application test → CRA, test of the internal infrastructure → GDPR measures and BSI WiBA.",
+      "rechtsgrundlage": "CRA Annex I Part II No. 3 (regular security tests) and Annex VII (test reports); GDPR Art. 32(1)(d) (regular review of the effectiveness of the measures); BSI WiBA as basic protection",
+      "pflichtfelder": [
+        "PDF report (or DOCX), type (application / internal infrastructure), tester, test period, scope.",
+        "Per finding: reference, title, severity (critical … info), CVSS, category, affected system, recommendation, status (open / fixed / accepted / false positive).",
+        "Retest: a second report with \"Retest of …\" – fixed findings receive the retest as evidence."
+      ],
+      "anleitung": "1) \"➕ Upload penetration test report\" (the file afterwards also appears under Evidence). 2) \"🤖 Extract findings\": long reports are split into parts; \"⚡ Directly with AI\" only after explicit confirmation, otherwise copy/paste. 3) Review the preview, take over your selection. 4) \"Take over into\": CRA (vulnerabilities, risks, Annex VII), GDPR measures (effectiveness review, risks) or WiBA (evidence on audit questions). 5) Maintain the status – it feeds back into CRA vulnerabilities, risks and the effectiveness of the measures.",
+      "tipps": [
+        "Penetration test reports are highly sensitive: prefer the local AI (Ollama) or copy/paste into an approved tool; the cloud route requires a confirmation and is audited.",
+        "No automatism for assessments: the status of a measure and WiBA answers are never changed automatically. If an open finding contradicts a \"Yes\" or an assessed OWASP control, \"⚠️ Reassessment required\" appears.",
+        "The assignment finding → measure/WiBA audit question is a suggestion derived from the category – check it before taking it over.",
+        "Scanned PDFs without a text layer: record findings via \"➕ Finding manually\"."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Companies module documentation (online)",
+      "href": "docs:/modules/firmen/"
+    }
+  ],
+  "module": "firmen"
+}

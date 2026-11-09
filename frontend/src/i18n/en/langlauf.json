@@ -1,0 +1,12 @@
+{
+  "kern": "{was} took longer than the interface waits. The server is still working — the operation has not been aborted, it is only no longer being waited for.",
+  "ratIdempotent": " Reload the view to see the current state. Running it again is safe: content already applied is not entered twice.",
+  "ratOhneStand": " The run itself completed, but its result is not stored — so it is gone. Start it again; this is safe, but costs another AI run.",
+  "ratPruefen": " Reload the view and check the state before you repeat the run.",
+  "was": {
+    "aktenpruefung": "The dossier review",
+    "erschliessung": "The indexing run",
+    "issueUebernahme": "Applying the issue content",
+    "vorgang": "The operation"
+  }
+}
