@@ -1,0 +1,287 @@
+{
+  "title": "Expert opinion",
+  "regulation": "§§ 402–414 ZPO (German Code of Civil Procedure, expert evidence), in particular § 407a ZPO and § 404a ZPO; methodological framework: the BISG standard for IT forensic expert opinions",
+  "purpose": "The module supports the production of expert and IT forensic court opinions to the BISG standard. It structures the make-up of the opinion, keeps to the procedural duties of the expert under the Code of Civil Procedure and provides methodological building blocks for forensic evidence.",
+  "legalBasis": {
+    "title": "Legal basis of expert evidence",
+    "intro": "A court-appointed expert is subject to the procedural duties of the Code of Civil Procedure. Central to these are the duty to render the opinion personally and to examine one's own expertise (§ 407a ZPO) as well as being bound by the direction and the order for evidence of the court (§ 404a ZPO). The expert does not provide a legal appraisal but answers only the questions of evidence put to them, on the basis of their expertise.",
+    "bullets": [
+      "§ 407a(1) ZPO: examination of whether the engagement falls within one's own field and can be completed without involving further experts; otherwise the court must be informed without delay.",
+      "§ 407a(1) ZPO: the opinion is to be rendered personally; assistants may act in a supporting capacity only and must be disclosed.",
+      "§ 407a(3) ZPO: duty to notify in the event of doubts about the content or scope of the engagement and where the assumed cost framework is likely to be exceeded.",
+      "§ 407a(4) ZPO: return of the files/objects of examination handed over, once the work is completed; careful handling of the evidence (integrity of the chain of custody).",
+      "§ 404a ZPO: direction of the work by the court; being bound by instructions and by the order for evidence, and the separation of questions of fact from questions of law.",
+      "§ 410 ZPO: taking the oath / affirming that the opinion has been rendered impartially and conscientiously.",
+      "§ 411 ZPO: form (a written opinion), the setting of deadlines and the duty to explain the opinion orally and to answer supplementary questions."
+    ]
+  },
+  "implementation": {
+    "title": "How to work in the module",
+    "intro": "The module leads in a structured way from the order for evidence to the finished version of the opinion: the questions of evidence are recorded, forensic findings are secured and documented, hypotheses are formed and tested against the findings. Every step is recorded traceably and reproducibly.",
+    "bullets": [
+      "Take the questions of evidence verbatim from the order for evidence and answer them individually, each under its own heading; no statements going beyond the engagement.",
+      "Document the initial examination under § 407a ZPO: one's own expertise, the completeness of the facts to be relied on, and notification to the court where applicable.",
+      "Record the forensic preservation without gaps: hash values (e.g. SHA-256), disk images, MACB timestamps (modified, accessed, changed, birth) and the chain of custody.",
+      "Validate and version the tools used (tool name, version, configuration) in order to ensure that the results are reproducible.",
+      "Keep findings separate from assessment: first an objective presentation of the findings, then the formation of hypotheses and a substantiated conclusion with a degree of certainty.",
+      "Cross-reference the sources and the facts relied on; trace every statement back to a documented finding.",
+      "Before submission: plan a peer review and check critical findings for reproducibility by a third expert.",
+      "Close the opinion with a summary, the methodology, the findings, the answers to the questions of evidence and a list of annexes; add the affirmation under § 410 ZPO."
+    ]
+  },
+  "moduleSpecific": {
+    "title": "Particularities of the expert opinion module",
+    "intro": "The module is tailored to IT forensic expert opinions to the BISG standard and reflects the specific requirements as to structure, procedural duties and forensic methodology.",
+    "bullets": [
+      "A template for the BISG-compliant structure of the opinion (engagement/questions of evidence, facts, methodology, findings, appraisal, answers, annexes).",
+      "A checklist of the § 407a ZPO duties as an initial examination before the actual investigation begins.",
+      "Methodological building blocks: forensic preservation (MACB times, hashing, imaging), tool validation, formation of hypotheses and cross-referencing.",
+      "Quality assurance via peer review and guidance on reproduction by a third expert.",
+      "The strict separation of the question of fact (the expert) from the question of law (the court) under § 404a ZPO is built into the structure.",
+      "Traceable documentation of the chain of custody as a principle running through all building blocks."
+    ]
+  },
+  "areas": [
+    {
+      "id": "stammdaten",
+      "title": "Cover sheet (master data)",
+      "zweck": "Master data of the opinion and the cover sheet details – it distinguishes court from private opinions and governs status and confidentiality.",
+      "rechtsgrundlage": "§ 404a ZPO (being bound by the order for evidence/the court); § 411 ZPO (form/deadline)",
+      "pflichtfelder": [
+        "Type of opinion (court/private) – it governs the cover sheet.",
+        "Court: court, chamber, case number, date of the order for evidence, claimant, defendant.",
+        "Private: client, type of engagement, date, number, fee agreement.",
+        "Subject (the subject matter of the opinion), name of the expert.",
+        "Confidentiality (locked once the status changes to finalised/submitted).",
+        "Status (in progress → finalised → submitted)."
+      ],
+      "anleitung": "1) Choose the type (court/private). 2) Take the proceedings/engagement data exactly from the order for evidence or the engagement. 3) Set the subject and the expert's name. 4) Determine the confidentiality while the opinion is still in progress. 5) Only set the status to final once the validator reports release readiness.",
+      "tipps": [
+        "Confidentiality is locked once the status changes – determine it finally beforehand.",
+        "Where the opinion is derived from a compliance audit: the finding skeletons taken over are empty and must be formulated anew in person under § 407a ZPO."
+      ]
+    },
+    {
+      "id": "selbstcheck",
+      "title": "Self-check (§ 406)",
+      "zweck": "The expert's self-examination for bias before accepting the engagement; it produces the editable prose on bias for Chapter III of the opinion.",
+      "rechtsgrundlage": "§ 406 ZPO (rejection), § 407a(2) ZPO (duties to notify); § 404a ZPO",
+      "pflichtfelder": [
+        "An answer (yes/no/unclear) to every self-check question (e.g. prior involvement, personal/economic proximity to the parties).",
+        "Prose on bias: review/adapt the generated text and save it (it goes into Chapter III of the DOCX)."
+      ],
+      "anleitung": "1) Answer all questions truthfully. 2) Evaluate – the result gives a recommendation (unobjectionable/notify the court/reject). 3) Read the prose on bias, adapt it where necessary and save it.",
+      "tipps": [
+        "Where the answer is 'unclear' or where there are relationships of proximity, inform the court actively (§ 407a(2)) rather than remaining silent.",
+        "The saved prose appears in the export – without it, the section on bias is missing."
+      ]
+    },
+    {
+      "id": "beweisfragen",
+      "title": "II. Questions of evidence",
+      "zweck": "Verbatim recording of the questions of evidence from the order for evidence and their answering on the merits – the substantive core of the engagement.",
+      "rechtsgrundlage": "§ 404a ZPO (being bound by the order for evidence); § 407a(3) ZPO (scope of the engagement)",
+      "pflichtfelder": [
+        "No. (order), question (verbatim from the order for evidence).",
+        "Short answer (yes/no/partially/non liquet).",
+        "Detailed answer (2–3 sentences, with a reference to the appraisals in Chapter V)."
+      ],
+      "anleitung": "1) Take each question of evidence verbatim. 2) Choose the short answer. 3) Formulate the detailed answer and refer to the appraisal that carries it (Chapter V). 4) Do not make statements going beyond the engagement.",
+      "tipps": [
+        "'Non liquet' is a permissible and honest answer where the findings do not support a statement.",
+        "The answer is the conclusion – the reasoning belongs in the findings (IV) and the appraisals (V)."
+      ]
+    },
+    {
+      "id": "befunde",
+      "title": "IV. Findings",
+      "zweck": "Pure establishment of fact: what was objectively established, by which method and with which tool – without any evaluation.",
+      "rechtsgrundlage": "§ 404a ZPO (question of fact vs. question of law); reproducibility per ISO/IEC 27037",
+      "pflichtfelder": [
+        "No. (e.g. 4.1) and title.",
+        "Method (static/dynamic/database/network/interview/live forensics).",
+        "Tool (name + version) for reproducibility.",
+        "Description – facts only (a language linter checks for evaluative wording)."
+      ],
+      "anleitung": "1) Number and title the finding. 2) State the method and the tool used including its version. 3) Describe observable facts only. 4) Resolve the linter's notes (evaluative wording).",
+      "tipps": [
+        "Strict separation: findings = facts, evaluation only in Chapter V (§ 404a ZPO).",
+        "The tool version is mandatory for reproducibility and for tool validation (Forensics tab)."
+      ]
+    },
+    {
+      "id": "beurteilungen",
+      "title": "V. Appraisals",
+      "zweck": "Technical appraisal of the findings against a standard, in a target/actual comparison with causality – the conclusion on the merits (without any legal appraisal).",
+      "rechtsgrundlage": "§ 404a ZPO (the expert's question of fact, no legal appraisal)",
+      "pflichtfelder": [
+        "No. (e.g. 5.1), title, standard (selection) + reference to the standard.",
+        "Linked finding IDs (what the appraisal rests on).",
+        "Target (what the standard requires), actual (comparison with the finding), causality.",
+        "Appraisal – on the merits, with a 'legal lock' (no legal assessment)."
+      ],
+      "anleitung": "1) Choose the standard and the reference. 2) Link the findings that carry it. 3) Derive the target from the standard, the actual from the findings, then the causality. 4) Appraise on the merits without answering questions of law. 5) Optionally generate an AI suggestion and review it on the merits.",
+      "tipps": [
+        "Every appraisal must rest on linked findings – otherwise the cross-reference linter will object.",
+        "Avoid legal conclusions (e.g. 'a defect in the legal sense') – that is for the court to decide."
+      ]
+    },
+    {
+      "id": "assets",
+      "title": "Exhibits (chain of custody)",
+      "zweck": "Gap-free documentation of the evidence with hash values and acquisition data – the chain of custody per ISO/IEC 27037.",
+      "rechtsgrundlage": "§ 407a(4) ZPO (handling of the objects of examination); ISO/IEC 27037 (chain of custody)",
+      "pflichtfelder": [
+        "Designation of the exhibit.",
+        "SHA-256 (calculated automatically when the file is uploaded) – mandatory.",
+        "Time of acquisition (UTC) and place.",
+        "Tool (name + version), countersigned by."
+      ],
+      "anleitung": "1) Name the exhibit and upload the file (the SHA-256 is produced automatically). 2) Record the time of acquisition (UTC) and the place. 3) Document the preservation tool + version and the countersignature. 4) Produce a preservation record PDF per exhibit.",
+      "tipps": [
+        "Without a hash value there is no robust integrity – SHA-256 is mandatory.",
+        "Always record times in UTC to avoid time zone ambiguity."
+      ]
+    },
+    {
+      "id": "verfahren",
+      "title": "III. Procedure",
+      "zweck": "The chronological course of the proceedings including communication with the parties, with a symmetry check (equal treatment of the parties).",
+      "rechtsgrundlage": "§ 404a ZPO (direction by the court); the right to be heard / equal treatment of the parties",
+      "pflichtfelder": [
+        "Date, type of event, title and description per procedural step.",
+        "Recipients of the communication (claimant/defendant/court) – the basis of the symmetry check."
+      ],
+      "anleitung": "1) Record every relevant step chronologically (the order can be corrected with ▲/▼). 2) Where there is communication with the parties, mark the recipients. 3) Check the symmetry – resolve one-sided communication to only one party.",
+      "tipps": [
+        "Breaches of symmetry (informing only one party) endanger the right to be heard – always involve both parties.",
+        "Record site visits and correspondence without gaps."
+      ]
+    },
+    {
+      "id": "forensik",
+      "title": "Forensics (MACB/tools)",
+      "zweck": "IT forensic tools and methodology: tool validator, MACB timestamps (timestomping detection), order of volatility and log classification.",
+      "rechtsgrundlage": "ISO/IEC 27037 (identification, collection, preservation of digital evidence); order of volatility (RFC 3227)",
+      "pflichtfelder": [
+        "Tool validator: all tools used in the findings should be in the expert's register.",
+        "MACB entries: file path + modified/accessed/changed/born timestamps.",
+        "Where the method is 'live forensics': observe the order of volatility (the sequence of preservation)."
+      ],
+      "anleitung": "1) Run the tool validator – add unknown tools to the register. 2) Record the MACB timestamps per relevant file; assess any timestomping warnings. 3) For live forensics, keep to the order of volatility. 4) Classify logs with the classifier.",
+      "tipps": [
+        "Where timestomping is suspected (inconsistent MACB times), appraise it expressly in the opinion.",
+        "Only validated, versioned tools secure reproducibility."
+      ]
+    },
+    {
+      "id": "hypothesen",
+      "title": "Hypothesis tree",
+      "zweck": "Systematic collection of alternative explanations and their substantiated rejection or acceptance – plus third-expert simulation and the cross-reference linter.",
+      "rechtsgrundlage": "Scientific traceability; DIN EN 16775 (expert services)",
+      "pflichtfelder": [
+        "Per hypothesis: the associated appraisal, the text of the hypothesis, the status (open/rejected/accepted), the reasoning.",
+        "Reasoning is mandatory when rejecting or accepting."
+      ],
+      "anleitung": "1) Collect alternative explanations for every appraisal that carries weight. 2) Reject or accept each hypothesis with reasons. 3) Produce a third-expert prompt for critical findings (reproduction instructions). 4) Run the cross-reference linter to check the structure.",
+      "tipps": [
+        "A hypothesis without reasoning weakens the evidential value – always give reasons.",
+        "Use the cross-reference linter before the validator in order to find gaps in the links early."
+      ]
+    },
+    {
+      "id": "peer",
+      "title": "Peer review",
+      "zweck": "Four-eyes quality assurance before submission, 10-year retention and an anonymised preview.",
+      "rechtsgrundlage": "Quality assurance; professional care; retention obligations",
+      "pflichtfelder": [
+        "Reviewer name (request the review).",
+        "Comments per chapter (chapter, text, author) during the review.",
+        "Complete the review before the opinion is finalised."
+      ],
+      "anleitung": "1) Request the review. 2) The reviewer comments by chapter. 3) Incorporate the comments and complete the review. 4) Activate the 10-year retention. 5) Review the anonymised preview if needed.",
+      "tipps": [
+        "Complete the peer review before changing the status to 'finalised'.",
+        "The anonymised preview is suitable for training/examples without reference to individuals."
+      ]
+    },
+    {
+      "id": "honorar",
+      "title": "Fees",
+      "zweck": "Time log and tracking of fees and disbursements as the basis for invoicing (JVEG for court opinions).",
+      "rechtsgrundlage": "JVEG (remuneration of court-appointed experts); § 407a(3) ZPO (notification of costs)",
+      "pflichtfelder": [
+        "Per entry: category (study of the file/exhibits/laboratory/report/communication/site visit/…), duration (minutes), hourly rate (€), description."
+      ],
+      "anleitung": "1) Record activities promptly as time log entries. 2) Set the hourly rate per entry. 3) Check the totals (fees/disbursements/outstanding). 4) Produce the invoice PDF.",
+      "tipps": [
+        "Where the cost framework is likely to be exceeded, inform the court in good time (§ 407a(3) ZPO).",
+        "Book times promptly – estimates made after the fact are open to challenge."
+      ]
+    },
+    {
+      "id": "validator",
+      "title": "Validator + export",
+      "zweck": "Pre-export check (release readiness) and language linter, plus DOCX preview/export of the final version.",
+      "rechtsgrundlage": "§ 411 ZPO (written opinion); § 404a ZPO (question of fact/question of law)",
+      "pflichtfelder": [
+        "No direct input – it checks completeness/structure and language from the subject-matter tabs.",
+        "Prerequisite for export: the validator reports 'release-ready' (no errors)."
+      ],
+      "anleitung": "1) Run the validator. 2) Resolve errors (they block the export). 3) Review the language warnings and tone down evaluative wording in the findings. 4) View the DOCX preview, then export.",
+      "tipps": [
+        "Language warnings often indicate impermissible evaluations in the chapters of fact (Chapter IV).",
+        "Only set the status to finalised once it is 'release-ready'."
+      ]
+    },
+    {
+      "id": "glossar",
+      "title": "📖 Glossary",
+      "zweck": "A glossary of technical terms and standards that appears alphabetically in the annex; it can be created automatically from the standards/tools/methods plus a seed catalogue.",
+      "rechtsgrundlage": "Comprehensibility/transparency of the opinion for the court",
+      "pflichtfelder": [
+        "Per entry: term (mandatory) and explanation; type/source are kept.",
+        "Manual entries (source='manuell') are preserved when the glossary is created automatically."
+      ],
+      "anleitung": "1) Run 'Create automatically' – it draws the standards, tools and methods from the opinion plus the seed catalogue. 2) Review/refine the explanations. 3) Add missing technical terms manually.",
+      "tipps": [
+        "Automatic creation does not overwrite manual entries – your own refinements are preserved.",
+        "A good glossary makes the opinion more comprehensible to a court that is not expert in the field."
+      ]
+    },
+    {
+      "id": "finalarchiv",
+      "title": "🔒 Final archive",
+      "zweck": "Immutable, SHA-256-secured storage of the finally corrected version (DOCX/PDF) with an audit record.",
+      "rechtsgrundlage": "Audit security/integrity; § 411 ZPO (the binding written version)",
+      "pflichtfelder": [
+        "Final version file (DOCX/PDF) and an optional remark.",
+        "Uploading produces a SHA-256 + an audit entry (uploaded by/on)."
+      ],
+      "anleitung": "1) Upload the finally corrected version. 2) The file is secured with a SHA-256 and recorded. 3) Download it if needed; deletion is for administrators only, with a mandatory justification (soft delete).",
+      "tipps": [
+        "Only archive the genuinely final version after the peer review/validator.",
+        "Deletion is possible only as an audited soft delete (administrator + justification) – the final version remains demonstrable."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Expert opinion module documentation (online)",
+      "href": "docs:/modules/gutachten/"
+    },
+    {
+      "label": "BISG e.V. - German federal association of IT experts and assessors",
+      "href": "https://www.bisg-ev.de/"
+    },
+    {
+      "label": "§ 407a ZPO - Further duties of the expert",
+      "href": "https://www.gesetze-im-internet.de/zpo/__407a.html"
+    },
+    {
+      "label": "§ 404a ZPO - Direction of the expert's work",
+      "href": "https://www.gesetze-im-internet.de/zpo/__404a.html"
+    }
+  ],
+  "module": "gutachten"
+}

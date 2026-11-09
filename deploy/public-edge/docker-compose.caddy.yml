@@ -1,0 +1,17 @@
+# Edge-Proxy für die externe Veröffentlichung (docker02). Bindet 80/443 am Host
+# (auf docker02 frei) und erreicht die internen Ports via network_mode host.
+# Let's-Encrypt-Zertifikate werden automatisch geholt + erneuert (HTTP-01/TLS-ALPN),
+# SOBALD DNS + Firewall-DNAT stehen.
+services:
+  caddy:
+    image: caddy:2
+    container_name: aics_public_edge
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+volumes:
+  caddy_data:
+  caddy_config:

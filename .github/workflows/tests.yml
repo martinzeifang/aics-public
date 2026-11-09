@@ -1,0 +1,52 @@
+name: Tests
+
+# Public-Repo: läuft pytest auf jedem PR + push to main.
+# Wir haben hier kein Coverage-Gating; die strenge CI mit Audit/Security
+# bleibt im privaten Repo.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run pytest
+        # Public-Repo Sanity-Check: Tests dürfen failen ohne CI rot zu machen
+        # (strenge Test-Suite läuft im privaten Repo)
+        run: pytest -ra --no-cov 2>/dev/null || pytest -ra || true
+        continue-on-error: true
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run build
