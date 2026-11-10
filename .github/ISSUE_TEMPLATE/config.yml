@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Projektplan & Übersicht
+    url: https://github.com/users/martinzeifang/projects/2
+    about: "Zentrale Projektplanung und Status aller Module"
+  - name: Dokumentation (CLAUDE.md)
+    url: https://github.com/martinzeifang/AI-Compliance-Suite/blob/main/CLAUDE.md
+    about: "Architektur, Module und Entwicklung"

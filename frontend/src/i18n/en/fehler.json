@@ -1,0 +1,24 @@
+{
+  "abgleichen": "Reconciling failed.",
+  "aktualisieren": "Updating failed.",
+  "allgemein": "The request failed.",
+  "anlegen": "Creating failed.",
+  "anmelden": "Sign-in failed.",
+  "auswerten": "Processing failed.",
+  "bewerten": "Assessment failed.",
+  "entfernen": "Removing failed.",
+  "erzeugen": "Generating failed.",
+  "exportieren": "Export failed.",
+  "freigeben": "Approval failed.",
+  "hochladen": "Upload failed.",
+  "kein_netz": "No connection to the server. Please check your network and try again.",
+  "laden": "Loading failed.",
+  "loeschen": "Deleting failed.",
+  "speichern": "Saving failed.",
+  "uebernehmen": "Applying failed.",
+  "verknuepfen": "Linking failed.",
+  "zeitueberschreitung": "The server did not respond in time. Please try again.",
+  "zusatz": {
+    "fehlendeFelder": "missing: {felder}"
+  }
+}

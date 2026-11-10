@@ -1,0 +1,375 @@
+<template>
+  <!-- #1234: Konformitäts-Checkliste (Soll-Ist) — nur sichtbar, wenn Items existieren -->
+  <div v-if="checklist && checklist.items.length" class="checklist-panel">
+    <div class="cl-head">
+      <h4 class="cl-title">{{ $t('geteilt.documentChecklistPanel.konformitatsCheckliste') }}</h4>
+      <div class="cl-progress">
+        <div class="cl-bar">
+          <div class="cl-bar-fill" :style="{ width: progressPct + '%' }"></div>
+        </div>
+        <span class="cl-progress-text">
+          {{ $t('geteilt.documentChecklistPanel.v0V1Erfullt', { v0: checklist.fortschritt.erfuellt, v1: checklist.fortschritt.gesamt }) }}
+          <template v-if="checklist.fortschritt.pflicht_gesamt">
+            {{ $t('geteilt.documentChecklistPanel.pflichtV0V1', { v0: checklist.fortschritt.pflicht_erfuellt, v1: checklist.fortschritt.pflicht_gesamt }) }}
+          </template>
+        </span>
+      </div>
+    </div>
+
+    <div v-if="error" class="cl-error">{{ error }}</div>
+
+    <ul class="cl-list">
+      <li v-for="it in checklist.items" :key="it.id" class="cl-item">
+        <label class="cl-check">
+          <input
+            type="checkbox"
+            :checked="it.erfuellt"
+            :disabled="busy"
+            @change="toggle(it, ($event.target as HTMLInputElement).checked)"
+          />
+          <span class="cl-label">
+            {{ it.label }}
+            <span v-if="it.pflicht" class="cl-pflicht">{{ $t('common.pflicht') }}</span>
+            <span v-else class="cl-optional">optional</span>
+          </span>
+        </label>
+        <span v-if="it.rechtsbezug" class="cl-legal">{{ it.rechtsbezug }}</span>
+        <span
+          v-if="suggestions[it.id] !== undefined && suggestions[it.id] !== it.erfuellt"
+          class="cl-suggest"
+          :title="$t('geteilt.documentChecklistPanel.kIVorschlagBitteSelbstBestatigen')"
+        >{{ $t('geteilt.documentChecklistPanel.vorschlagV0', { v0: suggestions[it.id] ? $t('geteilt.documentChecklistPanel.erfullt') : $t('common.offen') }) }}</span>
+      </li>
+    </ul>
+
+    <!-- #1236: Querverweis-Bausteine (vorhandene Modul-Daten als Bestandteil) -->
+    <div v-if="checklist.bausteine && checklist.bausteine.length" class="cl-bausteine">
+      <span class="cl-bausteine-title">{{ $t('geteilt.documentChecklistPanel.vorhandeneBausteineKeineDatendopplun') }}</span>
+      <ul>
+        <li v-for="b in checklist.bausteine" :key="b.ziel">
+          <strong>{{ b.label }}</strong> — {{ b.hinweis }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="cl-actions">
+      <button class="btn-primary" :disabled="busy" @click="openAuto">
+        {{ $t('geteilt.documentChecklistPanel.vollstandigkeitPrufenKI') }}
+      </button>
+      <button class="btn-secondary" :disabled="busy" @click="onAiCheck">
+        {{ $t('geteilt.documentChecklistPanel.kIPrufungPrompt') }}
+      </button>
+    </div>
+
+    <!-- #1423: Auto-KI-Vollständigkeitsprüfung (API/Cloud oder lokale LLM) -->
+    <div v-if="autoOpen" class="cl-ai-overlay" @mousedown.self="closeAuto">
+      <div class="cl-ai-modal">
+        <h3>{{ $t('geteilt.documentChecklistPanel.kIVollstandigkeitsprufung') }}</h3>
+        <DataPreviewWarning
+          v-if="!autoStarted"
+          :fields="autoPreviewFields"
+          :sensitive="['Dokumentinhalt']"
+          :provider="aiProvider"
+          @confirm="startAuto"
+        />
+        <!-- #1834: worauf die Prüfung besonders achten soll -->
+        <PromptZusatzFeld v-if="!autoStarted" v-model="checkZusatz"
+                          :modul="modul" :projekt="projekt" bereich="dokument"
+                          beispiel="z. B. Bitte besonders auf die Nachweise zu Lieferanten achten." />
+        <!-- #1836/E2: Die Daten-Vorschau oben IST die Zustimmung. Sie wird
+               jetzt mitgesendet (`confirmed`), damit der serverseitige
+               Riegel greift und ein Revisionseintrag entsteht — vorher
+               war sie eine Anzeige ohne Wirkung (#1840). Kein zweites
+               Tor: für denselben Vorgang eines zu viel. -->
+        <KiStreamView
+          v-if="autoStarted"
+          :url="autoUrl"
+          :body="{ prompt_zusatz: checkZusatz }"
+          :confirm-egress="true"
+          :egress-vorbestaetigt="true"
+          :egress-modul="modul"
+          egress-context="dokument.ki-check"
+          :pipeline="true"
+          @done="onAutoDone"
+          @error="(m: string) => { autoError = m }"
+        >
+          <template #result="{ payload }">
+            <div class="cl-auto-summary">
+              <p>
+                <strong>{{ payload.pflicht_erfuellt }}/{{ payload.pflicht_gesamt }}</strong>
+                {{ $t('geteilt.documentChecklistPanel.pflichtpunkteErfullt') }}
+                <span v-if="payload.gaps && payload.gaps.length"> {{ $t('geteilt.documentChecklistPanel.v0LuckeN', { v0: payload.gaps.length }) }}</span>
+              </p>
+              <div v-if="payload.gaps && payload.gaps.length" class="cl-gaps">
+                <h4>{{ $t('geteilt.documentChecklistPanel.fehlendeUnvollstandigePflichtinhalte') }}</h4>
+                <ul>
+                  <li v-for="g in payload.gaps" :key="g.id">
+                    <strong>{{ g.label }}</strong>
+                    <span class="cl-gap-status">[{{ g.status }}]</span>
+                    <span v-if="g.begruendung"> — {{ g.begruendung }}</span>
+                  </li>
+                </ul>
+                <button
+                  v-if="modul === 'cra'"
+                  class="btn-primary"
+                  :disabled="gapsIssue.creating"
+                  @click="createGapsIssue"
+                >
+                  {{ gapsIssue.creating ? $t('geteilt.documentChecklistPanel.erstelleIssue') : $t('geteilt.documentChecklistPanel.issueFurFehlendeInhalteErstellen') }}
+                </button>
+                <p v-if="gapsIssue.url" class="cl-issue-ok">
+                  {{ $t('geteilt.documentChecklistPanel.issueErstellt') }} <a :href="safeUrl(gapsIssue.url)" target="_blank" rel="noopener">{{ gapsIssue.url }}</a>
+                </p>
+                <p v-if="gapsIssue.error" class="cl-error">{{ gapsIssue.error }}</p>
+              </div>
+              <p v-else class="cl-issue-ok">{{ $t('geteilt.documentChecklistPanel.allePflichtinhalteErkannt') }}</p>
+            </div>
+          </template>
+        </KiStreamView>
+        <div v-if="autoError" class="cl-error">{{ autoError }}</div>
+        <div class="cl-ai-actions">
+          <button class="btn-secondary" @click="closeAuto">{{ $t('common.close') }}</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KI-Prüf-Dialog (Copy/Paste) -->
+    <div v-if="aiOpen" class="cl-ai-overlay" @mousedown.self="aiOpen = false">
+      <div class="cl-ai-modal">
+        <h3>{{ $t('geteilt.documentChecklistPanel.kIPrufungDerPflichtinhalte') }}</h3>
+        <p class="cl-ai-hint">
+          {{ $t('geteilt.documentChecklistPanel.promptKopierenUndInDenKIAssistentenE') }} <strong>vorgeschlagen</strong>{{ $t('geteilt.documentChecklistPanel.aberNichtAutomatischGesetztDuEntsche') }}
+        </p>
+        <label class="cl-ai-label">{{ $t('geteilt.documentChecklistPanel.prompt') }}</label>
+        <textarea class="cl-ai-prompt" :value="aiPrompt" rows="6" readonly></textarea>
+        <button class="btn-mini" @click="copyPrompt">
+          {{ kopiert ? $t('geteilt.documentChecklistPanel.kopiert') : $t('geteilt.documentChecklistPanel.promptKopieren') }}</button>
+        <label class="cl-ai-label">{{ $t('geteilt.documentChecklistPanel.kIAntwortJSONEinfugen') }}</label>
+        <textarea
+          v-model="aiResponse"
+          class="cl-ai-prompt"
+          rows="6"
+          placeholder='{"items": [{"id": "...", "erfuellt": true}]}'
+        ></textarea>
+        <div v-if="aiError" class="cl-error">{{ aiError }}</div>
+        <div class="cl-ai-actions">
+          <button class="btn-secondary" @click="aiOpen = false">{{ $t('common.close') }}</button>
+          <button class="btn-primary" :disabled="!aiResponse.trim()" @click="applySuggestions">
+            {{ $t('geteilt.documentChecklistPanel.vorschlageUbernehmen') }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue'
+// #2065: Die zweite Linie. Die erste liegt im Backend
+// (`validate_outbound_url`); zehn andere Dateien führen solche
+// Links konsequent über `safeUrl` (Schema-Positivliste, #746) —
+// diese nicht. Wer künftig eine dritte Quelle für `external_url`
+// einbaut, hat dann keine.
+import { safeUrl } from '../../utils/safeUrl'
+import { kopiere } from '../../utils/zwischenablage'
+import { useDocumentsStore, type Checklist, type ChecklistItem } from '../../stores/documents'
+import DataPreviewWarning from './DataPreviewWarning.vue'
+import KiStreamView from './KiStreamView.vue'
+import PromptZusatzFeld from './PromptZusatzFeld.vue'
+import apiClient from '../../api/client'
+import { t } from '../../i18n'
+
+const props = defineProps<{
+  modul: string
+  projekt: string
+  docId: number
+}>()
+// #1251: dem Editor melden, ob eine Checkliste existiert (→ Zwei-Spalten-Layout).
+const emit = defineEmits<{ (e: 'has-items', value: boolean): void }>()
+
+const store = useDocumentsStore()
+
+const checklist = ref<Checklist | null>(null)
+const busy = ref(false)
+const error = ref('')
+
+const aiOpen = ref(false)
+const aiPrompt = ref('')
+const kopiert = ref(false)
+const aiResponse = ref('')
+const aiError = ref('')
+/** KI-Vorschläge (nicht verbindlich) je item_id. */
+const suggestions = ref<Record<string, boolean>>({})
+
+const progressPct = computed(() => {
+  const f = checklist.value?.fortschritt
+  if (!f || !f.gesamt) return 0
+  return Math.round((f.erfuellt / f.gesamt) * 100)
+})
+
+// #1423: Auto-KI-Vollständigkeitsprüfung (API/Cloud oder lokale LLM, Live-Ansicht)
+const autoOpen = ref(false)
+const autoStarted = ref(false)
+// #1834: worauf die Vollständigkeitsprüfung besonders achten soll
+const checkZusatz = ref('')
+const autoError = ref('')
+const aiProvider = ref<'on_prem' | 'cloud'>('on_prem')
+const gapsIssue = ref<{ creating: boolean; url: string; error: string }>({ creating: false, url: '', error: '' })
+
+const autoUrl = computed(() =>
+  `/api/${props.modul}-dokumente/${encodeURIComponent(props.projekt)}/${props.docId}/ki-check/stream`)
+const autoPreviewFields = computed(() => [
+  { label: t('geteilt.documentChecklistPanel.dokumentTyp'), value: (checklist.value as any)?.doc_type || '—' },
+  { label: t('geteilt.documentChecklistPanel.pflichtinhalte'), value: `${checklist.value?.items.length || 0} Prüfpunkte` },
+  { label: t('geteilt.documentChecklistPanel.dokumentinhalt'), value: t('geteilt.documentChecklistPanel.derGesamteDokumenttextWirdZurPrufung') },
+])
+
+function openAuto() {
+  autoError.value = ''
+  autoStarted.value = false
+  gapsIssue.value = { creating: false, url: '', error: '' }
+  autoOpen.value = true
+}
+function startAuto() { autoStarted.value = true }
+function closeAuto() { autoOpen.value = false; autoStarted.value = false }
+
+async function onAutoDone() {
+  // Backend hat den Checklist-Status geschrieben → neu laden, Häkchen aktualisieren.
+  await load()
+}
+
+async function createGapsIssue() {
+  gapsIssue.value.creating = true
+  gapsIssue.value.error = ''
+  try {
+    const r = await apiClient.post(
+      `/cra/projekte/${encodeURIComponent(props.projekt)}/dokumente/${props.docId}/gaps-issue`, {})
+    gapsIssue.value.url = r.data?.url || ''
+  } catch (e: any) {
+    gapsIssue.value.error = e?.response?.data?.error || t('geteilt.documentChecklistPanel.issueKonnteNichtErstelltWerden')
+  } finally {
+    gapsIssue.value.creating = false
+  }
+}
+
+async function fetchProvider() {
+  try {
+    const res = await apiClient.get('/ai/provider-status')
+    aiProvider.value = res.data?.provider === 'cloud' ? 'cloud' : 'on_prem'
+  } catch { /* default on_prem */ }
+}
+
+async function load() {
+  checklist.value = await store.fetchChecklist(props.modul, props.projekt, props.docId)
+  emit('has-items', !!(checklist.value && checklist.value.items.length))
+}
+
+async function toggle(it: ChecklistItem, checked: boolean) {
+  busy.value = true
+  error.value = ''
+  const ok = await store.saveChecklist(props.modul, props.projekt, props.docId, {
+    [it.id]: { erfuellt: checked, kommentar: it.kommentar || '' },
+  })
+  busy.value = false
+  if (ok) {
+    await load()
+  } else {
+    error.value = store.keyState(props.modul, props.projekt).error || t('common.speichernFehlgeschlagen')
+  }
+}
+
+async function onAiCheck() {
+  aiError.value = ''
+  aiResponse.value = ''
+  const p = await store.fetchChecklistPrompt(props.modul, props.projekt, props.docId)
+  if (p) {
+    aiPrompt.value = p
+    aiOpen.value = true
+  } else {
+    error.value = store.keyState(props.modul, props.projekt).error || t('common.promptKonnteNichtErzeugtWerd')
+  }
+}
+
+async function copyPrompt() {
+  // #1867: Der Rückgabewert wird ausgewertet. Vorher verschwand ein
+  // Fehlschlag im `catch` — der Knopf tat dann nichts und sagte nichts.
+  kopiert.value = await kopiere(aiPrompt.value)
+  if (kopiert.value) setTimeout(() => (kopiert.value = false), 2000)
+}
+
+function applySuggestions() {
+  aiError.value = ''
+  try {
+    const parsed = JSON.parse(aiResponse.value)
+    const items = Array.isArray(parsed?.items) ? parsed.items : []
+    const next: Record<string, boolean> = {}
+    for (const it of items) {
+      if (it && typeof it.id === 'string') next[it.id] = !!it.erfuellt
+    }
+    if (!Object.keys(next).length) {
+      aiError.value = 'Keine gültigen Items in der Antwort gefunden.'
+      return
+    }
+    // NICHT automatisch setzen — nur als Vorschlag anzeigen.
+    suggestions.value = next
+    aiOpen.value = false
+  } catch {
+    aiError.value = 'Antwort ist kein gültiges JSON.'
+  }
+}
+
+onMounted(() => { load(); fetchProvider() })
+watch(() => props.docId, load)
+</script>
+
+<style scoped>
+.checklist-panel {
+  border-top: 1px solid #eee;
+  padding: 14px 20px;
+  background: #fafcff;
+}
+.cl-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.cl-title { margin: 0; font-size: 14px; color: #1565c0; }
+.cl-progress { display: flex; align-items: center; gap: 8px; }
+.cl-bar { width: 140px; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden; }
+.cl-bar-fill { height: 100%; background: #2e7d32; transition: width 200ms; }
+.cl-progress-text { font-size: 12px; color: #555; }
+
+.cl-list { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.cl-item { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.cl-check { display: flex; align-items: baseline; gap: 8px; cursor: pointer; flex: 1; }
+.cl-label { font-size: 13px; color: #333; }
+.cl-pflicht { background: #fce4ec; color: #ad1457; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 8px; margin-left: 6px; }
+.cl-optional { background: #eceff1; color: #607d8b; font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: 6px; }
+.cl-legal { font-size: 11px; color: #1565c0; font-weight: 600; }
+.cl-suggest { font-size: 11px; color: #7b1fa2; background: #f3e5f5; padding: 1px 8px; border-radius: 8px; }
+
+.cl-bausteine { margin-top: 14px; background: #eef5ff; border-left: 3px solid #1565c0; padding: 8px 12px; border-radius: 4px; }
+.cl-bausteine-title { font-size: 12px; font-weight: 600; color: #1565c0; }
+.cl-bausteine ul { margin: 6px 0 0; padding-left: 18px; }
+.cl-bausteine li { font-size: 12px; color: #444; line-height: 1.5; }
+
+.cl-actions { margin-top: 12px; }
+.cl-error { background: #ffebee; color: #c62828; border: 1px solid #ef5350; padding: 6px 10px; border-radius: 4px; font-size: 12px; margin: 8px 0; }
+
+.btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+.btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: #1565c0; color: #fff; border: none; padding: 7px 14px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-mini { background: #fff; border: 1px solid #ddd; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; margin: 6px 0; }
+
+.cl-ai-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1400; }
+.cl-ai-modal { background: #fff; border-radius: 8px; padding: 24px; width: 680px; max-width: 95%; max-height: 90vh; overflow: auto; }
+.cl-ai-modal h3 { margin: 0 0 8px; color: #1565c0; }
+.cl-ai-hint { font-size: 12px; color: #666; line-height: 1.5; margin: 0 0 12px; }
+.cl-ai-label { display: block; font-weight: 600; font-size: 12px; margin: 10px 0 4px; color: #333; }
+.cl-ai-prompt { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font: 12px/1.4 monospace; resize: vertical; }
+.cl-ai-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.cl-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.cl-auto-summary { margin-top: 10px; font-size: 13px; color: #263238; }
+.cl-gaps { margin-top: 8px; }
+.cl-gaps h4 { margin: 0 0 6px; font-size: 13px; color: #c62828; }
+.cl-gaps ul { margin: 0 0 10px; padding-left: 18px; line-height: 1.5; }
+.cl-gap-status { color: #ad1457; font-size: 11px; font-weight: 600; margin-left: 4px; }
+.cl-issue-ok { font-size: 12px; color: #2e7d32; margin: 8px 0 0; word-break: break-all; }
+</style>
