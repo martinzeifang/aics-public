@@ -1,0 +1,148 @@
+{
+  "title": "WiBA",
+  "regulation": "BSI \"Weg in die Basis-Absicherung\" (WiBA) – part of the BSI IT-Grundschutz",
+  "purpose": "The WiBA module helps small and medium-sized organisations (SMEs, municipalities, associations) to produce a structured, auditable record of secure IT operations (particularly with a view to data protection) using the BSI approach \"Weg in die Basis-Absicherung\". Based on the BSI topic checklists (19 topics / 257 audit questions), the questions are answered with Yes/No/Not relevant and a maturity level is derived from that.",
+  "legalBasis": {
+    "title": "What WiBA requires",
+    "intro": "WiBA is the BSI's low-threshold entry into the IT-Grundschutz. Instead of the full basic protection, organisations work through topic checklists with concrete audit questions that refer to the underlying IT-Grundschutz modules. The aim is a traceable minimum standard for secure IT operations.",
+    "bullets": [
+      "Topic checklists: WiBA divides basic protection into 19 topics with a total of 257 audit questions (as of WiBA 2.0 / 2023).",
+      "The audit questions per topic refer to the underlying IT-Grundschutz modules (e.g. CON.3 backup concept), an objective, a general note and further information.",
+      "Native answer model: every audit question is answered with Yes (implemented), No (open) or Not relevant (out of scope).",
+      "WiBA is part of the BSI IT-Grundschutz and is intended as an entry point for SMEs, municipalities and associations that do not yet run a full ISMS.",
+      "The BSI source files (WiBA tool, checklists) are subject to BSI copyright and are loaded from the BSI website at run time rather than shipped with the product."
+    ]
+  },
+  "implementation": {
+    "title": "How to work in the module",
+    "intro": "First the administrator loads the current WiBA audit question catalogue (BSI download + import). You then create a project, assign it to a company, answer the audit questions per topic and read off the maturity level. AI prompts and evidence suggestions help with pre-filling; open items can be carried forward as risks and issues.",
+    "bullets": [
+      "Maintain the catalogue (admin): download and import the BSI sources; the catalogue can be updated and a re-import replaces only the audit questions, not the answers already recorded.",
+      "Create the project and assign it to a company (field Company); the company assignment is the basis for evidence suggestions and for the risk cockpit.",
+      "Answer the audit questions per topic with Yes/No/Not relevant and record a note, the responsible person, a target date and references to evidence.",
+      "Read off the maturity level (overall and per topic): Yes = 100 %, No/Open = 0 %, Not relevant is excluded from the denominator.",
+      "Use the AI assistant (copy/paste): generate a prompt per audit question — including the evidence held for the company — answer it in ChatGPT and paste the JSON answer back.",
+      "Adopt the company's GDPR technical and organisational measures as evidence suggestions; pass No findings on as risks into the risk assessment; track audit questions as a GitHub/GitLab issue.",
+      "Export the evidence report (DOCX/PDF) with the maturity overview and the open items."
+    ]
+  },
+  "moduleSpecific": {
+    "title": "Particularities of the WiBA module",
+    "intro": "The module combines the database-backed, updatable BSI catalogue with the suite-wide maturity logic and interlocks WiBA with GDPR, risk assessment and issue tracking.",
+    "bullets": [
+      "Database-backed catalogue: topics and audit questions live in the database (not in the code), so that BSI updates can be loaded in via an admin download.",
+      "The BSI source files are not shipped for copyright reasons but loaded from the BSI website at run time.",
+      "Maturity mapping: Not relevant does not count towards the basis (out of scope); Open counts towards the scope at 0 %, so that unanswered questions do not flatter the maturity level.",
+      "The AI prompt includes the topic/module context and, optionally, the evidence uploaded for the company (evidence library).",
+      "Interlocking: GDPR measures as evidence suggestions, No findings as risks (linked risk assessment project), visibility in the risk cockpit, issue tracking per audit question (GitHub/GitLab)."
+    ]
+  },
+  "areas": [
+    {
+      "id": "dashboard",
+      "title": "📊 Dashboard",
+      "zweck": "Overview of the maturity level overall and per topic, the distribution of answers (Yes/No/Not relevant/Open) and the open items of the WiBA project.",
+      "rechtsgrundlage": "BSI \"Weg in die Basis-Absicherung\" (WiBA), IT-Grundschutz",
+      "pflichtfelder": [
+        "No direct input – the dashboard condenses the data of the audit questions.",
+        "Prerequisite: catalogue loaded and project assigned to a company."
+      ],
+      "anleitung": "1) Check the project/company assignment. 2) Read off the maturity level overall and per topic. 3) Work on topics with many open/No questions by priority in the Audit questions tab.",
+      "tipps": ["Maturity level: Yes = 100 %, No/Open = 0 %, Not relevant does not count towards the denominator."]
+    },
+    {
+      "id": "cockpit",
+      "title": "📊 Risk cockpit",
+      "zweck": "Company-wide, cross-module read-only view of the open risks of the assigned company – including the risks created from WiBA No findings.",
+      "rechtsgrundlage": "BSI IT-Grundschutz (risk-oriented basic protection)",
+      "pflichtfelder": [
+        "No input – aggregation per company (firmen_id) from the linked modules."
+      ],
+      "anleitung": "1) Make sure the project is assigned to a company. 2) Review the open risks. 3) Treat the No findings created from audit questions in the linked risk assessment project.",
+      "tipps": ["No findings are transferred into the linked risk assessment project via \"As risk\" in the Audit questions tab and appear here."]
+    },
+    {
+      "id": "dokumentation",
+      "title": "📋 Documentation",
+      "zweck": "Management of the BSI WiBA audit question catalogue (topics + audit questions): download of the BSI sources, import and update to new WiBA versions (admin).",
+      "rechtsgrundlage": "BSI WiBA checklists + WiBA tool (19 topics / 257 audit questions); BSI copyright (sources loaded at run time only)",
+      "pflichtfelder": [
+        "Download the BSI source files (checklist ZIP + WiBA tool XLSX) (admin permission WIBA_CATALOG).",
+        "Import/update the catalogue (replaces only the audit questions, not the answers recorded).",
+        "Check the catalogue version/source (currency)."
+      ],
+      "anleitung": "1) Load the BSI sources via the download/refresh button. 2) Run the import – topics and audit questions are created/updated in the database. 3) Check the version. Only after that is the Audit questions tab fully available.",
+      "tipps": [
+        "The BSI originals are not shipped for copyright reasons but loaded at run time.",
+        "A re-import leaves answers already recorded untouched."
+      ]
+    },
+    {
+      "id": "prueffragen",
+      "title": "✅ Audit questions",
+      "zweck": "The actual answering of the WiBA audit questions per topic with status, note, responsible person, target date and evidence – the basis of the maturity level.",
+      "rechtsgrundlage": "BSI WiBA audit questions (referring to IT-Grundschutz modules, e.g. CON.3 backup)",
+      "pflichtfelder": [
+        "Status per audit question: Yes (implemented) / No (open) / Not relevant (out of scope) / Open (unanswered).",
+        "Note/justification – especially for \"Not relevant\" (justification of the exclusion) and \"No\".",
+        "Responsible person (name/role) and target date for open items.",
+        "Link evidence (evidence_doc_ids; optionally GDPR measures as a suggestion)."
+      ],
+      "anleitung": "1) Choose the topic, open the audit question. 2) Set the status (Yes/No/Not relevant). 3) Record the note, the responsible person and the target date. 4) Attach evidence. 5) Save. 6) Optionally pass No findings on via \"As risk\" or track them as an issue.",
+      "tipps": [
+        "Always justify \"Not relevant\" – otherwise the scope exclusion is not auditable.",
+        "Open questions count at 0 % – they do not flatter the maturity level.",
+        "The AI assistant can supply a draft answer per audit question (copy/paste)."
+      ]
+    },
+    {
+      "id": "assistenten",
+      "title": "🤖 Assistants",
+      "zweck": "AI-supported wizards (copy/paste prompts) that supply draft answers per audit question/topic – including the evidence held for the company.",
+      "rechtsgrundlage": "— (an aid; the expert assessment of the audit question remains with the user)",
+      "pflichtfelder": [
+        "No mandatory fields – the prompt pulls in the topic/module context and the company evidence automatically."
+      ],
+      "anleitung": "1) Choose the assistant/audit question. 2) Generate the prompt and copy it into the AI tool. 3) Paste the JSON answer back. 4) Adopt and check the status/note in the Audit questions tab.",
+      "tipps": ["Review AI suggestions on their merits – they do not replace an assessment of secure operations."]
+    },
+    {
+      "id": "dokumente",
+      "title": "📄 Documents",
+      "zweck": "Storage and management of the evidence (concepts, screenshots, configurations) that is linked to audit questions as proof.",
+      "rechtsgrundlage": "BSI IT-Grundschutz (keeping records for basic protection)",
+      "pflichtfelder": [
+        "File + a meaningful name; document type.",
+        "Link to the audit question(s) it substantiates in the Audit questions tab."
+      ],
+      "anleitung": "1) Upload the evidence and name it unambiguously. 2) Select it as evidence in the Audit questions tab. 3) On an update, store a new version instead of overwriting.",
+      "tipps": ["Evidence held for the company (evidence library) also feeds into the AI prompts."]
+    },
+    {
+      "id": "berichte",
+      "title": "📄 Reports",
+      "zweck": "Export of the WiBA evidence report (maturity overview, answers per topic, open items) as DOCX/PDF.",
+      "rechtsgrundlage": "BSI WiBA (auditable record of secure IT operations)",
+      "pflichtfelder": [
+        "Selection of the report sections and the format (DOCX/PDF)."
+      ],
+      "anleitung": "1) Answer the audit questions largely beforehand. 2) Choose the sections. 3) Produce the report and file it as evidence or pass it on.",
+      "tipps": ["The quality of the report depends directly on fully answered audit questions and linked evidence."]
+    }
+  ],
+  "links": [
+    {
+      "label": "WiBA module documentation (online)",
+      "href": "docs:/modules/wiba/"
+    },
+    {
+      "label": "BSI – Weg in die Basis-Absicherung (WiBA)",
+      "href": "https://www.bsi.bund.de/dok/wiba"
+    },
+    {
+      "label": "BSI IT-Grundschutz",
+      "href": "https://www.bsi.bund.de/grundschutz"
+    }
+  ],
+  "module": "wiba"
+}

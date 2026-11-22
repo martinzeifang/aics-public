@@ -1,0 +1,20 @@
+{
+  "assistentenKachelGrid": {
+    "assistentenErgebnisMarkdownOderTextH": "Paste the assistant result (Markdown or text) here…",
+    "dokumentGespeichertEsIstImDokumenteR": "✅ Document saved. In the document register it can be edited, approved and exported (DOCX/PDF).",
+    "dokumentKonnteNichtGespeichertWerden": "The document could not be saved.",
+    "ergebnisDiesesAssistentenAlsDokument": "Save the result of this assistant as a document",
+    "fugeDasErgebnisVonV0EinEsWirdAlsEdit": "Paste the result of \"{v0}\". It is saved as an editable, versioned and exportable document (type",
+    "furDiesesModulSindNochKeineAssistent": "No assistants are available for this module yet.",
+    "imRegisterOffnen": "📂 Open in register",
+    "speichern": "Saving…",
+    "speichern2": "Save",
+    "gespeichert": ")."
+  },
+  "registry": {
+    "compliance": "Compliance",
+    "dokumentation": "Documentation",
+    "export": "Export",
+    "issues": "Issues"
+  }
+}

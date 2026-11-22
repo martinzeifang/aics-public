@@ -1,0 +1,12 @@
+{
+  "kern": "{was} hat länger gebraucht als die Wartezeit der Oberfläche. Der Server arbeitet weiter — der Vorgang ist also nicht abgebrochen, sondern nur nicht mehr abgewartet worden.",
+  "ratIdempotent": " Lade die Ansicht neu, um den Stand zu sehen. Ein erneuter Lauf ist gefahrlos: bereits übernommene Inhalte werden nicht doppelt eingetragen.",
+  "ratOhneStand": " Der Lauf selbst ist durchgelaufen, sein Ergebnis wird aber nicht gespeichert — es ist damit fort. Starte ihn erneut; er ist gefahrlos, kostet aber einen weiteren KI-Lauf.",
+  "ratPruefen": " Lade die Ansicht neu und prüfe den Stand, bevor Du den Lauf wiederholst.",
+  "was": {
+    "aktenpruefung": "Die Aktenprüfung",
+    "erschliessung": "Der Erschließungslauf",
+    "issueUebernahme": "Die Übernahme des Issue-Inhalts",
+    "vorgang": "Der Vorgang"
+  }
+}

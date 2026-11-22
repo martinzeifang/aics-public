@@ -1,0 +1,20 @@
+{
+  "assistentenKachelGrid": {
+    "assistentenErgebnisMarkdownOderTextH": "Assistenten-Ergebnis (Markdown oder Text) hier einfügen…",
+    "dokumentGespeichertEsIstImDokumenteR": "✅ Dokument gespeichert. Es ist im Dokumente-Register editier-, freigabe- und exportierbar (DOCX/PDF).",
+    "dokumentKonnteNichtGespeichertWerden": "Dokument konnte nicht gespeichert werden.",
+    "ergebnisDiesesAssistentenAlsDokument": "Ergebnis dieses Assistenten als Dokument speichern",
+    "fugeDasErgebnisVonV0EinEsWirdAlsEdit": "Füge das Ergebnis von „{v0}\" ein. Es wird als editierbares, versioniertes und exportierbares Dokument (Typ",
+    "furDiesesModulSindNochKeineAssistent": "Für dieses Modul sind noch keine Assistenten verfügbar.",
+    "gespeichert": ") gespeichert.",
+    "imRegisterOffnen": "📂 Im Register öffnen",
+    "speichern": "Speichern…",
+    "speichern2": "Speichern"
+  },
+  "registry": {
+    "compliance": "Compliance",
+    "dokumentation": "Dokumentation",
+    "export": "Export",
+    "issues": "Issues"
+  }
+}

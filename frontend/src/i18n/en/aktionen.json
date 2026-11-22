@@ -1,0 +1,91 @@
+{
+  "abschnitte": {
+    "issues": "🔗 Linked issues",
+    "kiBewertung": "🤖 AI assessment"
+  },
+  "kiVorbehalt": "🤖 AI-generated — subject to expert review.",
+  "objekt": {
+    "issueAbgleichen": {
+      "laufend": "⏳ Reconciling…",
+      "text": "🔄 Reconcile status",
+      "titel": "Retrieve the status and new comments of the linked issues; the assessment is not changed"
+    },
+    "issueAnlegen": {
+      "laufend": "⏳ Creating…",
+      "text": "➕ Create issue",
+      "titel": "Create a new GitHub/GitLab issue for this object and link it"
+    },
+    "issueEntknuepfen": {
+      "laufend": "…",
+      "text": "✕",
+      "titel": "Remove link"
+    },
+    "issueImportieren": {
+      "laufend": "⏳ Applying…",
+      "text": "📥 Import issue content",
+      "titel": "Apply the issue content and review feedback to the free-text field — the assessment is not changed"
+    },
+    "issueVerknuepfen": {
+      "laufend": "⏳ Linking…",
+      "text": "🔗 Link an existing one",
+      "titel": "Link an existing issue to this object via its URL"
+    },
+    "kiAuto": {
+      "laufend": "⏳ Assessing…",
+      "text": "🤖 Automatic assessment",
+      "titel": "Call the AI directly and apply the result"
+    },
+    "kiNeubewertung": {
+      "laufend": "⏳ Assessing…",
+      "text": "🔄 Reassessment with issue feedback",
+      "titel": "AI reassessment taking the issue/review feedback into account"
+    },
+    "kiPrompt": {
+      "laufend": "⏳ Loading prompt…",
+      "text": "🤖 AI assessment (prompt → answer)",
+      "titel": "Create a prompt, paste it into the AI and apply the answer"
+    }
+  },
+  "projekt": {
+    "auditLog": {
+      "laufend": "⏳ Loading…",
+      "text": "📜 Audit log",
+      "titel": "Audit trail of this project — who changed what and when"
+    },
+    "feedbackUebernehmen": {
+      "laufend": "⏳ Applying…",
+      "text": "📥 Apply issue feedback",
+      "titel": "Apply the content and comments of the linked issues to the free-text field — the assessment stays unchanged"
+    },
+    "issuesAnlegen": {
+      "laufend": "⏳ Creating…",
+      "text": "🐙 Create issues",
+      "titel": "Create GitHub/GitLab issues in bulk for the open items of this project"
+    },
+    "massenAuto": {
+      "laufend": "⏳ Assessing…",
+      "text": "🤖 Automatic bulk assessment",
+      "titel": "Select several objects and have the AI assess each one"
+    },
+    "massenPrompt": {
+      "laufend": "⏳ Loading…",
+      "text": "🧮 Bulk assessment (combined prompt)",
+      "titel": "Create one shared prompt for several objects and apply the answer"
+    },
+    "neubewertung": {
+      "laufend": "⏳ Checking…",
+      "text": "🧪 Reassessment from issues",
+      "titel": "Review the linked issues and show, for each object, what calls for a reassessment"
+    },
+    "statusAbgleichen": {
+      "laufend": "⏳ Reconciling…",
+      "text": "🔄 Reconcile issue status",
+      "titel": "Retrieve the status and new comments of all linked issues of this project; assessments are not changed"
+    },
+    "ueberholt": {
+      "laufend": "⏳ Checking…",
+      "text": "🕒 What is out of date?",
+      "titel": "Show assessments that are older than an event in the same file — new evidence, new SBOM, penetration test report. Nothing is reassessed."
+    }
+  }
+}

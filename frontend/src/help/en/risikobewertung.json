@@ -1,0 +1,153 @@
+{
+  "title": "Risk assessment",
+  "regulation": "EU Cyber Resilience Act (Regulation (EU) 2024/2847), in particular Art. 13 and Annex I; methodologically based on ISO/IEC 27005:2022, IEC 62443-3-2:2020 and ISO/SAE 21434:2021",
+  "purpose": "The risk assessment module serves the structured cyber and software risk assessment of products, systems and individual vulnerabilities. It provides several established assessment frameworks, calculates a quantified risk value per threat and thereby supports risk analysis, the derivation of measures and the demonstration of conformity.",
+  "legalBasis": {
+    "title": "Regulatory and normative basis",
+    "intro": "The Cyber Resilience Act requires manufacturers to carry out a cybersecurity risk assessment across the entire product lifecycle; its results must substantiate the selection of the security requirements and must be documented. The frameworks provided here implement recognised standards for information security and cybersecurity risk management, so that the assessment is methodologically traceable and auditable.",
+    "bullets": [
+      "CRA Art. 13(2) in conjunction with Annex I Part I: products with digital elements are to be designed, developed and produced on the basis of a cybersecurity risk assessment (security by design).",
+      "CRA Art. 13(3) and (5): the risk assessment forms part of the technical documentation (Annex VII) and is to be updated throughout the support period.",
+      "ISO/IEC 27005:2022: guidance on the information security risk management process (identification, analysis, evaluation and treatment of risks).",
+      "IEC 62443-3-2:2020: risk assessment and security level determination (SL-T) for industrial automation and control systems (IACS).",
+      "ISO/SAE 21434:2021: Threat Analysis and Risk Assessment (TARA) as the binding methodology of cybersecurity engineering for road vehicles, complementing UNECE R155 (WP.29).",
+      "Sector-specific for financial institutions: IT risk requirements from BAIT/VAIT, MaRisk and the EBA guidelines on ICT and security risk management."
+    ]
+  },
+  "implementation": {
+    "title": "How to work in the module",
+    "intro": "For each assessment object you choose a suitable framework, record the required assessment factors via selection fields and automatically receive a risk value with a risk level and a calculation detail. The results can be exported and taken over into reports.",
+    "bullets": [
+      "Choose the framework according to the context of use (see the framework overview): general software, AI/LLM, embedded/automotive, organisation-centred or financial sector.",
+      "Record the assessment factors via the predefined scales; the module only calculates the score once all mandatory fields are set.",
+      "The calculation logic of each framework is transparent: the detail field shows the formula (e.g. likelihood × impact, or AP sum → security/feasibility level).",
+      "Risk levels are colour-coded (green = negligible/acceptable through to red = high/critical) to make prioritisation and the need for measures visible.",
+      "Document assessments with versions and reassess on new findings or vulnerabilities (e.g. an incoming CVE) in order to meet the CRA lifecycle obligation.",
+      "Use the same framework consistently per product class so that risk values remain comparable; substantiate and document any change of framework."
+    ]
+  },
+  "moduleSpecific": {
+    "title": "Particularities of the module",
+    "intro": "The core of the module is choosing the right framework for the assessment context at hand. Every framework brings its own scale, calculation formula and an explanatory information text.",
+    "bullets": [
+      "Seven frameworks are available: Financial institutions, STRIDE, STRIDE-LLM, HEAVENS, OCTAVE Allegro, TARA and EU AI Act (Art. 9 AI Regulation).",
+      "STRIDE and STRIDE-LLM use a 5×5 matrix (likelihood × impact, 1–25); STRIDE-LLM adds LLM-specific threat categories per the OWASP LLM Top 10 (prompt injection, insecure output handling, training data poisoning and others) as well as bias and hallucination.",
+      "HEAVENS and TARA first assess the attack potential using Common Criteria factors (expertise, knowledge of the system, window of opportunity, equipment and, for TARA, elapsed time) and combine it with the impact across the SFOP dimensions (safety, financial, operational, privacy).",
+      "OCTAVE Allegro is qualitative and asset-/organisation-centred: likelihood × the sum of five impact areas (reputation, finance, productivity, safety/health, fines).",
+      "The Financial institutions framework uses the simple additive scale (likelihood + damage potential − 1, range 1–7) and at the same time serves as the basis for CVE assessment.",
+      "For every framework an information panel gives the origin, the assessment parameters, the formula, the risk levels and the CRA relevance."
+    ]
+  },
+  "frameworks": [
+    {
+      "name": "STRIDE",
+      "ref": "Microsoft Security Development Lifecycle (Kohnfelder & Garg, 1999); quantified in this module via a 5×5 matrix",
+      "whenToUse": "General software threat modelling in the design and development phase. The six categories (spoofing, tampering, repudiation, information disclosure, denial of service, elevation of privilege) help to identify threats systematically and to derive countermeasures (CRA Art. 13, security by design)."
+    },
+    {
+      "name": "STRIDE-LLM",
+      "ref": "OWASP Top 10 for LLM Applications (LLM01–LLM10), an extension of STRIDE",
+      "whenToUse": "For AI- and LLM-based products and functions. Covers LLM-specific risks such as prompt injection, insecure output handling, training data poisoning, excessive agency as well as bias and hallucination; useful in combination with the requirements of the EU AI Act."
+    },
+    {
+      "name": "HEAVENS",
+      "ref": "Volvo Cars Research & Technology (2014), based on ISO/SAE 21434 and Common Criteria",
+      "whenToUse": "For embedded and cyber-physical systems as well as IoT devices. Assesses the attack potential using Common Criteria factors and combines it with the SFOP impact dimensions; suitable for important/critical products per CRA Annex I/II."
+    },
+    {
+      "name": "OCTAVE Allegro",
+      "ref": "CERT Coordination Center, Carnegie Mellon University (2007); related to ISO/IEC 27001",
+      "whenToUse": "Asset- and organisation-centred, qualitative risk assessment from the operator's perspective. Suitable for smaller teams and ISMS contexts as well as for lifecycle risks per CRA Art. 13(2) and NIS2 obligations."
+    },
+    {
+      "name": "TARA",
+      "ref": "ISO/SAE 21434:2021 (Road Vehicles – Cybersecurity Engineering); also UNECE WP.29 / R155",
+      "whenToUse": "For connected vehicles and safety-critical E/E or embedded systems. The recommended method for CRA-compliant risk analyses of connected products: attack feasibility rating × impact rating across a risk matrix."
+    },
+    {
+      "name": "Risk assessment for financial institutions",
+      "ref": "BAIT/VAIT, MaRisk, EBA guidelines on ICT security",
+      "whenToUse": "For banks, insurers and financial service providers. A simple likelihood × damage potential scale for a quick, supervision-compliant classification; in this module it also serves as the basis for CVE assessment."
+    },
+    {
+      "name": "EU AI Act",
+      "ref": "Regulation (EU) 2024/1689 (AI Regulation), Art. 9 risk management system",
+      "whenToUse": "For high-risk AI systems under the EU AI Act. Assesses risks across the entire AI lifecycle (design, development, deployment, monitoring) per risk category (safety, fundamental rights, bias and others) as likelihood × impact (5×5 matrix). Can be linked directly to the AI Act module (A3 risk management)."
+    }
+  ],
+  "areas": [
+    {
+      "id": "dashboard",
+      "title": "📊 Dashboard",
+      "zweck": "Entry point and overview per project: the chosen framework, the distribution of risks by level and the state of processing – the starting point for working on risks.",
+      "rechtsgrundlage": "CRA Art. 13(2) (risk assessment across the lifecycle); methodologically ISO/IEC 27005",
+      "pflichtfelder": [
+        "Create the project: name (unique, stable), framework (see the framework overview), optionally a description and the company.",
+        "Company assignment (unternehmen): required so that the risk cockpit can aggregate company-wide."
+      ],
+      "anleitung": "1) Create the project with a suitable framework (choose the framework consistently per product class). 2) Assign the company. 3) Use the distribution of risks in the dashboard as a management view and switch to the 'Risks' tab.",
+      "tipps": [
+        "Decide on the framework before recording the first risk – a later change alters the scale and makes values incomparable.",
+        "Without a company assignment the project does not appear in the company-wide cockpit."
+      ]
+    },
+    {
+      "id": "cockpit",
+      "title": "📊 Risk cockpit",
+      "zweck": "Company-wide, cross-module read-only aggregation of all open risks (risk assessment + CRA vulnerabilities) of the assigned company.",
+      "rechtsgrundlage": "Risk-based approach (CRA Art. 13; NIS2 Art. 21; GDPR Art. 24/32)",
+      "pflichtfelder": [
+        "No input – read-only aggregation per company (firmen_id).",
+        "Prerequisite: the project is assigned to a company."
+      ],
+      "anleitung": "1) Make sure the project is assigned to a company. 2) Click the company (🏢) in the sidebar → tab '📊 Risk cockpit' (or 'Risk cockpit of the company' in the project dashboard); review the open risks company-wide. 3) Carry out the treatment in the respective risk entries ('Risks' tab) or in CRA – the cockpit mirrors their state.",
+      "tipps": [
+        "CRA vulnerabilities are deduplicated against risk assessment risks (CRA takes precedence).",
+        "The cockpit is a view, not a place of input – risks are maintained in their sources.",
+        "The cockpit exists at company level only; the company overview additionally shows all assessments of the company with open risks (#1569)."
+      ]
+    },
+    {
+      "id": "risiken",
+      "title": "⚠️ Risks",
+      "zweck": "The core of the module: recording and assessing the individual risks according to the chosen framework, with an automatically calculated, quantified risk value.",
+      "rechtsgrundlage": "CRA Art. 13(2)/(3) in conjunction with Annex I; ISO/IEC 27005:2022 (risk identification, analysis, evaluation, treatment)",
+      "pflichtfelder": [
+        "Designation/name of the risk and a description.",
+        "Threat and affected vulnerability (what is threatened, and by what).",
+        "The framework's assessment factors: depending on the framework, likelihood × impact (STRIDE/STRIDE-LLM/AI Act, 5×5), attack potential + SFOP impact (HEAVENS/TARA), the additive scale (financial institutions) or the impact sum (OCTAVE).",
+        "Measures (risk treatment) and the responsible person.",
+        "Status (open/treated – is_resolved) for follow-up."
+      ],
+      "anleitung": "1) Name the risk with its threat and vulnerability. 2) Set all assessment factors via the predefined scales – the score (with level and calculation detail) only appears once the mandatory fields are complete. 3) Derive measures and assign a responsible person. 4) On new findings (e.g. an incoming CVE), reassess and document with versions (CRA lifecycle). 5) Set treated risks to 'resolved'.",
+      "tipps": [
+        "The score is only complete once all factors are set – the detail field shows the formula transparently.",
+        "Keep to the same framework within a project so that values remain comparable.",
+        "GitHub/GitLab issues can be created from open risks and monitored; a closed issue marks the risk as 'reassessment required' (no automatic score).",
+        "'📥 Apply issue feedback' writes the content (title/status/comments) of all linked issues into the remarks of the respective risks in one step – including the issues created from linked CRA projects. The risk value stays unchanged; a further import replaces the issue block."
+      ]
+    },
+    {
+      "id": "berichte",
+      "title": "📄 Reports",
+      "zweck": "Export of the risk assessment as an evidence/report document for the technical documentation and for risk management.",
+      "rechtsgrundlage": "CRA Art. 13(3)/(5) in conjunction with Annex VII (part of the technical documentation)",
+      "pflichtfelder": [
+        "Selection of the project and, where applicable, the report format/template.",
+        "Prerequisite: the risks are fully assessed in the 'Risks' tab."
+      ],
+      "anleitung": "1) Choose a project with fully assessed risks. 2) Produce the report. 3) File it as part of the technical documentation and produce it again on updates.",
+      "tipps": [
+        "The quality of the report depends directly on the completeness of the risk assessment.",
+        "Update the report on every reassessment – the CRA documentation is to be kept current throughout the support period."
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Module documentation",
+      "href": "docs:/modules/risikobewertung/"
+    }
+  ],
+  "module": "risikobewertung"
+}

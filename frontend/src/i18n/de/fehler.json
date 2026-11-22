@@ -1,0 +1,24 @@
+{
+  "abgleichen": "Abgleichen fehlgeschlagen.",
+  "aktualisieren": "Aktualisieren fehlgeschlagen.",
+  "allgemein": "Die Anfrage ist fehlgeschlagen.",
+  "anlegen": "Anlegen fehlgeschlagen.",
+  "anmelden": "Anmeldung fehlgeschlagen.",
+  "auswerten": "Auswerten fehlgeschlagen.",
+  "bewerten": "Bewerten fehlgeschlagen.",
+  "entfernen": "Entfernen fehlgeschlagen.",
+  "erzeugen": "Erzeugen fehlgeschlagen.",
+  "exportieren": "Export fehlgeschlagen.",
+  "freigeben": "Freigeben fehlgeschlagen.",
+  "hochladen": "Hochladen fehlgeschlagen.",
+  "kein_netz": "Keine Verbindung zum Server. Bitte Netzverbindung prüfen und erneut versuchen.",
+  "laden": "Laden fehlgeschlagen.",
+  "loeschen": "Löschen fehlgeschlagen.",
+  "speichern": "Speichern fehlgeschlagen.",
+  "uebernehmen": "Übernehmen fehlgeschlagen.",
+  "verknuepfen": "Verknüpfen fehlgeschlagen.",
+  "zeitueberschreitung": "Der Server hat zu lange nicht geantwortet. Bitte erneut versuchen.",
+  "zusatz": {
+    "fehlendeFelder": "fehlt: {felder}"
+  }
+}

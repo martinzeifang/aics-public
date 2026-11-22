@@ -1,0 +1,110 @@
+{
+  "aIActSidebar": {
+    "aIActBewertungen": "AI-Act-Bewertungen",
+    "art": "Art",
+    "dieOrganisationsBewertungEntstehtAut": "Die Organisations-Bewertung entsteht automatisch, wenn in der Firmenverwaltung das AI-Act-Modul aktiv ist. KI-Systeme legst du danach je Produkt in der Bewertung an.",
+    "eintrageVerbergen": "Einträge verbergen",
+    "eintrageZeigen": "Einträge zeigen",
+    "kISystem": "🤖 KI-System",
+    "keinTrefferFurV0": "Kein Treffer für „{v0}\"",
+    "keineAIActBewertungen": "Keine AI-Act-Bewertungen.",
+    "ohneFirma": "— Ohne Firma —",
+    "organisation": "🏢 Organisation",
+    "firmaOderKISystem": "Firma oder KI-System …"
+  },
+  "cRASidebar": {
+    "cRAProjekte": "CRA-Projekte",
+    "cRAProjekteWerdenAutomatischAngelegt": "CRA-Projekte werden automatisch angelegt, wenn du in der Firmenverwaltung Produkte hinzufügst (1 Projekt pro Produkt).",
+    "firmaV0V1": "Firma · {v0} {v1}",
+    "keinProjektPasstZumFilter": "Kein Projekt passt zum Filter",
+    "keinTrefferFurV0": "Kein Treffer für „{v0}\"",
+    "keineCRAProjekte": "Keine CRA-Projekte.",
+    "klasse": "Klasse",
+    "ohneKlasse": "Ohne Klasse",
+    "produkt": "Produkt",
+    "produkte": "Produkte",
+    "produkteVerbergen": "Produkte verbergen",
+    "produkteZeigen": "Produkte zeigen",
+    "standardprodukt": "Standardprodukt",
+    "wichtigKlasseI": "Wichtig Klasse I",
+    "wichtigKlasseII": "Wichtig Klasse II",
+    "firmaProduktOderProjekt": "Firma, Produkt oder Projekt …"
+  },
+  "complianceAuditSidebar": {
+    "audits": "Audits"
+  },
+  "dSGVOSidebar": {
+    "dSGVOBewertungen": "DSGVO-Bewertungen"
+  },
+  "firmenSidebar": {},
+  "firmenSidebarModul": {
+    "anModulProjektWirdAutomatischErzeugt": "an — Modul-Projekt wird automatisch erzeugt.",
+    "berater": "Berater",
+    "keinTrefferFurV0": "Kein Treffer für „{v0}\"",
+    "keineV0BewertungenVorhanden": "Keine {v0}-Bewertungen vorhanden.",
+    "klasse": "Klasse",
+    "neueFirmaLegeSieInDer": "Neue Firma? Lege sie in der",
+    "proFirmaEineBewertungLegeEineFirmaMi": "— pro Firma eine Bewertung. Lege eine Firma mit aktiviertem {v0}-Modul in der Firmenverwaltung an.",
+    "mandantSuchen": "Mandant suchen …"
+  },
+  "gutachtenSidebar": {},
+  "nIS2Sidebar": {},
+  "projektSidebar": {
+    "alleProjekte": "— Alle Projekte —",
+    "keinTrefferFurV0": "Kein Treffer für „{v0}\"",
+    "keineEintrage": "Keine Einträge",
+    "neuAnlegen": "Neu anlegen",
+    "nameOderFirma": "Name oder Firma …"
+  },
+  "risikobewertungSidebar": {
+    "alleProjekte": "— Alle Projekte —",
+    "bewertung": "Bewertung",
+    "bewertungen": "Bewertungen",
+    "bewertungenVerbergen": "Bewertungen verbergen",
+    "bewertungenZeigen": "Bewertungen zeigen",
+    "firmaV0V1": "Firma · {v0} {v1}",
+    "keinTrefferFurV0": "Kein Treffer für „{v0}\"",
+    "keineBewertungPasstZumFilter": "Keine Bewertung passt zum Filter",
+    "keineProjekte": "Keine Projekte",
+    "neubewertung": "⚠️ Neubewertung",
+    "neubewertungErforderlich": "Neubewertung erforderlich",
+    "nurBewertungenMitMindestensEinemOffe": "Nur Bewertungen mit mindestens einem offenen Risiko",
+    "nurBewertungenMitMindestensEinemRisi": "Nur Bewertungen mit mindestens einem Risiko „Neubewertung erforderlich\"",
+    "offeneRisiken": "Offene Risiken",
+    "offeneRisiken2": "offene Risiken",
+    "projekt": "Projekt",
+    "projekte": "Projekte",
+    "risiken": "Risiken",
+    "risiko": "Risiko",
+    "firmaProduktOderBewertung": "Firma, Produkt oder Bewertung …"
+  },
+  "sidebarSearch": {
+    "alleAufklappen": "alle aufklappen",
+    "eintragen": "Einträgen",
+    "sucheZurucksetzen": "Suche zurücksetzen",
+    "sucheZurucksetzenEsc": "Suche zurücksetzen (Esc)",
+    "suchen": "Suchen …",
+    "suchen2": "Suchen"
+  },
+  "sidebarSortFilter": {
+    "sortierung": "Sortierung"
+  },
+  "sidebarWerkzeuge": {
+    "eintragen": "Einträgen",
+    "suchen": "Suchen …"
+  },
+  "wiBASidebar": {
+    "berater": "Berater",
+    "keinTrefferFurV0": "Kein Treffer für „{v0}\"",
+    "keineWiBAProjekte": "Keine WiBA-Projekte.",
+    "legeImWiBAModulEinProjektAnUndOrdneE": "Lege im WiBA-Modul ein Projekt an und ordne es einer Firma zu.",
+    "ohneFirma": "— Ohne Firma —",
+    "projekteVerbergen": "Projekte verbergen",
+    "projekteZeigen": "Projekte zeigen",
+    "wiBAProjekte": "WiBA-Projekte",
+    "firmaOderProjekt": "Firma oder Projekt …"
+  },
+  "nis2": {
+    "titel": "NIS2-Bewertungen"
+  }
+}

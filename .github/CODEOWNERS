@@ -1,0 +1,15 @@
+# Code-Ownership / Review-Verantwortung (#736 / BSI CON.8, ISO 27001 A.8.25)
+# Damit Branch-Protection "Require review from Code Owners" greifen kann.
+
+# Default: gesamtes Repo
+*                       @martinzeifang
+
+# Sicherheitskritische Bereiche (Auth, Krypto, Server-Konfiguration)
+/server/auth/           @martinzeifang
+/server/api/auth.py     @martinzeifang
+/server/api/webauthn.py @martinzeifang
+/server/api/certificates.py @martinzeifang
+/shared/cert_tools.py   @martinzeifang
+/shared/config_io.py    @martinzeifang
+/server/app.py          @martinzeifang
+/.github/workflows/     @martinzeifang

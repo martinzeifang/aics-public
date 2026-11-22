@@ -1,0 +1,17 @@
+{
+  "account": "Konto",
+  "admin": "Administration",
+  "benutzer": "Benutzer",
+  "hilfe": "Hilfe",
+  "language": "Sprache",
+  "lizenzVerwalten": "→ Lizenz verwalten",
+  "login": "Anmelden",
+  "logo": "Logo",
+  "logout": "Abmelden",
+  "menu": "Menü",
+  "settings": "Einstellungen",
+  "sicherheit": "🔐 Sicherheit (2FA)",
+  "sidebarToggle": "Seitenleiste umschalten",
+  "title": "AI Compliance Suite",
+  "untertitel": "Compliance Management Platform"
+}
