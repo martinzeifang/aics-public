@@ -1,0 +1,136 @@
+{
+  "app": {},
+  "auth": {
+    "vorgangAbgebrochen": "Operation cancelled."
+  },
+  "cra": {
+    "gitHubTokenErforderlichEinstellungen": "GitHub token required — Settings → 🐙 GitHub",
+    "repoAlignmentTimeoutBitteErneutVersu": "Repo alignment timed out — please try again.",
+    "repoScanDauerteZuLangeTimeoutBitteEr": "The repository scan took too long (timeout). Please try again.",
+    "einSyncLauftBereitsFurDiesesProjekt": "A sync is already running for this project."
+  },
+  "dokumenteRegister": {
+    "bearbeiten": "✏️ Edit",
+    "bitteZuerstEinProjektAuswahlenUmDieD": "Please select a project first in order to manage the documentation.",
+    "dokumenttypSchlussel": "Document type / key *",
+    "erstellen": "✏️ Create",
+    "externeWebDoku": "External web documentation",
+    "fehlt": "Missing",
+    "final": "Final",
+    "furDiesesModulSindKeinePflichtdokume": "No mandatory documents are defined for this module.",
+    "iWofurIstDas": "ℹ️ What is this for?",
+    "ladtDokumentenKatalog": "Loading document catalogue…",
+    "mitAssistentErstellen": "🤖 Create with assistant",
+    "mitDemVorgeschlagenenAssistentenErst": "Create with the suggested assistant",
+    "neuesDokument": "➕ New document",
+    "neuesDokument2": "New document",
+    "nochKeineWeiterenFreienDokumenteAnge": "No further (free-form) documents created yet.",
+    "pflichtdokument": "Mandatory document",
+    "pflichtdokumente": "📋 Mandatory documents",
+    "titelDesDokuments": "Title of the document",
+    "webLink": "🔗 Web link",
+    "weitereDokumente": "📄 Further documents",
+    "word": "⬇️ Word"
+  },
+  "firmaOverview": {
+    "cRAPflichtenWerdenJeProduktGefuhrtHi": "CRA obligations are managed per product. Here you see all products of the company and their open risks and vulnerabilities.",
+    "dieFirmaIstInDerFirmenverwaltungNich": "The company is not assigned in company management — link it in the admin area under \"Company assignment\", then the risk cockpit appears here.",
+    "keineOffenenRisiken": "no open risks",
+    "keineProjekteFurDieseFirma": "No projects for this company.",
+    "ladeRisikoCockpit": "⏳ Loading risk cockpit…",
+    "ohneFirma": "Without company",
+    "produkteV0": "📦 Products ({v0})",
+    "reifegrad": "Maturity level",
+    "risiken": "risks",
+    "risiko": "risk",
+    "risikoCockpit": "📊 Risk cockpit",
+    "risikobewertungenWerdenJeProduktBzwA": "Risk assessments are managed per product or occasion. Here you see all assessments of the company and their open risks."
+  },
+  "kiBewertung": {
+    "aktuelleAntwort": "Current answer",
+    "aktuelleBewertung": "Current assessment",
+    "aktuellerRisikowert": "Current risk value",
+    "aktuellerStatus": "Current status",
+    "antwortAlsJSONFelderBewertung": "Answer as JSON: { \"felder\": { … }, \"bewertung\": \"…\" }",
+    "antwortAlsJSONScoreKommentarMassnahm": "Answer as JSON: { \"score\": 0-5, \"kommentar\": \"…\", \"massnahme\": \"…\" }",
+    "antwortAlsJSONStatusJaNeinNichtRelev": "Answer as JSON: { \"status\": \"ja|nein|nicht_relevant\", \"notiz\": \"…\", \"empfehlung\": \"…\" }",
+    "befulltAntwortUndNotizDerPruffrage": "Fills in the answer and the note of the audit question.",
+    "befulltBewertungScoreKommentarUndMas": "Fills in the assessment (score), the comment and the measure.",
+    "befulltDieBewertungsfelderDenRisikow": "Fills in the assessment fields, the risk value and the assessment.",
+    "befulltStatusUndKommentarDerOWASPLLM": "Fills in the status and the comment of the OWASP-LLM control.",
+    "beiDerFirmaHochgeladeneNachweiseAusz": "Evidence uploaded for the company (extracts)",
+    "bezeichnung": "Designation",
+    "denKommentar": "the comment",
+    "dieBewertung": "the assessment",
+    "dieNotiz": "the note",
+    "frage": "Question",
+    "kontrolle": "Control",
+    "nachweise": "Evidence",
+    "pruffrage": "Audit question",
+    "uberschreibtDenAktuellenStatus": "Overwrites the current status.",
+    "uberschreibtDieAktuelleAntwortNachDe": "Overwrites the current answer once applied.",
+    "uberschreibtDieAktuelleBewertungNach": "Overwrites the current assessment once applied.",
+    "uberschreibtDieAktuelleRisikobewertu": "Overwrites the current risk assessment once applied.",
+    "zBDasSystemNutztAusschliesslichLokal": "e.g. \"The system uses local models exclusively.\"",
+    "zBDerBetriebIstAusgelagertNachweiseL": "e.g. \"Operations are outsourced, the evidence is held by the service provider.\"",
+    "zBDerSchwerpunktLiegtInDerFertigungD": "e.g. \"The focus is on manufacturing, IT is outsourced.\"",
+    "zBDieAnlageIstNichtAusDemInternetErr": "e.g. \"The installation is not reachable from the internet.\""
+  },
+  "massAdapters": {
+    "anforderungen": "Requirements",
+    "oWASPLLMKontrolle": "OWASP-LLM control",
+    "oWASPLLMKontrollen": "OWASP-LLM controls",
+    "pruffrage": "Audit question",
+    "pruffragen": "Audit questions"
+  },
+  "neubewertung": {
+    "einVerknupftesIssueOderEinPentestBef": "A linked issue or a pentest finding requires a reassessment"
+  },
+  "pdfFehler": {
+    "beiEinemSehrGrossenDokumentHilftDerW": "With a very large document the Word export (DOCX) helps.",
+    "dasWordDokumentDOCXLasstSichWeiterHe": "The Word document (DOCX) can still be downloaded.",
+    "derPDFKonverterHatDieUmwandlungAbgel": "The PDF converter rejected the conversion. ",
+    "derPDFKonverterIstNichtErreichbar": "The PDF converter is not reachable. ",
+    "dieUmwandlungInPDFHatZuLangeGedauert": "The conversion to PDF took too long and was aborted. "
+  },
+  "risikobewertung": {
+    "aktiv": "Active",
+    "resolved": "Resolved"
+  },
+  "riskCockpit": {
+    "aktualisieren": "Refresh",
+    "cRAV0": "CRA: {v0}",
+    "gering": "Low",
+    "geringV0": "Low: {v0}",
+    "gesamtV0": "Total: {v0}",
+    "hochV0": "High: {v0}",
+    "keineOffenenRisikenGefunden": "No open risks found.",
+    "kritischV0": "Critical: {v0}",
+    "ladt": "Loading…",
+    "mittelV0": "Medium: {v0}",
+    "referenz": "Reference",
+    "risikoCockpit": "Risk cockpit",
+    "unbekannt": "Unknown"
+  },
+  "useFormularVorschlag": {
+    "bestatigungNotig": "✋ Confirmation required"
+  },
+  "usePromptZusatz": {
+    "angezeigtePromptEnthaltIhnNicht": "prompt shown does not contain it. ",
+    "derHinweisKonnteNichtEingesetztWerde": "The note could not be inserted — the "
+  },
+  "useSseRun": {
+    "abgebrochen": "Cancelled",
+    "keinAuthTokenBitteNeuEinloggen": "No auth token — please log in again.",
+    "streamOhneErgebnisBeendet": "The stream ended without a result."
+  },
+  "zwischenablage": {
+    "bitteMitStrgVInDasFeldEinfugen": "Please paste it into the field with Ctrl+V.",
+    "derZugriffAufDieZwischenablageWurdeN": "Access to the clipboard was not permitted. ",
+    "dieZwischenablageIstLeer": "The clipboard is empty.",
+    "dieserBrowserGibtDieZwischenablageNi": "This browser does not release the clipboard. "
+  },
+  "gerichtsgutachten": {
+    "loschenNurFurAdministratoren": "Deletion is restricted to administrators."
+  }
+}

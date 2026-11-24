@@ -1,0 +1,107 @@
+{
+  "module": "compliance-audit",
+  "title": "Compliance audit",
+  "regulation": "Framework-dependent (ISO/IEC 27001, NIS2, CRA, GDPR, EU AI Act, BSI …)",
+  "purpose": "The compliance audit uses a questionnaire to establish how far an organisation actually is against one or more frameworks, and reports the result back as a status report: fully, largely, partially or not compliant. It is therefore the position-finding at the start — not the expert opinion at the end (that is what the expert opinion module is for).",
+  "legalBasis": {
+    "title": "Scope and classification",
+    "intro": "A compliance audit is not an expert opinion. It establishes the state of implementation in a structured and verifiable way so that gaps become visible and can be addressed by priority.",
+    "bullets": [
+      "The questions are generated from the regulatory texts that have been read in (framework library) and stay tied to the respective reference.",
+      "Fulfilment is recorded per question: fulfilled, partially, not fulfilled, not applicable or open.",
+      "\"Not applicable\" is a scoping decision by the auditor and drops out of the assessment — it must be justifiable.",
+      "Several frameworks in one audit are possible; the level is reported per framework and overall.",
+      "The compliance audit is part of the base price and can be used with any valid licence — like the risk assessment."
+    ]
+  },
+  "implementation": {
+    "title": "How to work in the module",
+    "intro": "Create the audit, choose frameworks, generate questions, collect answers, produce the status report. The questionnaire can go to the customer as XLSX and be read back in with their answers.",
+    "bullets": [
+      "Create the audit and assign it to a company (field Company) — the assignment is the basis for billing and tenant separation.",
+      "Fill the framework library: download the regulatory text or upload it as a PDF, then read it into sections.",
+      "Generate questions: create a prompt, have the AI answer it and import the questions — or add your own questions manually.",
+      "Export the questionnaire as XLSX, have the customer fill it in and import it again (the re-import matches the answers to the questions).",
+      "Set fulfilment per question. For audits from before v7.4.0, \"Adopt old assessments\" takes over the earlier free-text grade once.",
+      "Produce the status report: the level is calculated from the answers, the AI only formulates the text for the customer.",
+      "If needed, derive an expert opinion from the audit (bridge to the expert opinion module) — the findings taken over are deliberately empty and must be formulated personally."
+    ]
+  },
+  "moduleSpecific": {
+    "title": "How the level is arrived at",
+    "intro": "The compliance level is a commitment to the customer and is therefore calculated, not estimated: identical answers always produce the same level, and every level can be substantiated question by question.",
+    "bullets": [
+      "Ratio = (1 × fulfilled + 0.5 × partially) ÷ (all questions − not applicable).",
+      "Open questions count in the ratio like \"not fulfilled\": what is not substantiated is not evidenced. An audit with 10 of 200 questions answered therefore cannot come out as \"fully compliant\".",
+      "Levels: fully = 100 % and nothing open · largely from 80 % · partially from 40 % · below that not compliant.",
+      "In addition, the ratio of the assessed questions only and the coverage are reported — this keeps the difference between \"poorly fulfilled\" and \"not yet established\" visible.",
+      "The AI receives the level as a given and must not change it; it substantiates the level, names the main gaps and proposes measures.",
+      "Every report is archived with the calculated state and the AI text kept apart (history), so that it remains traceable what was calculated and what was formulated."
+    ]
+  },
+  "areas": [
+    {
+      "id": "overview",
+      "title": "📋 Overview",
+      "zweck": "Master data of the audit and selection of the frameworks.",
+      "pflichtfelder": [
+        "Name of the audit (unique)",
+        "Company — the audited company; without an assignment the audit is missing from the cockpit and from billing",
+        "Frameworks — one or several; they determine which texts questions are generated from",
+        "Audit focus — what the audit is limited to (scope definition)"
+      ],
+      "tipps": [
+        "Phrase the audit focus narrowly and in writing: it later substantiates why questions count as \"not applicable\"."
+      ]
+    },
+    {
+      "id": "fragen",
+      "title": "❓ Questions",
+      "zweck": "Generate the questionnaire, record answers and fulfilment.",
+      "pflichtfelder": [
+        "Question with a reference to the source (section/article)",
+        "The customer's answer",
+        "Fulfilment: fulfilled / partially / not fulfilled / not applicable / open",
+        "Comment — for \"partially\" and \"not fulfilled\", the specific gap"
+      ],
+      "anleitung": "Generate questions via prompt and import them, then export as XLSX, have the customer fill it in and import it again. After that, set fulfilment per question — it is the basis of the level calculation.",
+      "tipps": [
+        "Use \"not applicable\" sparingly and always with a justification in the comment — it raises the ratio.",
+        "Do not set open questions to \"not fulfilled\" merely because the answer is missing: the ratio treats both the same, but the coverage shows the difference."
+      ]
+    },
+    {
+      "id": "wasserstand",
+      "title": "📊 Status",
+      "zweck": "Review the calculated compliance state and produce the message to the customer.",
+      "pflichtfelder": [
+        "Fulfilment set per question (otherwise everything is \"open\")"
+      ],
+      "anleitung": "Check the state, then either produce the report directly with the AI or copy the prompt and paste the answer. The level does not change as a result.",
+      "tipps": [
+        "Check the coverage before reporting to the customer: below roughly 80 % the statement is thin — that belongs in the message.",
+        "The history shows the development over time and is suitable for follow-up audits."
+      ]
+    },
+    {
+      "id": "gutachten",
+      "title": "📄 Report",
+      "zweck": "Produce and export the audit report as a document.",
+      "pflichtfelder": [
+        "Evaluated questions",
+        "Summary",
+        "Recommendations"
+      ]
+    }
+  ],
+  "links": [
+    {
+      "label": "Module documentation",
+      "href": "docs:/modules/compliance-audit/"
+    },
+    {
+      "label": "Expert opinion module (derivation)",
+      "href": "docs:/modules/gutachten/"
+    }
+  ]
+}

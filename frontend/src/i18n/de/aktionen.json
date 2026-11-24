@@ -1,0 +1,91 @@
+{
+  "abschnitte": {
+    "issues": "🔗 Verknüpfte Issues",
+    "kiBewertung": "🤖 KI-Bewertung"
+  },
+  "kiVorbehalt": "🤖 Von der KI erzeugt — fachlich zu prüfen.",
+  "objekt": {
+    "issueAbgleichen": {
+      "laufend": "⏳ Gleiche ab…",
+      "text": "🔄 Status abgleichen",
+      "titel": "Status und neue Kommentare der verknüpften Issues abrufen; die Bewertung wird dabei nicht verändert"
+    },
+    "issueAnlegen": {
+      "laufend": "⏳ Lege an…",
+      "text": "➕ Issue anlegen",
+      "titel": "Ein neues GitHub-/GitLab-Issue für dieses Objekt anlegen und verknüpfen"
+    },
+    "issueEntknuepfen": {
+      "laufend": "…",
+      "text": "✕",
+      "titel": "Verknüpfung entfernen"
+    },
+    "issueImportieren": {
+      "laufend": "⏳ Übernehme…",
+      "text": "📥 Issue-Inhalt importieren",
+      "titel": "Issue-Inhalt und Review-Feedback in den Freitext übernehmen — die Bewertung wird dabei nicht verändert"
+    },
+    "issueVerknuepfen": {
+      "laufend": "⏳ Verknüpfe…",
+      "text": "🔗 Bestehendes verknüpfen",
+      "titel": "Ein vorhandenes Issue über seine URL mit diesem Objekt verknüpfen"
+    },
+    "kiAuto": {
+      "laufend": "⏳ Bewerte…",
+      "text": "🤖 Automatische Bewertung",
+      "titel": "Die KI direkt aufrufen und das Ergebnis übernehmen"
+    },
+    "kiNeubewertung": {
+      "laufend": "⏳ Bewerte…",
+      "text": "🔄 Neubewertung mit Issue-Feedback",
+      "titel": "KI-Neubewertung unter Einbezug des Issue-/Review-Feedbacks"
+    },
+    "kiPrompt": {
+      "laufend": "⏳ Lade Prompt…",
+      "text": "🤖 KI-Bewertung (Prompt → Antwort)",
+      "titel": "Prompt erzeugen, in die KI einfügen und die Antwort übernehmen"
+    }
+  },
+  "projekt": {
+    "auditLog": {
+      "laufend": "⏳ Lade…",
+      "text": "📜 Audit-Log",
+      "titel": "Revisionspfad dieses Projekts — wer wann was geändert hat"
+    },
+    "feedbackUebernehmen": {
+      "laufend": "⏳ Übernehme…",
+      "text": "📥 Issue-Feedback übernehmen",
+      "titel": "Inhalt und Kommentare der verknüpften Issues in den Freitext übernehmen — die Bewertung bleibt unverändert"
+    },
+    "issuesAnlegen": {
+      "laufend": "⏳ Lege an…",
+      "text": "🐙 Issues anlegen",
+      "titel": "Für die offenen Punkte dieses Projekts GitHub-/GitLab-Issues im Stapel anlegen"
+    },
+    "massenAuto": {
+      "laufend": "⏳ Bewerte…",
+      "text": "🤖 Automatische Massenbewertung",
+      "titel": "Mehrere Objekte auswählen und je Objekt von der KI bewerten lassen"
+    },
+    "massenPrompt": {
+      "laufend": "⏳ Lade…",
+      "text": "🧮 Massenbewertung (Sammel-Prompt)",
+      "titel": "Einen gemeinsamen Prompt für mehrere Objekte erzeugen und die Antwort übernehmen"
+    },
+    "neubewertung": {
+      "laufend": "⏳ Prüfe…",
+      "text": "🧪 Neubewertung aus Issues",
+      "titel": "Die verknüpften Issues durchsehen und je Objekt zeigen, was eine Neubewertung verlangt"
+    },
+    "statusAbgleichen": {
+      "laufend": "⏳ Gleiche ab…",
+      "text": "🔄 Issue-Status abgleichen",
+      "titel": "Status und neue Kommentare aller verknüpften Issues dieses Projekts abrufen; Bewertungen werden dabei nicht verändert"
+    },
+    "ueberholt": {
+      "laufend": "⏳ Prüfe…",
+      "text": "🕒 Was ist überholt?",
+      "titel": "Bewertungen zeigen, die älter sind als ein Ereignis in derselben Akte — neuer Nachweis, neue SBOM, Pentest-Bericht. Es wird nichts neu bewertet."
+    }
+  }
+}

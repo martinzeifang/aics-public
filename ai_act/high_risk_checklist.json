@@ -1,0 +1,112 @@
+[
+  {
+    "id": "HR-01",
+    "title": "Risikomanagement-System",
+    "short": "Prozess zur Identifikation, Bewertung und Minderung von Risiken ueber den gesamten Lebenszyklus.",
+    "evidence": [
+      "Risk register / Risk assessment reports",
+      "Threat model / TARA",
+      "Review- und Freigabeprozesse"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  {
+    "id": "HR-02",
+    "title": "Data Governance und Datenqualitaet",
+    "short": "Nachweise, dass Trainings-/Validierungsdaten geeignet sind (Qualitaet, Bias, Repraesentativitaet) und kontrolliert verwaltet werden.",
+    "evidence": [
+      "Datasheets / dataset documentation",
+      "Data lineage / provenance",
+      "Bias/Fairness Tests"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  {
+    "id": "HR-03",
+    "title": "Technische Dokumentation",
+    "short": "Technische Doku fuer Konformitaetsbewertung (intended purpose, limitations, Architektur, Tests, Security).",
+    "evidence": [
+      "System-/Modellbeschreibung",
+      "Architekturdiagramme",
+      "Test-/Evaluationsberichte"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  {
+    "id": "HR-04",
+    "title": "Logging / Record-Keeping",
+    "short": "Protokollierung und Nachvollziehbarkeit zur Unterstuetzung von Post-Market und Incident-Prozessen.",
+    "evidence": [
+      "Audit trail / log specs",
+      "Retention policy",
+      "Beispiele fuer Log-Ausgaben"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  {
+    "id": "HR-05",
+    "title": "Transparenz und Nutzerinformationen",
+    "short": "Nutzer-/Deployer-Informationen fuer sichere und korrekte Nutzung.",
+    "evidence": [
+      "User documentation",
+      "Model card",
+      "Limitations / known issues"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  {
+    "id": "HR-06",
+    "title": "Menschliche Aufsicht",
+    "short": "Human-oversight Massnahmen (rollen, training, escalation, override/stop).",
+    "evidence": [
+      "Rollen-/Betriebskonzept",
+      "Override/Stop Mechanismen",
+      "Escalation playbooks"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  {
+    "id": "HR-07",
+    "title": "Genauigkeit, Robustheit und Cybersicherheit",
+    "short": "Messbare Anforderungen an Performance, Robustheit und Security-by-design.",
+    "evidence": [
+      "Security controls / hardening guide",
+      "SBOM + vuln scan results",
+      "Adversarial / robustness tests"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  {
+    "id": "OPS-01",
+    "title": "Post-Market Monitoring",
+    "short": "Monitoring-Plan und Feedback-Loops nach Inverkehrbringen.",
+    "evidence": [
+      "Monitoring plan",
+      "KPIs/SLIs",
+      "Periodic review records"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  {
+    "id": "OPS-02",
+    "title": "Incident Management / Meldungen",
+    "short": "Prozess fuer Incident handling und regulatorische Meldungen.",
+    "evidence": [
+      "Incident response plan",
+      "Severity classification",
+      "Templates fuer Meldungen/Kommunikation"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  },
+  {
+    "id": "GOV-01",
+    "title": "Quality Management System (QMS)",
+    "short": "QMS fuer AI Act Konformitaet (rollen, prozesse, audits, change control).",
+    "evidence": [
+      "Policies/Procedures",
+      "Audit evidence",
+      "Training records"
+    ],
+    "ref_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689"
+  }
+]

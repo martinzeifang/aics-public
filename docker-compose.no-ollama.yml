@@ -1,0 +1,16 @@
+# Override: Ollama-Container deaktivieren
+#
+# Verwendung (statt normalem docker compose up):
+#   docker compose -f docker-compose.yml -f docker-compose.no-ollama.yml up -d
+#
+# Sinnvoll wenn:
+#   - Kein GPU/RAM für lokales LLM vorhanden
+#   - Externes Ollama (Host oder anderer Server) über OLLAMA_BASE_URL konfiguriert
+#   - Cloud-KI-Provider wird verwendet (AI_CLOUD_API_KEY gesetzt)
+
+version: '3.8'
+
+services:
+  ollama:
+    deploy:
+      replicas: 0

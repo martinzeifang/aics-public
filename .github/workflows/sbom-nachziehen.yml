@@ -1,0 +1,147 @@
+name: SBOM nachziehen
+
+# Erzeugt und attestiert die SPDX-Stückliste für ein **bereits
+# veröffentlichtes** Abbild — ohne es neu zu bauen.
+#
+# WARUM NICHT EINFACH NEU BAUEN (#1961)
+# Ein Neubau erzeugt einen **anderen Digest** (schon `org.opencontainers.
+# image.created` unterscheidet sich). Der Tag `8.6.1` zeigte danach auf ein
+# anderes Artefakt als das, was auf den Instanzen läuft — und als das, was in
+# `cra_sbom.image_digest` steht und die EU-Konformitätserklärung unter Anhang V
+# Nr. 4 als Gegenstand bezeichnet (#1884). Eine Stückliste nachzutragen darf
+# den Gegenstand nicht austauschen, den sie beschreibt.
+#
+# WARUM IM WORKFLOW UND NICHT VON HAND
+# `cosign attest` keyless bindet die Attestierung an die OIDC-Identität des
+# Ausführenden. Von einem Arbeitsplatz aus wäre das eine Privatperson; der
+# Deploy-Riegel (`scripts/ops/portainer_redeploy.py`) und jeder Kunde prüfen
+# aber gegen `…/aics-public/.github/workflows/…`. Eine Attestierung mit der
+# falschen Identität ist schlechter als keine: Sie sieht aus wie ein Nachweis
+# und fällt bei der Prüfung durch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Paketname, z. B. aics-nginx oder ai_compliance_suite'
+        required: true
+      tag:
+        description: 'Tag, dessen Digest nachgezogen wird, z. B. 8.6.1'
+        required: true
+
+concurrency:
+  # Dieselbe Gruppe wie der Build: Beide schreiben Attestierungen an denselben
+  # Digest, und zwei gleichzeitige Läufe hinterlassen zwei Aussagen zu einem
+  # Artefakt.
+  group: docker-publish
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+  id-token: write        # cosign keyless (Sigstore Fulcio)
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  nachziehen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Zwei Anläufe, weil genau hier der Fehlschlag aus #1961 saß: `curl`
+      # endete mit Exit 22 beim Laden der cosign-Binärdatei aus den
+      # GitHub-Releases. Ein Ausfall des Verzeichnisses ist hinzunehmen — dass
+      # er den ganzen Nachweis kostet, nicht.
+      - name: Install cosign
+        id: cosign1
+        continue-on-error: true
+        uses: sigstore/cosign-installer@v3
+      - name: Install cosign (zweiter Anlauf)
+        if: steps.cosign1.outcome == 'failure'
+        uses: sigstore/cosign-installer@v3
+
+      - name: Abbild und Digest auflösen
+        id: ref
+        env:
+          IMG: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ inputs.image }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          ref="${IMG,,}"
+          digest=$(cosign triangulate --type digest "${ref}:${TAG}")
+          # `triangulate` liefert `…@sha256:…`; nur die Prüfsumme wird gebraucht.
+          echo "ref=${ref}" >> "$GITHUB_OUTPUT"
+          echo "digest=${digest##*@}" >> "$GITHUB_OUTPUT"
+          echo "Abbild: ${ref}:${TAG} → ${digest##*@}"
+
+      # Fail-closed gegen den naheliegenden Bedienfehler: Wer diesen Workflow
+      # auf ein Abbild wirft, das längst eine Attestierung hat, erzeugt eine
+      # zweite Aussage zum selben Digest. Zwei Stücklisten zu einem Artefakt
+      # sind zwei Wahrheiten, und die jüngere ist nicht automatisch die
+      # richtige.
+      - name: Abbrechen, wenn schon eine Attestierung vorliegt
+        env:
+          REF: ${{ steps.ref.outputs.ref }}
+          DIGEST: ${{ steps.ref.outputs.digest }}
+        run: |
+          set -uo pipefail
+          if cosign verify-attestation --type spdxjson \
+               --certificate-identity-regexp "^https://github\.com/${{ github.repository }}/\.github/workflows/.+$" \
+               --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+               "${REF}@${DIGEST}" >/dev/null 2>&1; then
+            echo "::error title=Nichts nachzuziehen::${REF}@${DIGEST} trägt bereits eine SBOM-Attestierung."
+            exit 1
+          fi
+          echo "✓ keine Attestierung vorhanden — nachziehen ist richtig"
+
+      - name: Generate SBOM
+        id: sbom1
+        continue-on-error: true
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ steps.ref.outputs.ref }}@${{ steps.ref.outputs.digest }}
+          format: spdx-json
+          output-file: sbom.spdx.json
+          upload-release-assets: false
+      - name: Generate SBOM (zweiter Anlauf)
+        if: steps.sbom1.outcome == 'failure'
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ steps.ref.outputs.ref }}@${{ steps.ref.outputs.digest }}
+          format: spdx-json
+          output-file: sbom.spdx.json
+          upload-release-assets: false
+
+      - name: Attest SBOM (keyless)
+        env:
+          COSIGN_EXPERIMENTAL: "1"
+          REF: ${{ steps.ref.outputs.ref }}
+          DIGEST: ${{ steps.ref.outputs.digest }}
+        run: |
+          set -euo pipefail
+          cosign attest --yes \
+            --predicate sbom.spdx.json \
+            --type spdxjson \
+            "${REF}@${DIGEST}"
+
+      # Der Nachweis ist erst erbracht, wenn er sich **abrufen** lässt. Das ist
+      # die Lehre aus #1961 in einem Satz: Dass ein Schritt grün war, sagt
+      # nichts darüber, ob am Digest etwas liegt.
+      - name: Attestierung nachweisen
+        env:
+          REF: ${{ steps.ref.outputs.ref }}
+          DIGEST: ${{ steps.ref.outputs.digest }}
+        run: |
+          set -euo pipefail
+          cosign verify-attestation --type spdxjson \
+            --certificate-identity-regexp "^https://github\.com/${{ github.repository }}/\.github/workflows/.+$" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+            "${REF}@${DIGEST}" > /dev/null
+          echo "::notice title=SBOM nachgezogen::${REF}@${DIGEST} trägt jetzt eine abrufbare SPDX-Attestierung."

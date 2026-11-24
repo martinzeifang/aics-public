@@ -1,0 +1,303 @@
+"""RBAC Models: Permission, Role, User.
+
+Definiert Rollen und Permissions für alle Module der Web-API.
+"""
+
+from __future__ import annotations
+
+from enum import Enum
+from typing import List
+
+
+class RoleEnum(str, Enum):
+    """Rollen der Web-API."""
+    ADMIN = "admin"
+    EDITOR = "editor"          # Vollzugriff auf alle Module (lesen+schreiben+export)
+    VIEWER = "viewer"          # Nur-Lese-Zugriff auf alle Module
+    AUDITOR = "auditor"        # Nur-Lese + Audit-Log
+    # Modul-spezifische Editor-Rollen (für feinere Aufteilung):
+    CRA_EDITOR = "cra_editor"
+    CRA_VIEWER = "cra_viewer"
+    NIS2_EDITOR = "nis2_editor"
+    AIACT_EDITOR = "aiact_editor"
+    DSGVO_EDITOR = "dsgvo_editor"
+    GUTACHTEN_EDITOR = "gutachten_editor"
+    RISIKOBEWERTUNG_EDITOR = "risikobewertung_editor"
+    FIRMEN_EDITOR = "firmen_editor"
+    WIBA_EDITOR = "wiba_editor"
+    COMPLIANCE_AUDITOR = "compliance_auditor"  # Compliance-Audit (v7.4.0)
+    GESCHAEFTSFUEHRER = "geschaeftsfuehrer"  # Jahresbericht-Freigabe
+    DSB = "dsb"  # Datenschutzbeauftragte:r — Signatur
+    # #1743 (v8.0.0): Compliance prüft, was die Entwicklung einreicht. Bewusst
+    # OHNE Schreibrecht — eine Freigabe, die der Ersteller selbst erteilen kann,
+    # belegt nichts.
+    CRA_APPROVER = "cra_approver"
+    # #1756: dasselbe Muster im AI-Act-Modul. Wer eine Änderung am KI-System
+    # einreicht, darf sie nicht selbst freigeben (Art. 43 Abs. 4).
+    AIACT_APPROVER = "aiact_approver"
+
+
+# ── Module ──────────────────────────────────────────────────────────────────
+MODULES = [
+    'firmen',
+    'risikobewertung',
+    'cra',
+    'nis2',
+    'aiact',
+    'dsgvo',
+    'gutachten',
+    'wiba',
+]
+
+
+# ── Granulare Permissions ───────────────────────────────────────────────────
+class Permission(str, Enum):
+    # Firmen
+    FIRMEN_READ = "firmen:read"
+    FIRMEN_WRITE = "firmen:write"
+
+    # Risikobewertung
+    RB_READ = "risikobewertung:read"
+    RB_WRITE = "risikobewertung:write"
+    RB_EXPORT = "risikobewertung:export"
+
+    # CRA
+    CRA_READ = "cra:read"
+    CRA_WRITE = "cra:write"
+    CRA_PREFILL = "cra:prefill"
+    CRA_ISSUE_LINK = "cra:issue_link"
+    CRA_EXPORT = "cra:export"
+    CRA_APPROVE = "cra:approve"   # #1220-A — Konformitäts-/Bewertungs-Sign-off (Governance)
+
+    # NIS2
+    NIS2_READ = "nis2:read"
+    NIS2_WRITE = "nis2:write"
+    NIS2_EXPORT = "nis2:export"
+
+    # AI-Act
+    AIACT_READ = "aiact:read"
+    AIACT_WRITE = "aiact:write"
+    AIACT_EXPORT = "aiact:export"
+    AIACT_APPROVE = "aiact:approve"   # #1756 — Änderungsvorgang freigeben (Art. 43 Abs. 4)
+
+    # DSGVO
+    DSGVO_READ = "dsgvo:read"
+    DSGVO_WRITE = "dsgvo:write"
+    DSGVO_EXPORT = "dsgvo:export"
+    DSGVO_APPROVE = "dsgvo:approve"   # Jahresbericht/Kontrolle freigeben (GF)
+    DSGVO_SIGN = "dsgvo:sign"         # Jahresbericht signieren (DSB)
+
+    # Gutachten
+    GUTACHTEN_READ = "gutachten:read"
+    GUTACHTEN_WRITE = "gutachten:write"
+    GUTACHTEN_EXPORT = "gutachten:export"
+    GUTACHTEN_FRAMEWORKS = "gutachten:frameworks"   # Framework-Bibliothek (Download/Ingest)
+    GUTACHTEN_FINAL_DELETE = "gutachten:final_delete"  # #969 — Final-Archiv löschen (nur Admin)
+    # Compliance-Audit — eigenes Modul seit v7.4.0 (vorher Teil von Gutachten).
+    # Der Wert-Prefix MUSS dem Modulschluessel aus server/middleware/authz.py
+    # entsprechen: der zentrale Guard baut die Permission als f"{modul}:{aktion}".
+    COMPLIANCE_AUDIT_READ = "compliance_audit:read"
+    COMPLIANCE_AUDIT_WRITE = "compliance_audit:write"
+    COMPLIANCE_AUDIT_EXPORT = "compliance_audit:export"
+    COMPLIANCE_AUDIT_FRAMEWORKS = "compliance_audit:frameworks"   # Framework-Bibliothek (Download/Ingest)
+
+    # WiBA (BSI Weg in die Basis-Absicherung)
+    WIBA_READ = "wiba:read"
+    WIBA_WRITE = "wiba:write"
+    WIBA_EXPORT = "wiba:export"
+    WIBA_CATALOG = "wiba:catalog"   # Prüffragen-Katalog Download/Ingest (Admin)
+
+
+    # Admin
+    ADMIN_USERS = "admin:users"
+    ADMIN_ROLES = "admin:roles"
+    ADMIN_AUDIT = "admin:audit"
+    ADMIN_CONFIG = "admin:config"
+
+    # Template-Engine (#991) — Verwaltung der Word-Vorlagen (nur Admin)
+    TEMPLATE_MANAGE = "template:manage"
+
+
+# ── Permission-Sets pro Modul (für UI + Defaults) ──────────────────────────
+MODULE_PERMISSIONS: dict[str, list[Permission]] = {
+    'firmen': [Permission.FIRMEN_READ, Permission.FIRMEN_WRITE],
+    'risikobewertung': [Permission.RB_READ, Permission.RB_WRITE, Permission.RB_EXPORT],
+    'cra': [Permission.CRA_READ, Permission.CRA_WRITE, Permission.CRA_PREFILL,
+            Permission.CRA_ISSUE_LINK, Permission.CRA_EXPORT, Permission.CRA_APPROVE],
+    'nis2': [Permission.NIS2_READ, Permission.NIS2_WRITE, Permission.NIS2_EXPORT],
+    'aiact': [Permission.AIACT_READ, Permission.AIACT_WRITE, Permission.AIACT_EXPORT,
+              Permission.AIACT_APPROVE],
+    'dsgvo': [Permission.DSGVO_READ, Permission.DSGVO_WRITE, Permission.DSGVO_EXPORT,
+             Permission.DSGVO_APPROVE, Permission.DSGVO_SIGN],
+    'compliance_audit': [Permission.COMPLIANCE_AUDIT_READ, Permission.COMPLIANCE_AUDIT_WRITE,
+                         Permission.COMPLIANCE_AUDIT_EXPORT, Permission.COMPLIANCE_AUDIT_FRAMEWORKS],
+    # Das Compliance-Audit ist seit v7.4.0 ein eigenes Modul. Die Audit-Rechte
+    # bleiben bewusst ZUSAETZLICH in der Gutachten-Rolle: wer bisher Audits im
+    # Gutachten-Modul gepflegt hat, verliert den Zugang durch die Trennung nicht.
+    'gutachten': [Permission.GUTACHTEN_READ, Permission.GUTACHTEN_WRITE,
+                  Permission.GUTACHTEN_EXPORT, Permission.GUTACHTEN_FRAMEWORKS,
+                  Permission.COMPLIANCE_AUDIT_READ, Permission.COMPLIANCE_AUDIT_WRITE,
+                  Permission.COMPLIANCE_AUDIT_EXPORT, Permission.COMPLIANCE_AUDIT_FRAMEWORKS],
+    'wiba': [Permission.WIBA_READ, Permission.WIBA_WRITE, Permission.WIBA_EXPORT,
+             Permission.WIBA_CATALOG],
+}
+
+
+def _all_module_permissions(action: str | None = None) -> list[Permission]:
+    """Alle Permissions, optional nur 'read'/'write'/'export'."""
+    out: list[Permission] = []
+    for perms in MODULE_PERMISSIONS.values():
+        for p in perms:
+            if action is None or p.value.endswith(f':{action}'):
+                out.append(p)
+    return out
+
+
+# ── Sign-off-Rechte (#1743, v8.0.0) ────────────────────────────────────────
+# Freigabe und Signatur sind keine Schreibrechte, sondern eine zweite Instanz.
+# Sie dürfen deshalb NICHT über eine breite Rolle mitkommen: Vor 8.0.0 erhielt
+# `editor` via ``_ALL_WRITE`` jedes Modulrecht — also auch CRA_APPROVE,
+# DSGVO_APPROVE und DSGVO_SIGN. Wer einen Nachweis erstellt, konnte ihn damit
+# selbst freigeben, und die Vier-Augen-Prüfung war eine Absprache, keine
+# Eigenschaft der Anwendung.
+#
+# Die Rechte bleiben in ``MODULE_PERMISSIONS`` (sie gehören fachlich zum Modul
+# und sollen im Rollen-Katalog der Benutzerverwaltung auftauchen) — sie werden
+# nur nicht mehr implizit verteilt. Vergabe erfolgt über die dafür gedachten
+# Rollen: ``cra_approver``, ``geschaeftsfuehrer``, ``dsb``.
+SIGN_OFF_PERMISSIONS: set[Permission] = {
+    Permission.CRA_APPROVE,
+    Permission.AIACT_APPROVE,
+    Permission.DSGVO_APPROVE,
+    Permission.DSGVO_SIGN,
+}
+
+
+def _ohne_signoff(perms: list[Permission]) -> list[Permission]:
+    return [p for p in perms if p not in SIGN_OFF_PERMISSIONS]
+
+
+# Read-Only-Set über alle Module
+_ALL_READ = _all_module_permissions('read') + _all_module_permissions('export')
+_ALL_WRITE = _ohne_signoff(_all_module_permissions())
+
+
+# ── Role → Permissions Mapping ─────────────────────────────────────────────
+ROLE_PERMISSIONS: dict[RoleEnum, list[Permission]] = {
+    RoleEnum.ADMIN: list(Permission),  # alle
+    RoleEnum.EDITOR: list(set(_ALL_WRITE)),
+    RoleEnum.VIEWER: list(set(_ALL_READ)),
+    RoleEnum.AUDITOR: list(set(_ALL_READ + [Permission.ADMIN_AUDIT])),
+    # Modul-spezifische Editor-Rollen
+    # #1743: Der Editor reicht ein, der Approver gibt frei. CRA_APPROVE ist
+    # deshalb aus der Editor-Rolle entfernt (brechend — siehe Release-Notes
+    # v8.0.0: bestehende CRA-Editoren brauchen zusätzlich `cra_approver`,
+    # wenn sie weiter freigeben sollen, und genau diese Entscheidung soll
+    # jemand bewusst treffen).
+    RoleEnum.CRA_EDITOR: _ohne_signoff(MODULE_PERMISSIONS['cra']),
+    RoleEnum.CRA_VIEWER: [Permission.CRA_READ, Permission.CRA_EXPORT],
+    # Spiegelbild zu GESCHAEFTSFUEHRER im DSGVO-Modul: lesen, exportieren,
+    # freigeben — nicht schreiben.
+    RoleEnum.CRA_APPROVER: [Permission.CRA_READ, Permission.CRA_EXPORT,
+                            Permission.CRA_APPROVE],
+    RoleEnum.NIS2_EDITOR: MODULE_PERMISSIONS['nis2'],
+    # #1756: wie bei CRA — der Editor reicht ein, der Approver gibt frei.
+    RoleEnum.AIACT_EDITOR: _ohne_signoff(MODULE_PERMISSIONS['aiact']),
+    RoleEnum.AIACT_APPROVER: [Permission.AIACT_READ, Permission.AIACT_EXPORT,
+                              Permission.AIACT_APPROVE],
+    # #1743: dieselbe Regel wie bei CRA. #1128 hat Freigabe (GF) und Signatur
+    # (DSB) bewusst als eigene Rollen eingeführt — mit beiden Rechten in der
+    # Editor-Rolle war die Trennung wirkungslos.
+    RoleEnum.DSGVO_EDITOR: _ohne_signoff(MODULE_PERMISSIONS['dsgvo']),
+    RoleEnum.GESCHAEFTSFUEHRER: [Permission.DSGVO_READ, Permission.DSGVO_EXPORT, Permission.DSGVO_APPROVE],
+    RoleEnum.DSB: [Permission.DSGVO_READ, Permission.DSGVO_WRITE, Permission.DSGVO_EXPORT, Permission.DSGVO_SIGN],
+    RoleEnum.GUTACHTEN_EDITOR: MODULE_PERMISSIONS['gutachten'],
+    RoleEnum.RISIKOBEWERTUNG_EDITOR: MODULE_PERMISSIONS['risikobewertung'],
+    RoleEnum.FIRMEN_EDITOR: MODULE_PERMISSIONS['firmen'],
+    RoleEnum.WIBA_EDITOR: MODULE_PERMISSIONS['wiba'],
+    RoleEnum.COMPLIANCE_AUDITOR: MODULE_PERMISSIONS['compliance_audit'],
+}
+
+
+# Legacy-Rollen-/Permission-Strings aus der Zeit vor der Umbenennung
+# „Kunden" → „Firmen" (#1003), die weiterhin akzeptiert werden.
+_LEGACY_ROLE_ALIASES: dict[str, str] = {'kunden_editor': 'firmen_editor'}
+_LEGACY_PERMISSION_ALIASES: dict[str, str] = {
+    'kunden:read': 'firmen:read',
+    'kunden:write': 'firmen:write',
+}
+
+
+def resolve_permissions(roles: list[str], extra_permissions: list[str] | None = None) -> list[str]:
+    """Effektive Permissions aus Rollen + extra_permissions (additiv)."""
+    result: set[str] = set()
+    for role_str in roles or []:
+        role_str = _LEGACY_ROLE_ALIASES.get(role_str, role_str)
+        try:
+            role = RoleEnum(role_str)
+        except ValueError:
+            continue
+        for p in ROLE_PERMISSIONS.get(role, []):
+            result.add(p.value)
+    for p in (extra_permissions or []):
+        # Legacy-Permission-Strings auf neue Namen mappen (additiv: beide behalten)
+        result.add(_LEGACY_PERMISSION_ALIASES.get(p, p))
+    return sorted(result)
+
+
+def has_permission(user_roles: list[str], permission: str | Permission,
+                   extra_permissions: list[str] | None = None) -> bool:
+    """Prüfe, ob User die Permission hat (über Rollen oder extra_permissions)."""
+    perm_value = permission.value if isinstance(permission, Permission) else permission
+    effective = resolve_permissions(user_roles, extra_permissions)
+    return perm_value in effective
+
+
+def allowed_modules_for(user_roles: list[str], extra_permissions: list[str] | None = None,
+                         allowed_modules: list[str] | None = None) -> list[str]:
+    """Module, die der User sehen darf.
+
+    - Wenn `allowed_modules` explizit gesetzt: dieser Filter (Whitelist).
+    - Sonst: alle Module, für die mindestens eine Read-Permission vorliegt.
+    """
+    if allowed_modules is not None:
+        return [m for m in allowed_modules if m in MODULES]
+
+    effective = set(resolve_permissions(user_roles, extra_permissions))
+    out = []
+    for m, perms in MODULE_PERMISSIONS.items():
+        # mindestens eine Permission aus dem Modul vorhanden?
+        if any(p.value in effective for p in perms):
+            out.append(m)
+    return out
+
+
+def require_permission(permission: str | Permission):
+    """Decorator für Flask-Routes mit Permission-Check.
+
+    Liest extra_permissions zusätzlich aus dem JWT-sub.
+    """
+    from functools import wraps
+    from flask import jsonify
+    from flask_jwt_extended import get_jwt
+
+    def decorator(fn):
+        @wraps(fn)
+        def wrapper(*args, **kwargs):
+            from flask_jwt_extended import verify_jwt_in_request
+            verify_jwt_in_request()
+            claims = get_jwt()
+            # Neuer Style: additional_claims sind direkt im claims-Dict
+            user_roles = claims.get('roles', [])
+            extra = claims.get('extra_permissions', [])
+            # Fallback Legacy (sub als Dict)
+            if not user_roles:
+                sub = claims.get('sub')
+                if isinstance(sub, dict):
+                    user_roles = sub.get('roles', [])
+                    extra = sub.get('extra_permissions', extra)
+            if not has_permission(user_roles, permission, extra):
+                return jsonify({'error': 'Forbidden', 'required': str(permission)}), 403
+            return fn(*args, **kwargs)
+        return wrapper
+    return decorator
